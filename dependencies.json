@@ -1,0 +1,12 @@
+{
+    "bootstrap": {
+        "src": "./node_modules/bootstrap/dist/**/*",
+        "dest": "ventor/bootstrap/",
+        "css_link": "ventor/bootstrap/css/bootstrap.min.css",
+        "js_link": "ventor/bootstrap/js/bootstrap.bundle.min.js"
+    },
+    "fontAwesome": {
+        "css_link": "ventor/icofont/all.min.css",
+        "js_link": "ventor/icofont/all.min.js"
+    }
+}

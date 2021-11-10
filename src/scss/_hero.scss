@@ -1,0 +1,69 @@
+/*------------------------------------------
+ * Hero
+ *----------------------------------------*/
+#hero {
+    width: 100%;
+    height: 100vh;
+    background: url("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcenitpsicologos.com%2Fwp-content%2Fuploads%2F2019%2F07%2Fbrain-2.jpg&f=1&nofb=1");
+    background-size: cover;
+    position: relative;
+
+    .overlapping-sheet{
+    background-color: $dark;
+    opacity: .4;
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    }
+
+    .hero-container {
+        position: absolute;
+        bottom: 0;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .h1, .h2 {
+        margin: 0 0 10px 0;
+        text-transform: uppercase;
+        color: #fff;
+        //text-shadow: -1px 0 2px $dark;
+    }
+
+    .h1 {
+        font-size: 75px;
+        font-weight: 700;
+        line-height: 56px;
+    }
+
+    .h2 {
+        font-size: 15px;
+        font-weight: 900;
+        letter-spacing: 8.4px;
+        font-family: "Rufina";
+    }
+    
+
+    @media (min-width: 1024px) {
+        background-attachment: fixed;
+    }
+
+    @media(max-width: 1024ps) {
+        .h1 {
+            font-size: 60px;
+        }
+    }
+
+    @media(max-width: 700px) {
+        .h1 {
+            font-size: 35px;
+            line-height: 36px;
+        }
+    }
+}
