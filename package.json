@@ -1,0 +1,35 @@
+{
+  "name": "serious-attention-and-memory-game",
+  "version": "1.0.0",
+  "description": "This is an attention and memory game, designed for the elderly.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NAP6/serious-attention-and-memory-game.git"
+  },
+  "author": "Nicolas Alvarez, Juan Cordero",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/NAP6/serious-attention-and-memory-game/issues"
+  },
+  "homepage": "https://github.com/NAP6/serious-attention-and-memory-game#readme",
+  "dependencies": {
+    "bootstrap": "^5.1.3",
+    "dotenv": "^10.0.0"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.27.7",
+    "del": "^6.0.0",
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^8.0.0",
+    "gulp-beautify": "^3.0.0",
+    "gulp-inject-string": "^1.1.2",
+    "gulp-nunjucks": "^5.1.0",
+    "gulp-sass": "^5.0.0",
+    "merge-stream": "^2.0.0",
+    "sass": "^1.43.4"
+  }
+}
