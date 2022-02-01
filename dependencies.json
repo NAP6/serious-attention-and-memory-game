@@ -1,4 +1,9 @@
 {
+    "jQuery": {
+        "src": "./node_modules/jquery/dist/jquery.min.js",
+        "dest": "ventor/jQuery/",
+        "js_link": "ventor/jQuery/jquery.min.js"
+    },
     "bootstrap": {
         "src": "./node_modules/bootstrap/dist/**/*",
         "dest": "ventor/bootstrap/",
