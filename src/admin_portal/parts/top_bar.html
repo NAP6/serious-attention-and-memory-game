@@ -1,0 +1,31 @@
+{% set have_serchBar=true %} {% set have_alerts=true %}
+<nav
+  class="navbar navbar-expand navbar-light bg-white topbar mb-4 px-2 static-top shadow"
+>
+  <!--Sidebar Button on small window-->
+  <button
+    id="sidebarToggleTop"
+    class="btn btn-outline-dark d-md-none rounded-circle me-3"
+  >
+    <i class="fa fa-bars"></i>
+  </button>
+
+  {% if have_serchBar %}
+  <!--Top inline serch box-->
+  {% include('admin_portal/parts/top_bar/serch_top_inline.html') %} {% endif %}
+
+  <!--Top Navbar options-->
+  <ul class="navbar-nav ms-auto">
+    {% if have_serchBar %}
+    <!--Button to serch on small window-->
+    {% include('admin_portal/parts/top_bar/serch_top_buton.html') %} {% endif %}
+    {%if have_alerts %}
+    <!--Alerts button-->
+    {% include('admin_portal/parts/top_bar/alerts.html') %} {% endif %}
+
+    <div class="topbar-divider d-none d-sm-block"></div>
+
+    <!--Alerts button-->
+    {% include('admin_portal/parts/top_bar/profile_options.html') %}
+  </ul>
+</nav>
