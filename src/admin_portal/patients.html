@@ -1,0 +1,46 @@
+{% extends "admin_portal/template.html" %} 
+
+{% block meta %}
+<title>Web</title>
+<meta content="" name="description" />
+<meta content="" name="keywords" />
+{% endblock %} 
+
+{% block style %}
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css" rel="stylesheet" type="text/css">
+
+{% endblock %}
+
+{% block content %}
+
+<main id="main">
+  <h1 class="h3 mb-2 text-gray-800">Pacientes</h1>
+  <p class="mb-4">
+    Los pacientes aqui listados, son todos aquellos que hayan creado una cuenta,
+    utilizando el codigo de algun grupo, al que pertenezaca el administrador.
+  </p>
+
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-width-blod text-dark d-inline">Base de datos de pacientes</h6>
+    </div>
+
+    <div class="card-body">
+      <div class="table-responsive">
+        <div id="dataTable_group_contaier"></div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+{% endblock %}
+
+
+{% block script %}
+
+    <script type="module" src="/assets/js/admin/tables/patient_table.js"></script>
+
+{% endblock %}

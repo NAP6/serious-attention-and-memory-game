@@ -10,6 +10,11 @@
         "css_link": "ventor/bootstrap/css/bootstrap.min.css",
         "js_link": "ventor/bootstrap/js/bootstrap.bundle.min.js"
     },
+    "datatables": {
+        "src": "./node_modules/datatables.net/js/jquery.dataTables.min.js",
+        "dest": "ventor/dataTables/",
+        "js_link": "ventor/dataTables/jquery.dataTables.min.js"
+    },
     "fontAwesome": {
         "css_link": "ventor/icofont/all.min.css",
         "js_link": "ventor/icofont/all.min.js"

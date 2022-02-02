@@ -19,6 +19,7 @@
   "homepage": "https://github.com/NAP6/serious-attention-and-memory-game#readme",
   "dependencies": {
     "bootstrap": "^5.1.3",
+    "datatables.net": "^1.11.4",
     "dotenv": "^10.0.0",
     "jquery": "^3.6.0"
   },

@@ -12,7 +12,8 @@
     <!-- Vendor CSS Files -->
 
     <!-- Main CSS File -->
-    <link href="/assets/css/admin_navs.css" rel="stylesheet"
+    <link href="/assets/css/admin_navs.css" rel="stylesheet" type="text/css">
+    {% block style %}{% endblock %}
 
   </head>
 
@@ -35,6 +36,7 @@
 
     <!-- Main JS Files -->
     <script src="/assets/js/admin/actions.js"></script>
+    {% block script %}{% endblock %}
 
   </body>
 </html>
