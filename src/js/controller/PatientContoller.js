@@ -16,6 +16,21 @@ class PatientController {
         return list;
     }
 
+    static aux_alertar = false;
+    static update(obj) {
+        this.aux_alertar = !this.aux_alertar;
+        return this.aux_alertar;
+    }
+
+    static delete(obj) {
+        this.aux_alertar = !this.aux_alertar;
+        return this.aux_alertar;
+    }
+
+    static insert(obj) {
+        this.aux_alertar = !this.aux_alertar;
+        return this.aux_alertar;
+    }
 }
 
 export { PatientController };
