@@ -54,12 +54,15 @@ class Modal {
         modal_footer.appendChild(contetn_footer)
         modal_footer.appendChild(yButoon);
 
-        this.modal = $(modal);
-        this.body = $(modal_body);
-        this.footer = $(modal_footer);
-        this._title = $(h5);
-        this._close_button = $(yButoon);
-        this._conten_footer = $(contetn_footer);
+        this.modal = modal;
+        this.header = modal_header;
+        this.body = modal_body;
+        this.footer = modal_footer;
+        this._title = h5;
+        this._close_button = yButoon;
+        this._conten_footer = contetn_footer;
+        this._actual_size_class = 'modal-lg';
+        this._bootstrap = new bootstrap.Modal(this.modal, { keyboard: false });
 
         if(params_start['body_content'])
             this.set_bodyContent(params_start['body_content']);
@@ -82,35 +85,55 @@ class Modal {
     }
 
     set id(value) {
-        this.modal.attr('id', value);
+        this.modal.id = value;
     }
 
     get id() {
-        return this.modal.attr('id');
+        return this.modal.id;
     }
 
     set title(value) {
-        this._title.text(value);
+        this._title.innerText = value;
     }
 
     get title() {
-        return this._title.text();
+        return this._title.innerText;
     }
 
-    show() {
-        this.modal.show();
+    static get FULL_SCREEN_SIZE() {
+        return 'modal-fullscreen';
     }
 
-    hide() {
-        this.modal.hide();
+    static get EXTRA_LARGE_SIZE() {
+        return 'modal-xl';
+    }
+
+    static get LARGE_SIZE() {
+        return 'modal-lg';
+    }
+
+    static get NORMAL_SIZE() {
+        return '';
+    }
+
+    static get SMALL_SIZE() {
+        return 'modal-sm';
     }
 
     toggle() {
-        this.modal.toggle();
+        this._bootstrap.toggle();
+    }
+
+    hide() {
+        this._bootstrap.hide();
+    }
+
+    show() {
+        this._bootstrap.show();
     }
 
     appendTo(node) {
-        this.modal.appendTo(node);
+        node.appendChild(this.modal);
     }
 
     add_onClick_toggle(node) {
@@ -119,27 +142,46 @@ class Modal {
     }
 
     set_bodyContent(node) {
-        this.body.html(node);
+        this.body.innerHTML='';
+        this.body.appendChild(node);
     }
 
     set_footerContent(node) {
-        this._conten_footer.html(node);
+        this._conten_footer.innerHTML='';
+        this._conten_footer.appendChild(node);
     }
 
     hide_closeButton() {
-        this._close_button.addClass('d-none');
+        this._close_button.classList.add('d-none');
     }
 
     show_closeButton() {
-        this._close_button.removeClass('d-none');
+        this._close_button.classList.remove('d-none');
     }
 
     hide_footer() {
-        this.footer.addClass('d-none');
+        this.footer.classList.add('d-none');
     }
 
-    show_foother() {
-        this.removeClass('d-none');
+    show_footer() {
+        this.footer.classList.remove('d-none');
+    }
+
+    hide_header() {
+        this.header.classList.add('d-none');
+    }
+
+    show_header() {
+        this.header.classList.remove('d-none');
+    }
+
+    changeSize(value) {
+        var elem = this.modal.getElementsByClassName('modal-dialog')[0];
+        if(this._actual_size_class != Modal.NORMAL_SIZE)
+            elem.classList.remove(this._actual_size_class);
+        if(value != Modal.NORMAL_SIZE)
+            elem.classList.add(value);
+        this._actual_size_class = value;
     }
 }
 
