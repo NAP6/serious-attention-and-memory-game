@@ -2,21 +2,32 @@
     "jQuery": {
         "src": "./node_modules/jquery/dist/jquery.min.js",
         "dest": "ventor/jQuery/",
-        "js_link": "ventor/jQuery/jquery.min.js"
+        "js_link": ["ventor/jQuery/jquery.min.js"]
     },
     "bootstrap": {
         "src": "./node_modules/bootstrap/dist/**/*",
         "dest": "ventor/bootstrap/",
-        "css_link": "ventor/bootstrap/css/bootstrap.min.css",
-        "js_link": "ventor/bootstrap/js/bootstrap.bundle.min.js"
+        "css_link": ["ventor/bootstrap/css/bootstrap.min.css"],
+        "js_link": ["ventor/bootstrap/js/bootstrap.bundle.min.js"]
     },
     "datatables": {
         "src": "./node_modules/datatables.net/js/jquery.dataTables.min.js",
         "dest": "ventor/dataTables/",
-        "js_link": "ventor/dataTables/jquery.dataTables.min.js"
+        "js_link": ["ventor/dataTables/jquery.dataTables.min.js"]
     },
     "fontAwesome": {
-        "css_link": "ventor/icofont/all.min.css",
-        "js_link": "ventor/icofont/all.min.js"
+        "css_link": ["ventor/icofont/all.min.css"],
+        "js_link": ["ventor/icofont/all.min.js"]
+    },
+    "sweetalert2": {
+        "src": "./node_modules/sweetalert2/dist/sweetalert2.all.min.js",
+        "dest": "ventor/sweetalert2/",
+        "js_link": ["ventor/sweetalert2/sweetalert2.all.min.js"]
+    },
+    "notyf": {
+        "src": "./node_modules/notyf/*.min.*",
+        "dest": "ventor/notyf/",
+        "css_link": ["ventor/notyf/notyf.min.css"],
+        "js_link": ["ventor/notyf/notyf.min.js"]
     }
 }

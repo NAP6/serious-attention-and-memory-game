@@ -10,12 +10,27 @@ class GroupController {
 
     static getAll() {
         var list = [];
-        for(var i=0; i < 50; i++) {
+        for(var i=0; i < 5; i++) {
             list.push(new Group(i, `Grupo ${i}`, `Descripcion ${i}`));
         }
         return list;
     }
 
+    static aux_alertar = false;
+    static update(obj) {
+        this.aux_alertar = !this.aux_alertar;
+        return this.aux_alertar;
+    }
+
+    static delete(obj) {
+        this.aux_alertar = !this.aux_alertar;
+        return this.aux_alertar;
+    }
+
+    static insert(obj) {
+        this.aux_alertar = !this.aux_alertar;
+        return this.aux_alertar;
+    }
 }
 
 export { GroupController };

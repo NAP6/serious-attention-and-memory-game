@@ -56,4 +56,22 @@
     if ($(window).width() < 480 && !$(".sidebar").hasClass("toggled")) {
         $(".sidebar").toggleClass('toggled');
     }
+
+
+    // Active actual position on sidebar
+    var link = `a[href='${window.location.pathname}']`;
+
+    var a = document.querySelector(`.collapse-inner>${link}, .nav-item>${link}`);
+    var parent_a = a.parentNode;
+
+    if (Object.values(parent_a.classList).indexOf("nav-item") != -1) {
+      parent_a.classList.add("active");
+    } else {
+      var container_div = parent_a.parentNode;
+      var nav_item = container_div.parentNode;
+      nav_item.classList.add("active");
+      a.classList.add("active");
+      nav_item.click();
+    }
+
 })(jQuery); // End of use strict

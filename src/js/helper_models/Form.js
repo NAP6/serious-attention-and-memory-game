@@ -64,8 +64,10 @@ class Form {
 
     fill(object) {
         var keys = Object.keys(object);
-        for(let k of keys)
-            this.inputs[k].value = object[k];
+        for(let k of keys) {
+            if(this.inputs[k])
+                this.inputs[k].value = object[k];
+        }
     }
 
     getObject() {
