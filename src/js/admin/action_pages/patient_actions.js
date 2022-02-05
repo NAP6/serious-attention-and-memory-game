@@ -1,5 +1,5 @@
 import { PatientController } from '../../controller/PatientContoller.js';
-import { start_group } from './start_patient.js';
+import { start_table_admin_page } from '../start_table_admin_page.js';
 import { Modal } from '../../helper_models/Modal.js';
 
 var data = PatientController.getAll();
@@ -75,12 +75,14 @@ var open_history_modal = () => {
     grp.modal.show();
 };
 
-var grp = start_group({
+var grp = start_table_admin_page({
     form_structure: form_structure,
     onExtraButton: open_history_modal,
     data: data,
     tableNameLabels: nameLabels,
     onUpdateHandler: open_update_modal,
     onDeleteHandler: onDeleteHandler,
-    on_updateButton: on_updateButton
+    on_updateButton: on_updateButton,
+    labelExtraButton: 'Ver Historial',
+    titleExtraButton: 'Historial'
 });

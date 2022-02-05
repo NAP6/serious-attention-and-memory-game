@@ -1,9 +1,9 @@
-import { Modal } from "../../helper_models/Modal.js";
-import { Form } from "../../helper_models/Form.js";
-import { Table } from '../../helper_models/Table.js';
-import { start_DataTable } from '../../helper_models/DataTable_helper.js';
+import { Modal } from "./../helper_models/Modal.js";
+import { Form } from "./../helper_models/Form.js";
+import { Table } from './../helper_models/Table.js';
+import { start_DataTable } from './../helper_models/DataTable_helper.js';
 
-function start_group(param) {
+function start_table_admin_page(param) {
     // Get elements from Dom
     var modal_section = document.getElementById('modal_section');
     var btn_add = document.getElementById('btn_add');
@@ -31,7 +31,10 @@ function start_group(param) {
         id: 'table_groups',
         names: param.tableNameLabels,
         onUpdateHandler: param.onUpdateHandler,
-        onDeleteHandler: param.onDeleteHandler
+        onDeleteHandler: param.onDeleteHandler,
+        extraButtonHandler: param.onExtraButton,
+        extraButtonLabel: param.labelExtraButton,
+        extraButtonTitle: param.titleExtraButton
     });
 
     // Add onClick events to buttons
@@ -91,4 +94,4 @@ function start_group(param) {
 
 
 
-export { start_group };
+export { start_table_admin_page };

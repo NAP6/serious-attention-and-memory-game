@@ -1,5 +1,5 @@
 import { GroupController } from '../../controller/GroupContoller.js';
-import { start_group } from './start_group.js';
+import { start_table_admin_page } from '../start_table_admin_page.js';
 
 var data = GroupController.getAll();
 var nameLabels = ['ID', 'Nombre', 'Descripcion'];
@@ -82,7 +82,7 @@ var onDeleteHandler = (obj, tr)=> {
     })
 }
 
-var grp = start_group({
+var grp = start_table_admin_page({
     form_structure: form_structure,
     on_addButton: open_create_modal,
     on_createButton: on_create_button,
