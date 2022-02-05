@@ -2,6 +2,8 @@ import { PyramidsPharaohsController } from '../../controller/PyramidsPharaohsCon
 import { start_table_admin_page } from '../start_table_admin_page.js';
 import { Modal } from '../../helper_models/Modal.js';
 
+var config_form = document.getElementById('config_game_template')
+    .content.cloneNode(true).querySelector('div');
 var data = PyramidsPharaohsController.getAll();
 var nameLabels = ['ID', 'Nombre', 'Descripcion'];
 var form_structure = {
@@ -29,17 +31,17 @@ var open_update_modal = (obj)=> {
     pap.form.get_input('id').disabled = true;
     pap.modal.title = 'Modificar Juego';
     pap.modal.set_footerContent(pap.btn.update);
-    pap.modal.toggle();
     pap.modal.changeSize(Modal.LARGE_SIZE);
     pap.modal.set_bodyContent(pap.form.form);
-}
+    pap.modal.toggle();
+};
 
 var on_updateButton = (obj, tr)=> {
     var obj = pap.form.getObject();
     pap.modal.hide();
     PyramidsPharaohsController.update(obj)
     pap.table.update(tr, obj);
-}
+};
 
 // Create
 var open_create_modal = () => { 
@@ -59,7 +61,7 @@ var on_create_button = ()=> {
         PyramidsPharaohsController.insert(obj)
         pap.table.add(obj);
     }
-}
+};
 
 // Delete
 var onDeleteHandler = (obj, tr)=> {
@@ -85,15 +87,20 @@ var onDeleteHandler = (obj, tr)=> {
             });
         }
     })
-}
+};
 
 // Open Config Game Modal
 var open_config_game_modal = (obj, tr) => { 
     pap.modal.title = `Configuracion del Juego ${obj.name}`;
-    pap.modal.set_bodyContent(document.createElement('div'));
+    pap.modal.set_bodyContent(load_game_config_form(obj));
     pap.modal.set_footerContent(document.createElement('div'));
     pap.modal.changeSize(Modal.FULL_SCREEN_SIZE);
     pap.modal.show();
+};
+
+var load_game_config_form =(obj)=> {
+    // Charge info if it have
+    return config_form;
 };
 
 var pap = start_table_admin_page({
@@ -107,5 +114,5 @@ var pap = start_table_admin_page({
     on_updateButton: on_updateButton,
     onExtraButton: open_config_game_modal,
     labelExtraButton: 'Configurar Juego',
-    titleExtraButton: 'Configurar'
+    titleExtraButton: 'Configurar',
 });

@@ -54,6 +54,9 @@ class Modal {
         modal_footer.appendChild(contetn_footer)
         modal_footer.appendChild(yButoon);
 
+        xButoon.onclick = params_start['onCloseButtonDo'];
+        yButoon.onclick = params_start['onCloseButtonDo'];
+
         this.modal = modal;
         this.header = modal_header;
         this.body = modal_body;
@@ -193,7 +196,8 @@ const params_start = {
     body_content: null,
     footer_visible: true,
     appendTo: null,
-    onClick_toggle: null
+    onClick_toggle: null,
+    onCloseButtonDo: null
 }
 
 export { Modal };

@@ -2,6 +2,8 @@ import { PatientController } from '../../controller/PatientContoller.js';
 import { start_table_admin_page } from '../start_table_admin_page.js';
 import { Modal } from '../../helper_models/Modal.js';
 
+var config_form = document.getElementById('config_game_template')
+    .content.cloneNode(true).querySelector('div');
 var data = PatientController.getAll();
 var nameLabels = ['ID', 'Nombre', 'Descripcion'];
 var form_structure = {
@@ -68,12 +70,17 @@ var onDeleteHandler = (obj, tr)=> {
 }
 
 // Open History modal
-var open_history_modal = () => { 
+var open_history_modal = (obj, tr) => { 
     pat.modal.title = 'Historia del paciente';
-    pat.modal.set_bodyContent(document.createElement('div'));
+    pat.modal.set_bodyContent(load_patient_history(obj));
     pat.modal.set_footerContent(document.createElement('div'));
     pat.modal.changeSize(Modal.FULL_SCREEN_SIZE);
     pat.modal.show();
+};
+
+var load_patient_history =(obj)=> {
+    // Charge info if it have
+    return config_form;
 };
 
 var pat = start_table_admin_page({

@@ -19,9 +19,10 @@ function start_table_admin_page(param) {
 
     // Create Object of Models
     var modal = new Modal('global_modal', {
-        title: 'Nuevo Grupo',
+        title: 'Nuevo',
         onClick_toggle: btn_add,
         appendTo: modal_section,
+        onCloseButtonDo: param['onModalCloseButtonDo']
     });
 
     var form = new Form('global_form', param.form_structure, modal.body);
