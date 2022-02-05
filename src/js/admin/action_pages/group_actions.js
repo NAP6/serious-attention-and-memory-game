@@ -32,10 +32,11 @@ var open_update_modal = (obj)=> {
     grp.modal.toggle();
 }
 
-var on_updateButton = ()=> {
+var on_updateButton = (obj, tr)=> {
     var obj = grp.form.getObject();
     grp.modal.hide();
     GroupController.update(obj)
+    grp.table.update(tr, obj);
 }
 
 // Create
@@ -52,7 +53,7 @@ var on_create_button = ()=> {
         var obj = grp.form.getObject();
         grp.modal.hide();
         GroupController.insert(obj)
-        grp.table.apendObject(obj);
+        grp.table.add(obj);
     }
 }
 
@@ -69,7 +70,7 @@ var onDeleteHandler = (obj, tr)=> {
         if(result.isConfirmed) {
             var is_deleted = GroupController.delete(obj);
             if(is_deleted) {
-                tr.remove();
+                grp.table.remove(tr);
                 grp.notyf.success('Se ha eliminado correctamente');
             } else
                 grp.notyf.error('No se ha podido eliminar');

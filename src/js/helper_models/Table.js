@@ -1,3 +1,5 @@
+import { start_DataTable } from './DataTable_helper.js';
+
 class Table {
 
     constructor(object_list=[], params=params_start) {
@@ -31,6 +33,10 @@ class Table {
 
         this._creation_params = params;
         this._body = tbody;
+
+        start_DataTable(this.id, (dt)=> {
+            this._dt = dt;
+        });
     }
 
     get id() {
@@ -50,6 +56,34 @@ class Table {
             this._creation_params['extraButtonLabel']
         );
         this._body.appendChild(tr);
+    }
+
+    add(obj) {
+        var tr = _create_row(obj,
+            this._creation_params['keys'],
+            this._creation_params['onUpdateHandler'], 
+            this._creation_params['onDeleteHandler'], 
+            this._creation_params['extraButtonHandler'],
+            this._creation_params['extraButtonLabel']
+        );
+
+        this._dt.row.add(tr).draw();
+    }
+
+    remove(tr) {
+        this._dt.row(tr).remove().draw();
+    }
+
+    update(tr, obj) {
+        this._dt.row(tr).remove().draw();
+        var tr = _create_row(obj,
+            this._creation_params['keys'],
+            this._creation_params['onUpdateHandler'], 
+            this._creation_params['onDeleteHandler'], 
+            this._creation_params['extraButtonHandler'],
+            this._creation_params['extraButtonLabel']
+        );
+        this._dt.row.add(tr).draw();
     }
 
 }
@@ -111,11 +145,45 @@ function _build_body(object_list, key_list, body, params) {
 
 function _create_row(obj, key_list, h_update=null, h_delete=null, h_extra=null, l_extra='') {
     var tr = document.createElement('tr');
+    tr.id =`row-${obj.id}`;
 
+    var td = _create_delete_update_buttons(obj, tr, h_update, h_delete);
+    if(td) {
+        tr.appendChild(td);
+    }
+
+    for(const key of key_list) {
+        var td = document.createElement('td')
+        td.innerHTML = obj[key];
+        td.classList.add('align-middle')
+        tr.appendChild(td);
+    }
+
+    var td = _create_extra_button(obj, tr, h_extra, l_extra);
+    if(td) {
+        tr.appendChild(td);
+    }
+
+    return tr;
+}
+
+function _create_extra_button(obj, tr, h_extra, l_extra) {
+    if(h_extra) {
+        var td = document.createElement('td');
+        var button = document.createElement('button');
+        button.classList.add('btn', 'btn-outline-dark', 'w-100');
+        td.appendChild(button);
+
+        button.innerHTML = l_extra;
+        button.onclick = ()=> { h_extra(obj, tr); };
+        return td;
+    }
+    return false;
+}
+
+function _create_delete_update_buttons(obj, tr, h_update, h_delete) {
     if(h_update || h_delete) {
         var td = document.createElement('td');
-        tr.appendChild(td);
-
         var butons = [
             {handler: h_update, icon: 'fas fa-edit fa-xs'},
             {handler: h_delete, icon: 'fas fa-trash-alt fa-xs'}
@@ -133,27 +201,10 @@ function _create_row(obj, key_list, h_update=null, h_delete=null, h_extra=null, 
                 button.onclick = ()=> { b.handler(obj, tr); };
             }
         }
+
+        return td;
     }
-
-    for(const key of key_list) {
-        var td = document.createElement('td')
-        td.innerHTML = obj[key];
-        td.classList.add('align-middle')
-        tr.appendChild(td);
-    }
-
-    if(h_extra) {
-        var td = document.createElement('td');
-        var button = document.createElement('button');
-        button.classList.add('btn', 'btn-outline-dark', 'w-100');
-        td.appendChild(button);
-        tr.appendChild(td);
-
-        button.innerHTML = l_extra;
-        button.onclick = ()=> { h_extra(obj, tr); };
-    }
-
-    return tr;
+    return false;
 }
 
 export { Table };

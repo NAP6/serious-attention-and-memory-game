@@ -1,7 +1,6 @@
 import { Modal } from "./../helper_models/Modal.js";
 import { Form } from "./../helper_models/Form.js";
 import { Table } from './../helper_models/Table.js';
-import { start_DataTable } from './../helper_models/DataTable_helper.js';
 
 function start_table_admin_page(param) {
     // Get elements from Dom
@@ -19,16 +18,16 @@ function start_table_admin_page(param) {
     btn_update.innerText = 'Modificar';
 
     // Create Object of Models
-    var modal = new Modal('modal_group', {
+    var modal = new Modal('global_modal', {
         title: 'Nuevo Grupo',
         onClick_toggle: btn_add,
         appendTo: modal_section,
     });
 
-    var form = new Form('group_form', param.form_structure, modal.body);
+    var form = new Form('global_form', param.form_structure, modal.body);
 
     var table = new Table(param.data,{
-        id: 'table_groups',
+        id: 'global_table',
         names: param.tableNameLabels,
         onUpdateHandler: param.onUpdateHandler,
         onDeleteHandler: param.onDeleteHandler,
@@ -46,7 +45,6 @@ function start_table_admin_page(param) {
     // Start DataTable
     container.innerHTML="";
     container.appendChild(table.table);
-    start_DataTable(table.id);
 
 
     // Create Alert Objects

@@ -1,6 +1,6 @@
-function start_DataTable(table_id) {
+function start_DataTable(table_id, func) {
     $(document).ready( function () {
-        $(`#${table_id}`).DataTable({
+        var dt = $(`#${table_id}`).DataTable({
             language: {
                 processing:     "En curso...",
                 search:         "Buscar:",
@@ -24,6 +24,7 @@ function start_DataTable(table_id) {
                 //}
             }
         });
+        func(dt);
     });
 }
 

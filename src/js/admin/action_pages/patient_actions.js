@@ -24,25 +24,26 @@ var form_structure = {
 
 // Update
 var open_update_modal = (obj)=> {
-    grp.form.reset();
-    grp.form.fill(obj);
-    grp.form.get_input('id').disabled = true;
-    grp.modal.changeSize(Modal.LARGE_SIZE);
-    grp.modal.set_bodyContent(grp.form.form);
-    grp.modal.title = 'Modificar Paciente';
-    grp.modal.set_footerContent(grp.btn.update);
-    grp.modal.toggle();
+    pat.form.reset();
+    pat.form.fill(obj);
+    pat.form.get_input('id').disabled = true;
+    pat.modal.changeSize(Modal.LARGE_SIZE);
+    pat.modal.set_bodyContent(pat.form.form);
+    pat.modal.title = 'Modificar Paciente';
+    pat.modal.set_footerContent(pat.btn.update);
+    pat.modal.toggle();
 }
 
-var on_updateButton = ()=> {
-    var obj = grp.form.getObject();
-    grp.modal.hide();
+var on_updateButton = (obj, tr)=> {
+    var obj = pat.form.getObject();
+    pat.modal.hide();
     PatientController.update(obj)
+    pat.table.update(tr, obj)
 }
 
 // Delete
 var onDeleteHandler = (obj, tr)=> {
-    grp.alert.fire({
+    pat.alert.fire({
       title: 'Borrar',
       text: '¿Esta seguro de que desea continuar?',
       icon: 'warning',
@@ -53,12 +54,12 @@ var onDeleteHandler = (obj, tr)=> {
         if(result.isConfirmed) {
             var is_deleted = PatientController.delete(obj);
             if(is_deleted) {
-                tr.remove();
-                grp.notyf.success('Se ha eliminado correctamente');
+                pat.table.remove(tr);
+                pat.notyf.success('Se ha eliminado correctamente');
             } else
-                grp.notyf.error('No se ha podido eliminar');
+                pat.notyf.error('No se ha podido eliminar');
         } else {
-            grp.notyf.open({
+            pat.notyf.open({
                 type: 'warning',
                 message: 'El eliminado ha sido cancelado'
             });
@@ -68,14 +69,14 @@ var onDeleteHandler = (obj, tr)=> {
 
 // Open History modal
 var open_history_modal = () => { 
-    grp.modal.title = 'Historia del paciente';
-    grp.modal.set_bodyContent(document.createElement('div'));
-    grp.modal.set_footerContent(document.createElement('div'));
-    grp.modal.changeSize(Modal.FULL_SCREEN_SIZE);
-    grp.modal.show();
+    pat.modal.title = 'Historia del paciente';
+    pat.modal.set_bodyContent(document.createElement('div'));
+    pat.modal.set_footerContent(document.createElement('div'));
+    pat.modal.changeSize(Modal.FULL_SCREEN_SIZE);
+    pat.modal.show();
 };
 
-var grp = start_table_admin_page({
+var pat = start_table_admin_page({
     form_structure: form_structure,
     onExtraButton: open_history_modal,
     data: data,
