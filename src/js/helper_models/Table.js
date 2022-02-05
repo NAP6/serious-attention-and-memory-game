@@ -47,17 +47,6 @@ class Table {
         this.table.id = value;
     }
 
-    apendObject(obj) {
-        var tr = _create_row(obj,
-            this._creation_params['keys'],
-            this._creation_params['onUpdateHandler'], 
-            this._creation_params['onDeleteHandler'], 
-            this._creation_params['extraButtonHandler'],
-            this._creation_params['extraButtonLabel']
-        );
-        this._body.appendChild(tr);
-    }
-
     add(obj) {
         var tr = _create_row(obj,
             this._creation_params['keys'],
