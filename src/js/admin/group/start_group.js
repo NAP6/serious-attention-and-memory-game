@@ -6,8 +6,8 @@ import { start_DataTable } from '../../helper_models/DataTable_helper.js';
 function start_group(param) {
     // Get elements from Dom
     var modal_section = document.getElementById('modal_section');
-    var btn_add = document.getElementById('btn-addGroup');
-    var container = document.getElementById('dataTable_group_contaier');
+    var btn_add = document.getElementById('btn_add');
+    var container = document.getElementById('dataTable_contaier');
 
     // Create Modal Buttons
     var btn_create = document.createElement('button');

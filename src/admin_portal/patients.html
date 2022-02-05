@@ -1,45 +1,25 @@
-{% extends "admin_portal/template.html" %} 
+{% extends "admin_portal/table_template.html" %}
 
-{% block meta %}
-<title>Web</title>
-<meta content="" name="description" />
-<meta content="" name="keywords" />
-{% endblock %} 
+<!-- Title -->
 
-{% block style %}
+{% block title %} Pacientes {% endblock %}
 
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-    <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css" rel="stylesheet" type="text/css">
+<!-- Description -->
 
-{% endblock %}
-
-{% block content %}
-
-<main id="main">
-  <h1 class="h3 mb-2 text-gray-800">Pacientes</h1>
-  <p class="mb-4">
+{% block description %}
     Los pacientes aqui listados, son todos aquellos que hayan creado una cuenta,
     utilizando el codigo de algun grupo, al que pertenezaca el administrador.
-  </p>
+ {% endblock %}
 
-  <div class="card shadow mb-4">
-    <div class="card-header py-3">
-      <h6 class="m-0 font-width-blod text-dark d-inline">Base de datos de pacientes</h6>
-    </div>
+<!-- Talbel Title -->
 
-    <div class="card-body">
-      <div class="table-responsive">
-        <div id="dataTable_contaier"></div>
-      </div>
-    </div>
+{% block tableTitle %} Base de datos de pacientes {% endblock %}
 
-  </div>
-</main>
+<!-- Put "d-none" class if wanth to hide -->
 
-<div id="modal_section"></div>
+{% block class_addButton %}d-none{% endblock %}
 
-{% endblock %}
-
+<!-- Scripts for this page -->
 
 {% block script %}
 

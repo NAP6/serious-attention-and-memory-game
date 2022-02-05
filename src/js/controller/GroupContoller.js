@@ -10,7 +10,7 @@ class GroupController {
 
     static getAll() {
         var list = [];
-        for(var i=0; i < 5; i++) {
+        for(var i=0; i < 10; i++) {
             list.push(new Group(i, `Grupo ${i}`, `Descripcion ${i}`));
         }
         return list;
