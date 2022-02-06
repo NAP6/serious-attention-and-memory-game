@@ -1,13 +1,123 @@
 <template id="config_game_template">
-  <div>
-    Cargar fotos grupo 1 titulo<br />
-    Cargar fotos grupo 1 descrpcion<br />
-    Cargar fotos grupo 1 input<br />
-    Cargar fotos grupo 1 output<br /><br />
-    Cargar fotos grupo 2 titulo<br />
-    Cargar fotos grupo 2 descrpcion<br />
-    Cargar fotos grupo 2 input<br />
-    Cargar fotos grupo 2 output<br />
-    Cargar fotos grupo 2 seleccionar respuesta<br />
+  <div class="container-fluid">
+    <h3 class="text-gray-800">Piramides y Faraones</h3>
+    <p class="mb-4">
+      El test de piramides y faraones consiste en medir el tiempo que a una
+      persona le toma, el poder identificar, que imagen de un grupo secundario,
+      pertenece al grupo principal.
+    </p>
+    <hr />
+
+    <div class="card shadow mb-4">
+      <div class="card-body">
+        <div class="accordion accordion-flush" id="level_acordion">
+          <div class="accordion-item">
+            <h5 class="accordion-header" id="level_1_accordion_header">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#level_1_content"
+                aria-expanded="false"
+                aria-controls="level_1_content"
+              >
+                Nivel 1
+              </button>
+            </h5>
+            <div
+              id="level_1_content"
+              class="accordion-collapse collapse"
+              aria-labelledby="level_1_accordion_header"
+              data-bs-parent="level_acordion"
+            >
+              <div class="accordion-body">
+                <div class="py-3">
+                  <h6 class="h4">Grupo Ejemplo</h6>
+                  <hr />
+                  <div class="container-fluid my-4">
+                    <div class="row justify-content-center">
+                      {% for i in range(0, 3) %}
+                      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <div class="album-container rounded shadow m-2 p-0">
+                          <div class="album-image w-100 h-100"></div>
+                        </div>
+                      </div>
+                      {% endfor %}
+
+                      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <div
+                          class="album-container add-new-image rounded shadow"
+                        >
+                          <div class="album-image w-100 h-100"></div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="py-3">
+                  <h6 class="h4">Grupo Respuesta</h6>
+                  <hr />
+                  <div class="container-fluid my-4">
+                    <div class="row justify-content-center">
+                      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <div class="album-container answer selected rounded shadow m-2 p-0">
+                          <div class="album-image w-100 h-100"></div>
+                        </div>
+                      </div>
+                      {% for i in range(0, 3) %}
+                      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <div class="album-container answer rounded shadow m-2 p-0">
+                          <div class="album-image w-100 h-100"></div>
+                        </div>
+                      </div>
+                      {% endfor %}
+
+                      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <div
+                          class="album-container add-new-image rounded shadow"
+                        >
+                          <div class="album-image w-100 h-100"></div>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h5 class="accordion-header" id="level_2_accordion_header">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#level_2_content"
+                aria-expanded="false"
+                aria-controls="level_2_content"
+              >
+                Nivel 2
+              </button>
+            </h5>
+            <div
+              id="level_2_content"
+              class="accordion-collapse collapse"
+              aria-labelledby="level_2_accordion_header"
+              data-bs-parent="level_acordion"
+            >
+              <div class="accordion-body">
+                Este es el contenido del acordion numero 2
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="my-2 text-center">
+        <button type="button" class="btn btn-outline-dark rounded-circle">
+          <i class="fas fa-plus"></i>
+        </button>
+      </div>
+    </div>
   </div>
 </template>
