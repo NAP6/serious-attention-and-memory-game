@@ -10,8 +10,15 @@ class PyramidsPharaohsController {
 
     static getAll() {
         var list = [];
-        for(var i=0; i < 10; i++) {
-            list.push(new PyramidsPharaohs(i, `Juego ${i}`, `Descripcion ${i}`));
+        for(var i=0; i < 5; i++) {
+            var game = new PyramidsPharaohs(i, `Juego ${i}`, `Descripcion ${i}`);
+            if(i % 2 == 0) {
+                game.add_lavel(
+                    Array(3).fill('https://www.paturros.es/wp-content/uploads/2021/01/comprar-patito-goma-doc-brown.jpg'), 
+                    Array(3).fill('https://www.paturros.es/wp-content/uploads/2021/01/comprar-patito-goma-marty-mcfly.jpg')
+                    ,[1])
+            }
+            list.push(game);
         }
         return list;
     }

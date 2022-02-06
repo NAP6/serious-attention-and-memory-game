@@ -29,6 +29,7 @@ function start_table_admin_page(param) {
 
     var table = new Table(param.data,{
         id: 'global_table',
+        keys: param.table_keys? param.table_keys : [],
         names: param.tableNameLabels,
         onUpdateHandler: param.onUpdateHandler,
         onDeleteHandler: param.onDeleteHandler,

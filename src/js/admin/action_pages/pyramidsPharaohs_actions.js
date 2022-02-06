@@ -109,4 +109,5 @@ var pap = start_table_admin_page({
     onExtraButton: open_config_game_modal,
     labelExtraButton: 'Configurar Juego',
     titleExtraButton: 'Configurar',
+    table_keys: Object.keys(form_structure)
 });
