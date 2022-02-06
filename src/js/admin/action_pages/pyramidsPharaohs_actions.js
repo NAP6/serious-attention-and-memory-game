@@ -1,9 +1,8 @@
 import { PyramidsPharaohsController } from '../../controller/PyramidsPharaohsController.js';
 import { start_table_admin_page } from '../start_table_admin_page.js';
 import { Modal } from '../../helper_models/Modal.js';
+import { load_game_config_form } from './configGame_pyramidsPharaohs.js';
 
-var config_form = document.getElementById('config_game_template')
-    .content.cloneNode(true).querySelector('div');
 var data = PyramidsPharaohsController.getAll();
 var nameLabels = ['ID', 'Nombre', 'Descripcion'];
 var form_structure = {
@@ -86,21 +85,16 @@ var onDeleteHandler = (obj, tr)=> {
                 message: 'El eliminado ha sido cancelado'
             });
         }
-    })
+    });
 };
 
 // Open Config Game Modal
 var open_config_game_modal = (obj, tr) => { 
     pap.modal.title = `Configuracion del Juego ${obj.name}`;
-    pap.modal.set_bodyContent(load_game_config_form(obj));
+    pap.modal.set_bodyContent(load_game_config_form(obj, pap.alert, pap.notyf));
     pap.modal.set_footerContent(document.createElement('div'));
     pap.modal.changeSize(Modal.FULL_SCREEN_SIZE);
     pap.modal.show();
-};
-
-var load_game_config_form =(obj)=> {
-    // Charge info if it have
-    return config_form;
 };
 
 var pap = start_table_admin_page({

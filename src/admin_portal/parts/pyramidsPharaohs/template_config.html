@@ -10,114 +10,78 @@
 
     <div class="card shadow mb-4">
       <div class="card-body">
-        <div class="accordion accordion-flush" id="level_acordion">
-          <div class="accordion-item">
-            <h5 class="accordion-header" id="level_1_accordion_header">
-              <button
-                class="accordion-button collapsed"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#level_1_content"
-                aria-expanded="false"
-                aria-controls="level_1_content"
-              >
-                Nivel 1
-              </button>
-            </h5>
-            <div
-              id="level_1_content"
-              class="accordion-collapse collapse"
-              aria-labelledby="level_1_accordion_header"
-              data-bs-parent="level_acordion"
-            >
-              <div class="accordion-body">
-                <div class="py-3">
-                  <h6 class="h4">Grupo Ejemplo</h6>
-                  <hr />
-                  <div class="container-fluid my-4">
-                    <div class="row justify-content-center">
-                      {% for i in range(0, 3) %}
-                      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-                        <div class="album-container rounded shadow m-2 p-0">
-                          <div class="album-image w-100 h-100"></div>
-                        </div>
-                      </div>
-                      {% endfor %}
-
-                      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-                        <div
-                          class="album-container add-new-image rounded shadow"
-                        >
-                          <div class="album-image w-100 h-100"></div>
-                        </div>
-
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="py-3">
-                  <h6 class="h4">Grupo Respuesta</h6>
-                  <hr />
-                  <div class="container-fluid my-4">
-                    <div class="row justify-content-center">
-                      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-                        <div class="album-container answer selected rounded shadow m-2 p-0">
-                          <div class="album-image w-100 h-100"></div>
-                        </div>
-                      </div>
-                      {% for i in range(0, 3) %}
-                      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-                        <div class="album-container answer rounded shadow m-2 p-0">
-                          <div class="album-image w-100 h-100"></div>
-                        </div>
-                      </div>
-                      {% endfor %}
-
-                      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-                        <div
-                          class="album-container add-new-image rounded shadow"
-                        >
-                          <div class="album-image w-100 h-100"></div>
-                        </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="accordion-item">
-            <h5 class="accordion-header" id="level_2_accordion_header">
-              <button
-                class="accordion-button collapsed"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#level_2_content"
-                aria-expanded="false"
-                aria-controls="level_2_content"
-              >
-                Nivel 2
-              </button>
-            </h5>
-            <div
-              id="level_2_content"
-              class="accordion-collapse collapse"
-              aria-labelledby="level_2_accordion_header"
-              data-bs-parent="level_acordion"
-            >
-              <div class="accordion-body">
-                Este es el contenido del acordion numero 2
-              </div>
-            </div>
-          </div>
-        </div>
+        <div class="accordion accordion-flush" id="level_acordion"></div>
       </div>
 
       <div class="my-2 text-center">
-        <button type="button" class="btn btn-outline-dark rounded-circle">
+        <button
+          type="button"
+          id="add_new_lavel"
+          class="btn btn-outline-dark rounded-circle"
+        >
           <i class="fas fa-plus"></i>
         </button>
       </div>
+    </div>
+    <input
+      type="file"
+      class="d-none"
+      id="input_img"
+      accept="image/png, image/svg, image/jpeg"
+    />
+  </div>
+</template>
+
+<template id="accordion_album_item_template">
+  <div class="accordion-item">
+    <h5 class="accordion-header" id="level_0_accordion_header">
+      <button
+        class="accordion-button collapsed"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#level_0_content"
+        aria-expanded="false"
+        aria-controls="level_0_content"
+      >
+        Nivel
+      </button>
+    </h5>
+    <div
+      id="level_0_content"
+      class="accordion-collapse collapse"
+      aria-labelledby="level_0_accordion_header"
+      data-bs-parent="level_acordion"
+    >
+      <div class="accordion-body">
+        <div class="py-3">
+          <h6 class="h4">Grupo Ejemplo</h6>
+          <hr />
+          <div class="container-fluid my-4">
+            <div
+              id="example_group_container"
+              class="row justify-content-center"
+            ></div>
+          </div>
+        </div>
+        <div class="py-3">
+          <h6 class="h4">Grupo Respuesta</h6>
+          <hr />
+          <div class="container-fluid my-4">
+            <div
+              id="answer_group_container"
+              class="row justify-content-center answer"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template id="album_image_template">
+  <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+    <div class="album-container rounded shadow m-2 p-0">
+      <div class="album-image w-100 h-100"></div>
     </div>
   </div>
 </template>
