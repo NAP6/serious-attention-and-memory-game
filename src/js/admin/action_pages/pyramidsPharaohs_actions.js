@@ -57,8 +57,9 @@ var on_create_button = ()=> {
     if(is_valid) {
         var obj = pap.form.getObject();
         pap.modal.hide();
-        PyramidsPharaohsController.insert(obj)
-        pap.table.add(obj);
+        var classObj = PyramidsPharaohsController.toClass(obj);
+        PyramidsPharaohsController.insert(classObj);
+        pap.table.add(classObj);
     }
 };
 
@@ -90,12 +91,20 @@ var onDeleteHandler = (obj, tr)=> {
 
 // Open Config Game Modal
 var open_config_game_modal = (obj, tr) => { 
+    var save = (new_obj)=> { on_save_config_game_modal(new_obj, tr); };
+    var config = load_game_config_form(obj, pap.alert, pap.notyf, save);
     pap.modal.title = `Configuracion del Juego ${obj.name}`;
-    pap.modal.set_bodyContent(load_game_config_form(obj, pap.alert, pap.notyf));
-    pap.modal.set_footerContent(document.createElement('div'));
+    pap.modal.set_bodyContent(config.body);
+    pap.modal.set_footerContent(config.footer);
     pap.modal.changeSize(Modal.FULL_SCREEN_SIZE);
     pap.modal.show();
 };
+
+var on_save_config_game_modal = (obj, tr)=> {
+    PyramidsPharaohsController.update(obj)
+    pap.table.update(tr, obj);
+    pap.modal.hide();
+}
 
 var pap = start_table_admin_page({
     form_structure: form_structure,

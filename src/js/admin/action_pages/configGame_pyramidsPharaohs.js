@@ -1,6 +1,6 @@
 import { PyramidsPharaohs, PPImage } from '../../models/PyramidsPharaohs.js';
 
-function load_game_config_form(game, alert, notyf) {
+function load_game_config_form(game, alert, notyf, onSave) {
     var config_form = document.getElementById('config_game_template')
         .content.cloneNode(true);
 
@@ -22,7 +22,18 @@ function load_game_config_form(game, alert, notyf) {
         level_container.appendChild(create_level(i++));
     }
 
-    return config_form;
+
+    var btn_save = document.createElement('button');
+    btn_save.classList.add('btn', 'btn-dark');
+    btn_save.innerText = 'Guardar Cambios';
+    btn_save.onclick = ()=> {
+        onSave(obj);
+    };
+
+    return {
+        body: config_form,
+        footer: btn_save
+    };
 
 
     function create_level(index, example=[], answer=[]) {

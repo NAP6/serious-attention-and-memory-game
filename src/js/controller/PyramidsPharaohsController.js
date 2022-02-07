@@ -38,6 +38,13 @@ class PyramidsPharaohsController {
         this.aux_alertar = !this.aux_alertar;
         return this.aux_alertar;
     }
+
+    static toClass(obj) {
+        var new_obj = new PyramidsPharaohs(obj.id, obj.name, obj.description);
+        if(obj.levels && obj.levels.length > 0)
+            new_obj.levels = obj.levels;
+        return new_obj;
+    }
 }
 
 export { PyramidsPharaohsController };
