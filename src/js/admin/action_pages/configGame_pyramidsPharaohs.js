@@ -16,13 +16,6 @@ function load_game_config_form(game, alert, notyf) {
             level_container.appendChild(level);
         }
     }
-    //for(i=1; i <= 2; i++){
-        //var level = create_level(i, 
-            //Array(3).fill('https://www.paturros.es/wp-content/uploads/2021/01/comprar-patito-goma-doc-brown.jpg'), 
-            //Array(3).fill('https://www.paturros.es/wp-content/uploads/2021/01/comprar-patito-goma-marty-mcfly.jpg')
-                    //);
-        //level_container.appendChild(level);
-    //}
 
     var btn_new_lavel = config_form.querySelector('div #add_new_lavel');
     btn_new_lavel.onclick = ()=> {
@@ -36,10 +29,13 @@ function load_game_config_form(game, alert, notyf) {
         var new_level = obj.add_level();
         var level_item = document.getElementById('accordion_album_item_template')
             .content.cloneNode(true);
+        var item_id = `level_item_container_${index}`
+        level_item.querySelector('div').id = item_id;
 
         var title = level_item.querySelector('div').getElementsByTagName('h5')[0];
         var button = title.getElementsByTagName('button')[0];
         var content_container = level_item.querySelector('div').getElementsByTagName('div')[0];
+        var delete_level = content_container.querySelector('#btn_close_level_0');
 
         title.id = `album_${index}_item_header`;
         content_container.id = `album_${index}_item_content`;
@@ -47,6 +43,7 @@ function load_game_config_form(game, alert, notyf) {
         button.setAttribute('data-bs-target', `#${content_container.id}`);
         button.setAttribute('aria-controls', content_container.id);
         button.innerText = `Nivel ${index + 1}`;
+        delete_level.id = `btn_close_level_${index}`
 
         var exaple_group = level_item.getElementById('example_group_container');
         var answer_group = level_item.getElementById('answer_group_container');
@@ -65,6 +62,8 @@ function load_game_config_form(game, alert, notyf) {
             answer_group.appendChild(image_item);
         }
         answer_group.appendChild(create_img_item(new_level));
+        
+        delete_level.onclick = ()=> { onDeleteLevelEvent(new_level, item_id); };
 
         return level_item;
     }
@@ -90,7 +89,6 @@ function load_game_config_form(game, alert, notyf) {
             container.children[0].style.backgroundImage = `url(${image.image})`;
             container.onclick = ()=>{ onDeleteEvent(level, image, container); };
         }
-        console.log(obj)
 
         return image_item;
     }
@@ -146,7 +144,6 @@ function load_game_config_form(game, alert, notyf) {
                 } else {
                     notyf.error('No ha podido eliminar');
                 }
-                console.log(obj)
             } else {
                 notyf.open({
                     type: 'warning',
@@ -175,11 +172,17 @@ function load_game_config_form(game, alert, notyf) {
                     image.selected = true;
                 }
                 notyf.success('Operacion exitosa');
-                console.log(obj);
             } else {
                 onDeleteEvent(index, image, element, true);
             }
         });
+    }
+
+    function onDeleteLevelEvent(level, element_id) {
+        var index = obj.levels.indexOf(level);
+        obj.remove_level(index);
+        var element = document.getElementById(element_id);
+        element.remove();
     }
 }
 
