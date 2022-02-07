@@ -1,4 +1,4 @@
-import { PyramidsPharaohs } from '../../models/PyramidsPharaohs.js';
+import { PyramidsPharaohs, PPImage } from '../../models/PyramidsPharaohs.js';
 
 function load_game_config_form(game, alert, notyf) {
     var config_form = document.getElementById('config_game_template')
@@ -12,7 +12,7 @@ function load_game_config_form(game, alert, notyf) {
 
     if(game.levels.length > 0) {
         for(var i=0; i < game.levels.length; i++) {
-            var level = create_level(i,game.levels[i].example, game.levels[i].answer)
+            var level = create_level(i, game.levels[i].example, game.levels[i].answer)
             level_container.appendChild(level);
         }
     }
@@ -33,9 +33,9 @@ function load_game_config_form(game, alert, notyf) {
 
 
     function create_level(index, example=[], answer=[]) {
+        var new_level = obj.add_level();
         var level_item = document.getElementById('accordion_album_item_template')
             .content.cloneNode(true);
-        obj.add_lavel();
 
         var title = level_item.querySelector('div').getElementsByTagName('h5')[0];
         var button = title.getElementsByTagName('button')[0];
@@ -54,22 +54,22 @@ function load_game_config_form(game, alert, notyf) {
         exaple_group.id += `_${index}`;
         answer_group.id += `_${index}`;
 
-        for(let img of example){
-            var image_item = create_img_item(index, img);
+        for(var i=0; i< example.length; i++){
+            var image_item = create_img_item(new_level, example.get(i));
             exaple_group.appendChild(image_item);
         }
-        exaple_group.appendChild(create_img_item(index));
+        exaple_group.appendChild(create_img_item(new_level));
 
-        for(let img of answer){
-            var image_item = create_img_item(index, img, true);
+        for(var i=0; i< answer.length; i++){
+            var image_item = create_img_item(new_level, answer.get(i), true);
             answer_group.appendChild(image_item);
         }
-        answer_group.appendChild(create_img_item(index));
+        answer_group.appendChild(create_img_item(new_level));
 
         return level_item;
     }
 
-    function create_img_item(index, image=null, answer=false) {
+    function create_img_item(level, image=null, answer=false) {
         var image_item = document.getElementById('album_image_template')
             .content.cloneNode(true);
 
@@ -77,23 +77,25 @@ function load_game_config_form(game, alert, notyf) {
 
         if(image == null) {
             container.classList.add('add-new-image');
-            container.onclick = ()=>{ onAddEvent(index, container); };
+            container.onclick = ()=>{ onAddEvent(level, container); };
         } else if(answer){
-            obj.levels[index].answer.push(image);
+            level.answer.push(image);
             container.classList.add('answer');
-            container.children[0].style.backgroundImage = `url(${image})`;
-            container.onclick = ()=>{ onOptionEvent(index, image, container, true); };
+            if(image.selected)
+                container.classList.add('selected');
+            container.children[0].style.backgroundImage = `url(${image.image})`;
+            container.onclick = ()=>{ onOptionEvent(level, image, container, true); };
         } else {
-            obj.levels[index].example.push(image);
-            container.children[0].style.backgroundImage = `url(${image})`;
-            container.onclick = ()=>{ onDeleteEvent(index, image, container); };
+            level.example.push(image);
+            container.children[0].style.backgroundImage = `url(${image.image})`;
+            container.onclick = ()=>{ onDeleteEvent(level, image, container); };
         }
         console.log(obj)
 
         return image_item;
     }
 
-    function onAddEvent(index, element) {
+    function onAddEvent(level, element) {
         var input = document.getElementById('input_img').cloneNode(true);
         input.onchange = ()=> {
             const reader = new FileReader();
@@ -102,14 +104,14 @@ function load_game_config_form(game, alert, notyf) {
                 element.children[0].style.backgroundImage = `url(${uploaded_image})`;
                 element.classList.remove('add-new-image');
                 var super_container = element.parentNode.parentNode;
-                super_container.appendChild(create_img_item(index));
+                super_container.appendChild(create_img_item(level));
                 if(Object.values(super_container.classList).indexOf('answer') == -1){
-                    obj.levels[index].example.push(uploaded_image);
-                    element.onclick = ()=>{ onDeleteEvent(index, uploaded_image, element); };
+                    var image_added = level.example.push(uploaded_image);
+                    element.onclick = ()=>{ onDeleteEvent(level, image_added, element); };
                 } else {
-                    obj.levels[index].answer.push(uploaded_image);
+                    var image_added = level.answer.push(uploaded_image);
                     element.classList.add('answer');
-                    element.onclick = ()=>{ onOptionEvent(index, uploaded_image, element); };
+                    element.onclick = ()=>{ onOptionEvent(level, image_added, element); };
                 }
             });
             reader.readAsDataURL(input.files[0]);
@@ -118,7 +120,7 @@ function load_game_config_form(game, alert, notyf) {
 
     }
 
-    function onDeleteEvent(level_index,  image, element, answer=false) {
+    function onDeleteEvent(level,  image, element, answer=false) {
         alert.fire({
           title: 'Borrar',
           text: '¿Esta seguro de que desea continuar?',
@@ -128,16 +130,15 @@ function load_game_config_form(game, alert, notyf) {
             showDenyButton: true,
         }).then((result)=> {
             if(result.isConfirmed) {
-                var level = obj.levels[level_index];
                 var pos;
                 if(answer) {
                     var pos = level.answer.indexOf(image);
                     if(pos != -1)
-                        level.answer_remove(pos);
+                        level.answer.remove(pos);
                 } else {
                     var pos = level.example.indexOf(image);
                     if(pos != -1)
-                        level.example_remove(pos);
+                        level.example.remove(pos);
                 }
                 if(pos != -1) {
                     element.parentNode.remove();
@@ -166,11 +167,15 @@ function load_game_config_form(game, alert, notyf) {
             showDenyButton: true,
         }).then((result)=> {
             if(result.isConfirmed) {
-                if(is_selected)
+                if(is_selected){
                     element.classList.remove('selected');
-                else
+                    image.selected = false;
+                } else {
                     element.classList.add('selected');
+                    image.selected = true;
+                }
                 notyf.success('Operacion exitosa');
+                console.log(obj);
             } else {
                 onDeleteEvent(index, image, element, true);
             }

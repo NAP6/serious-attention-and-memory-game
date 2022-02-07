@@ -13,7 +13,7 @@ class PyramidsPharaohsController {
         for(var i=0; i < 5; i++) {
             var game = new PyramidsPharaohs(i, `Juego ${i}`, `Descripcion ${i}`);
             if(i % 2 == 0) {
-                game.add_lavel(
+                game.add_level(
                     Array(3).fill('https://www.paturros.es/wp-content/uploads/2021/01/comprar-patito-goma-doc-brown.jpg'), 
                     Array(3).fill('https://www.paturros.es/wp-content/uploads/2021/01/comprar-patito-goma-marty-mcfly.jpg')
                     ,[1])
