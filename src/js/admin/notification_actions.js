@@ -30,5 +30,5 @@ var example_handler = (obj, status)=> {
     console.log(obj);
 }
 notification_center.new_notification(messages[0], null, null, ['fas', 'fa-file-alt']);
-notification_center.new_notification(messages[1], example_handler, example_handler, ['fas', 'fa-user-lock']);
-notification_center.new_notification(messages[2], example_handler, example_handler, ['fas', 'fa-user-injured']);
+notification_center.new_notification(messages[1], example_handler, example_handler, ['fas', 'fa-user-lock'], 'bg-warning');
+notification_center.new_notification(messages[2], example_handler, example_handler, ['fas', 'fa-user-injured'], 'bg-success');

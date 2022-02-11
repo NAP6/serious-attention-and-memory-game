@@ -10,11 +10,11 @@ class Notifications {
         this.#badge.innerText = '0';
     }
 
-    new_notification(obj, ok_handler=null, no_handler=null, icon_class=[]) {
+    new_notification(obj, ok_handler=null, no_handler=null, icon_class=[], backgraud_class='bg-primary') {
         var on_destroy = ()=>{
             this.#badge.innerText = '' + (parseInt(this.#badge.innerText) - 1);
         }
-        var notification = create_notification(obj, ok_handler, no_handler, on_destroy, icon_class);
+        var notification = create_notification(obj, ok_handler, no_handler, on_destroy, icon_class, backgraud_class);
         this.#notification_center.appendChild(notification);
         this.#badge.innerText = '' + (1 + parseInt(this.#badge.innerText));
     }
@@ -63,7 +63,7 @@ function _create_notification_area(id_alert_button='alert_dropdown', extra_class
 
 }
 
-function create_notification(obj, ok_handler=null, no_handler=null, on_destroy, icon_class=[]) {
+function create_notification(obj, ok_handler=null, no_handler=null, on_destroy, icon_class=[], backgraud_class='bg-primary') {
     var alert_container = document.createElement('a');
     var icon_section = document.createElement('div');
     var icon_container = document.createElement('div');
@@ -78,7 +78,7 @@ function create_notification(obj, ok_handler=null, no_handler=null, on_destroy, 
 
     icon_section.classList.add('me-3');
 
-    icon_container.classList.add('icon-circle', 'bg-primary');
+    icon_container.classList.add('icon-circle', backgraud_class);
 
     for(var n_class of icon_class)
         icon.classList.add(n_class);
