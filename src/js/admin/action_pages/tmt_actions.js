@@ -1,9 +1,9 @@
+import { TMT } from '../../models/TMT.js';
 import { TMTController } from '../../controller/TMTController.js';
 import { start_table_admin_page } from '../start_table_admin_page.js';
 import { Modal } from '../../helper_models/Modal.js';
+import { load_game_config_form } from './configGame_tmt.js';
 
-var config_form = document.getElementById('config_game_template')
-    .content.cloneNode(true).querySelector('div');
 var data = TMTController.getAll();
 var nameLabels = ['ID', 'Nombre', 'Descripcion'];
 var form_structure = {
@@ -23,9 +23,8 @@ var form_structure = {
     }
 };
 
-
 // Update
-var open_update_modal = (obj)=> {
+var open_update_modal = (obj, tr)=> {
     tmt.form.reset();
     tmt.form.fill(obj);
     tmt.form.get_input('id').disabled = true;
@@ -34,13 +33,16 @@ var open_update_modal = (obj)=> {
     tmt.modal.changeSize(Modal.LARGE_SIZE);
     tmt.modal.set_bodyContent(tmt.form.form);
     tmt.modal.toggle();
+    tmt.btn.update.onclick = ()=> {on_updateButton(obj, tr);};
 }
 
-var on_updateButton = (obj, tr)=> {
+var on_updateButton = (obj_old, tr)=> {
     var obj = tmt.form.getObject();
     tmt.modal.hide();
-    TMTController.update(obj)
-    tmt.table.update(tr, obj);
+    var classObj = TMTController.toClass(obj);
+    classObj.levels = obj_old.levels;
+    TMTController.update(classObj)
+    tmt.table.update(tr, classObj);
 }
 
 // Create
@@ -58,8 +60,9 @@ var on_create_button = ()=> {
     if(is_valid) {
         var obj = tmt.form.getObject();
         tmt.modal.hide();
-        TMTController.insert(obj)
-        tmt.table.add(obj);
+        var classObj = TMTController.toClass(obj);
+        TMTController.insert(classObj)
+        tmt.table.add(classObj);
     }
 }
 
@@ -91,17 +94,20 @@ var onDeleteHandler = (obj, tr)=> {
 
 // Open Config Game Modal
 var open_config_game_modal = (obj, tr) => { 
+    var save = (new_obj)=> { on_save_config_game_modal(new_obj, tr); };
+    var config = load_game_config_form(obj, tmt.alert, tmt.notyf, save);
     tmt.modal.title = `Configuracion del Juego ${obj.name}`;
-    tmt.modal.set_bodyContent(load_game_config_form(obj));
-    tmt.modal.set_footerContent(document.createElement('div'));
+    tmt.modal.set_bodyContent(config.body);
+    tmt.modal.set_footerContent(config.footer);
     tmt.modal.changeSize(Modal.FULL_SCREEN_SIZE);
     tmt.modal.show();
 };
 
-var load_game_config_form =(obj)=> {
-    // Charge info if it have
-    return config_form;
-};
+var on_save_config_game_modal = (obj, tr)=> {
+    TMTController.update(obj)
+    tmt.table.update(tr, obj);
+    tmt.modal.hide();
+}
 
 var tmt = start_table_admin_page({
     form_structure: form_structure,
@@ -114,5 +120,6 @@ var tmt = start_table_admin_page({
     on_updateButton: on_updateButton,
     onExtraButton: open_config_game_modal,
     labelExtraButton: 'Configurar Juego',
-    titleExtraButton: 'Configurar'
+    titleExtraButton: 'Configurar',
+    table_keys: Object.keys(form_structure)
 });

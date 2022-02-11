@@ -1,0 +1,30 @@
+#points_container {
+    max-height: 80vh;
+
+    .img_behind_dots {
+        max-height: 100%!important;
+        -moz-user-select: none;
+        -webkit-user-drag: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+    }
+
+    .points {
+        width: 10px;
+        height: 10px;
+        background-color: rgba(1, 1, 1, 0.5);
+        border-radius: 50%;
+        position: absolute;
+        color: #fff;
+        place-items: center;
+        display: grid;
+        inset: 0;
+        cursor: grab;
+        cursor: -moz-grab;
+        cursor: -webkit-grab;
+
+        &:active {
+            cursor: grabbing;
+        }
+    }
+}

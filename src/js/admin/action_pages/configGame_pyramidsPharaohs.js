@@ -11,7 +11,7 @@ function load_game_config_form(game, alert, notyf, onSave) {
 
 
     if(game.levels.length > 0) {
-        for(var i=0; i < game.levels.length; i++) {
+        for(i=0; i < game.levels.length; i++) {
             var level = create_level(i, game.levels[i].example, game.levels[i].answer)
             level_container.appendChild(level);
         }

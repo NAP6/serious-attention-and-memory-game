@@ -24,7 +24,7 @@ var form_structure = {
 
 
 // Update
-var open_update_modal = (obj)=> {
+var open_update_modal = (obj, tr)=> {
     pap.form.reset();
     pap.form.fill(obj);
     pap.form.get_input('id').disabled = true;
@@ -33,10 +33,13 @@ var open_update_modal = (obj)=> {
     pap.modal.changeSize(Modal.LARGE_SIZE);
     pap.modal.set_bodyContent(pap.form.form);
     pap.modal.toggle();
+    pap.btn.update.onclick = ()=> { on_updateButton(obj, tr); };
 };
 
-var on_updateButton = (obj, tr)=> {
+var on_updateButton = (obj_old, tr)=> {
     var obj = pap.form.getObject();
+    obj = PyramidsPharaohsController.toClass(obj);
+    obj.levels = obj_old.levels;
     pap.modal.hide();
     PyramidsPharaohsController.update(obj)
     pap.table.update(tr, obj);
