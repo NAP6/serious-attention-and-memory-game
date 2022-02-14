@@ -1,5 +1,6 @@
 import { GroupController } from '../../controller/GroupContoller.js';
 import { start_table_admin_page } from '../start_table_admin_page.js';
+import { Modal } from '../../helper_models/Modal.js';
 
 var data = GroupController.getAll();
 var nameLabels = ['ID', 'Nombre', 'Descripcion'];
@@ -83,6 +84,34 @@ var onDeleteHandler = (obj, tr)=> {
     })
 }
 
+// Open History modal
+var open_invitation_modal = (obj, tr) => { 
+    grp.modal.title = 'Invitación de ' + obj.name;
+    grp.modal.set_bodyContent(load_invitation_modal(obj));
+    grp.modal.changeSize(Modal.SMALL_SIZE);
+    grp.modal.show();
+};
+
+var load_invitation_modal =(obj)=> {
+    // Charge info if it have
+    var config_form = document.getElementById('invitation_group_template')
+        .content.cloneNode(true);
+    var btn_copy = config_form.querySelector('#btn_copy');
+    btn_copy.onclick = ()=> {
+        navigator.clipboard.writeText(`
+Bienbenido al proyecto 'Patito'
+Has sido invitado a participar del gurpo
+de investigacion '${obj.name}'.
+Para leer la descripcion del grupo y
+unirte para colaborar en ese, accede al
+siguiente enlace:
+${window.location.origin}/invitation?id=${obj.id}
+        `);
+        grp.notyf.success('La invitacion ha sido copiada en el portapapeles.');
+    };
+    return config_form;
+};
+
 var grp = start_table_admin_page({
     form_structure: form_structure,
     on_addButton: open_create_modal,
@@ -91,5 +120,8 @@ var grp = start_table_admin_page({
     tableNameLabels: nameLabels,
     onUpdateHandler: open_update_modal,
     onDeleteHandler: onDeleteHandler,
-    on_updateButton: on_updateButton
+    on_updateButton: on_updateButton,
+    onExtraButton: open_invitation_modal,
+    labelExtraButton: 'Link de Invitación',
+    titleExtraButton: 'Invitar'
 });
