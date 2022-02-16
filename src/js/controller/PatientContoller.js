@@ -40,6 +40,25 @@ class PatientController {
         this.aux_alertar = !this.aux_alertar;
         return this.aux_alertar;
     }
+
+    static login(email, password) {
+        var is_valid = (email == 'paciente@ejemplo.com' && password == '123');
+        var res;
+        if(is_valid) {
+            res = {
+                status: 'ok',
+                is_valid: is_valid,
+                message: ''
+            }
+        } else {
+            res = {
+                status: 'error',
+                is_valid: is_valid,
+                message: 'Usuario no Encontrado'
+            }
+        }
+        return res;
+    }
 }
 
 export { PatientController };
