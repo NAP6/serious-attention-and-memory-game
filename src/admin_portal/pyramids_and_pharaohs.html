@@ -1,0 +1,32 @@
+{% extends "admin_portal/table_template.html" %}
+
+<!-- Title -->
+
+{% block title %} Piramides y faraones {% endblock %}
+
+<!-- Description -->
+
+{% block description %} Este es un test para medir atencion y todo lo que
+puscimos en la introduccion del articulo. {% endblock %}
+
+<!-- Talbel Title -->
+
+{% block tableTitle %} Base de datos de juego {% endblock %}
+
+<!-- Put "d-none" class if wanth to hide -->
+
+{% block class_addButton %}{% endblock %}
+
+<!-- Template section -->
+
+{% block templates %}
+    {% include('admin_portal/parts/pyramidsPharaohs/template_config.html') %}
+{% endblock %}
+
+<!-- Scripts for this page -->
+
+{% block script %}
+
+    <script type="module" src="/assets/js/admin/action_pages/pyramidsPharaohs_actions.js"></script>
+
+{% endblock %}

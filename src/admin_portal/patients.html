@@ -1,0 +1,34 @@
+{% extends "admin_portal/table_template.html" %}
+
+<!-- Title -->
+
+{% block title %} Pacientes {% endblock %}
+
+<!-- Description -->
+
+{% block description %}
+    Los pacientes aqui listados, son todos aquellos que hayan creado una cuenta,
+    utilizando el codigo de algun grupo, al que pertenezaca el administrador.
+ {% endblock %}
+
+<!-- Talbel Title -->
+
+{% block tableTitle %} Base de datos de pacientes {% endblock %}
+
+<!-- Put "d-none" class if wanth to hide -->
+
+{% block class_addButton %}d-none{% endblock %}
+
+<!-- Template section -->
+
+{% block templates %}
+    {% include('admin_portal/parts/patients/template_config.html') %}
+{% endblock %}
+
+<!-- Scripts for this page -->
+
+{% block script %}
+
+    <script type="module" src="/assets/js/admin/action_pages/patient_actions.js"></script>
+
+{% endblock %}
