@@ -1,9 +1,9 @@
 class Administrator {
 
-    constructor(id, name, description) {
+    constructor(id, name, image) {
         this.id = id;
         this.name = name;
-        this.description = description;
+        this.image = image;
     }
 
 }

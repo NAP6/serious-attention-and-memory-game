@@ -1,11 +1,19 @@
-import { TMT } from '../../models/TMT.js';
 import { TMTController } from '../../controller/TMTController.js';
+import { AdministratorController } from '../../controller/AdministratorController.js';
 import { start_table_admin_page } from '../start_table_admin_page.js';
 import { Modal } from '../../helper_models/Modal.js';
 import { load_game_config_form } from './configGame_tmt.js';
 
 var data = TMTController.getAll();
-var nameLabels = ['ID', 'Nombre', 'Descripcion'];
+var nameLabels = ['ID', 'Nombre', 'Grupo', 'Descripcion'];
+var group_list = AdministratorController.get_groups_of(AdministratorController.get_active_adminitrator().id);
+var options_group = group_list.map((g)=> {
+    var option = {
+        value: g.id,
+        text: g.name
+    }
+    return option;
+})
 var form_structure = {
     id: {
         type: 'number',
@@ -15,6 +23,11 @@ var form_structure = {
     name: {
         label: 'Nombre',
         position_class: ['col-12', 'col-md-6']
+    },
+    group: {
+        type: 'select',
+        label: 'Grupo',
+        options: options_group
     },
     description: {
         type: 'textarea',

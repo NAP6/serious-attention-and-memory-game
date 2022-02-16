@@ -1,4 +1,5 @@
 import { Patient } from "../models/Patient.js";
+import { Group } from "../models/Group.js";
 
 class PatientController {
 
@@ -14,6 +15,14 @@ class PatientController {
             list.push(new Patient(i, `Paciente ${i}`, Math.floor(Math.random() * 11) + 60, ['Masculino', 'Femenino'][(Math.random()>=0.5)? 1 : 0], `Escolaridad ${i}`, `Cuenca`, `Ecuador`));
         }
         return list;
+    }
+
+    static get_list_of_groups(patient_id) {
+        var group_list = [];
+        for(var i = 0; i < 3; i++) {
+            group_list.push(new Group(i, 'Grupo '+i, 'Descripcion'));
+        }
+        return group_list;
     }
 
     static aux_alertar = false;

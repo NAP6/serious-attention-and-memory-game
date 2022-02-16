@@ -114,5 +114,6 @@ var pat = start_table_admin_page({
     onDeleteHandler: onDeleteHandler,
     on_updateButton: on_updateButton,
     labelExtraButton: 'Ver Historial',
-    titleExtraButton: 'Historial'
+    titleExtraButton: 'Historial',
+    table_keys: Object.keys(form_structure)
 });

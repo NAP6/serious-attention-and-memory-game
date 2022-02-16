@@ -1,4 +1,5 @@
 import { MatchCrontroller } from '../../controller/MatchController.js';
+import { PatientController } from '../../controller/PatientContoller.js';
 import { Table } from '../../helper_models/Table.js';
 
 function start_history_page(obj, notyf) {
@@ -12,6 +13,8 @@ function start_history_page(obj, notyf) {
     var schooling = config_form.querySelector('#profile_schooling');
     var residence = config_form.querySelector('#profile_residence');
     var country_of_study = config_form.querySelector('#profile_country_of_study');
+    var profile_image = config_form.querySelector('#profile_image');
+    var list_group = config_form.querySelector('#list_group');
 
     id.innerText                = obj.id;
     name.innerText              = obj.name;
@@ -20,6 +23,16 @@ function start_history_page(obj, notyf) {
     schooling.innerText         = obj.schooling;
     residence.innerText         = obj.residence;
     country_of_study.innerText  = obj.country_of_study;
+    if(obj.image)
+        profile_image.src       = obj.image;
+
+    for(var o of PatientController.get_list_of_groups(obj.id)){
+        var li = document.createElement('li');
+        li.classList.add('list-group-item');
+        li.innerText = o.name;
+        list_group.appendChild(li);
+    }
+
 
     var dataTable_match_contaier = config_form.querySelector('#dataTable_match_contaier');
 

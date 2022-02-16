@@ -1,8 +1,8 @@
 import { Game } from "./Game.js";
 
 class PyramidsPharaohs extends Game {
-    constructor(id, name, description) {
-        super(id, name, description);
+    constructor(id, name, description, group) {
+        super(id, name, description, group);
         this.levels = [];
     }
 

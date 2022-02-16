@@ -4,7 +4,7 @@ class GroupController {
 
     static getById(id) {
         if(!id) throw(['Se nececita un id']);
-        var group = new Group(1, 'Primer Grupo', 'Es un grupo de prueba');
+        var group = new Group(id, 'Grupo '+id, 'Es un grupo de prueba');
         return group;
     }
 

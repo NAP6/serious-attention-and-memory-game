@@ -1,3 +1,5 @@
+import { AdministratorController } from '../controller/AdministratorController.js';
+
 (function($) {
   "use strict"; // Start of use strict
 
@@ -75,5 +77,11 @@
           nav_item.querySelector('a.nav-link').click();
         }
     }
+    
+    var admin = AdministratorController.get_active_adminitrator();
+    $('#admin_profile_name').text(admin.name);
+    if(admin.image)
+        $('#admin_profile_image').attr("src", admin.image);
+
 
 })(jQuery); // End of use strict

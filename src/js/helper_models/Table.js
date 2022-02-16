@@ -143,7 +143,10 @@ function _create_row(obj, key_list, h_update=null, h_delete=null, h_extra=null, 
 
     for(const key of key_list) {
         var td = document.createElement('td')
-        td.innerHTML = obj[key];
+        if(obj[key] instanceof Object)
+            td.innerHTML = obj[key].name;
+        else
+            td.innerHTML = obj[key];
         td.classList.add('align-middle')
         tr.appendChild(td);
     }
