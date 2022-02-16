@@ -1,11 +1,10 @@
 import { PatientController } from '../../controller/PatientContoller.js';
 import { start_table_admin_page } from '../start_table_admin_page.js';
 import { Modal } from '../../helper_models/Modal.js';
+import { start_history_page } from './history_patients.js';
 
-var config_form = document.getElementById('config_game_template')
-    .content.cloneNode(true).querySelector('div');
 var data = PatientController.getAll();
-var nameLabels = ['ID', 'Nombre', 'Descripcion'];
+var nameLabels = ['ID', 'Nombre', 'Edad', 'Genero', 'Escolaridad', 'Residencia', 'País de esudio'];
 var form_structure = {
     id: {
         type: 'number',
@@ -16,10 +15,37 @@ var form_structure = {
         label: 'Nombre',
         position_class: ['col-12', 'col-md-6']
     },
-    description: {
-        type: 'textarea',
-        label: 'Descripcion',
-        required: false
+    age: {
+        type: 'number',
+        label: 'Edad',
+        position_class: ['col-12', 'col-md-6']
+    },
+    gender: {
+        type: 'select',
+        label: 'Genero',
+        options: {
+            masculino: {
+                value: 'Masculino',
+                text: 'Masculino'
+            },
+            femenino: {
+                value: 'Femenino',
+                text: 'Femenino'
+            }
+        },
+        position: 7
+    },
+    schooling: {
+        label: 'Escolaridad',
+        position_class: ['col-12', 'col-md-6']
+    },
+    residence: {
+        label: 'Residencia',
+        position_class: ['col-12', 'col-md-6']
+    },
+    country_of_study: {
+        label: 'País de estudio',
+        position_class: ['col-12', 'col-md-6']
     }
 };
 
@@ -70,17 +96,13 @@ var onDeleteHandler = (obj, tr)=> {
 }
 
 // Open History modal
+var empty_div = document.createElement('div');
 var open_history_modal = (obj, tr) => { 
     pat.modal.title = 'Historia del paciente';
-    pat.modal.set_bodyContent(load_patient_history(obj));
-    pat.modal.set_footerContent(document.createElement('div'));
+    pat.modal.set_bodyContent(start_history_page(obj, pat.notyf));
+    pat.modal.set_footerContent(empty_div);
     pat.modal.changeSize(Modal.FULL_SCREEN_SIZE);
     pat.modal.show();
-};
-
-var load_patient_history =(obj)=> {
-    // Charge info if it have
-    return config_form;
 };
 
 var pat = start_table_admin_page({

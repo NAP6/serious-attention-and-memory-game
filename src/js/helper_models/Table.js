@@ -8,10 +8,10 @@ class Table {
         var tbody = document.createElement('tbody');
         var tfoot = document.createElement('tfoot');
 
-        for(let k of Object.keys(params)) {
-            params_start[k] = params[k];
+        for(let k of Object.keys(params_start)) {
+            if(!params[k])
+                params[k] = params_start[k];
         }
-        params=params_start;
 
         if(object_list.length > 0 && params['keys'].length == 0)
             params['keys'] = Object.keys(object_list[0]);

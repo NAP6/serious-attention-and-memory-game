@@ -29,8 +29,10 @@ var open_update_modal = (obj)=> {
     grp.form.fill(obj);
     grp.form.get_input('id').disabled = true;
     grp.modal.title = 'Modificar Grupo';
+    grp.modal.set_bodyContent(grp.form.form);
     grp.modal.set_footerContent(grp.btn.update);
-    grp.modal.toggle();
+    grp.modal.changeSize(Modal.LARGE_SIZE);
+    grp.modal.show();
 }
 
 var on_updateButton = (obj, tr)=> {
@@ -45,6 +47,8 @@ var open_create_modal = () => {
     grp.form.reset();
     grp.form.enableAll();
     grp.modal.set_footerContent(grp.btn.create)
+    grp.modal.set_bodyContent(grp.form.form);
+    grp.modal.changeSize(Modal.LARGE_SIZE);
     grp.modal.title = 'Crear Grupo';
 };
 
@@ -85,9 +89,11 @@ var onDeleteHandler = (obj, tr)=> {
 }
 
 // Open History modal
+var empty_div = document.createElement('div');
 var open_invitation_modal = (obj, tr) => { 
     grp.modal.title = 'Invitación de ' + obj.name;
     grp.modal.set_bodyContent(load_invitation_modal(obj));
+    grp.modal.set_footerContent(empty_div);
     grp.modal.changeSize(Modal.SMALL_SIZE);
     grp.modal.show();
 };

@@ -65,7 +65,7 @@ class Modal {
         this._close_button = yButoon;
         this._conten_footer = contetn_footer;
         this._actual_size_class = 'modal-lg';
-        this._bootstrap = new bootstrap.Modal(this.modal, { keyboard: false });
+        this._bootstrap = new bootstrap.Modal(this.modal, { keyboard: false, focus: false });
 
         if(params_start['body_content'])
             this.set_bodyContent(params_start['body_content']);
