@@ -43,7 +43,7 @@ class PyramidsPharaohsController {
 
     static toClass(obj) {
         var group = GroupController.getById(obj.group);
-        var new_obj = new PyramidsPharaohs(obj.id, obj.name, obj.description, group);
+        var new_obj = new PyramidsPharaohs(obj.id, obj.name, obj.description, group, obj.maximum_attempsts);
         if(obj.levels && obj.levels.length > 0)
             new_obj.levels = obj.levels;
         return new_obj;

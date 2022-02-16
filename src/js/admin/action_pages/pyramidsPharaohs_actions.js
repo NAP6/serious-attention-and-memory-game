@@ -13,7 +13,7 @@ var options_group = group_list.map((g)=> {
     }
     return option;
 })
-var nameLabels = ['ID', 'Nombre', 'Grupo', 'Descripcion'];
+var nameLabels = ['ID', 'Nombre', 'Grupo', 'Intentos', 'Descripcion'];
 var form_structure = {
     id: {
         type: 'number',
@@ -28,6 +28,10 @@ var form_structure = {
         type: 'select',
         label: 'Grupo',
         options: options_group
+    },
+    maximum_attempsts: {
+        type: 'number',
+        label: 'Numero maximo de intentos'
     },
     description: {
         type: 'textarea',
