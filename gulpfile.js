@@ -77,14 +77,14 @@ function copile_HTML() {
     var js_links = "";
     for (let dependency in dependencies) {
         if (dependencies[dependency].css_link !== undefined) {
-            css_links += `<link href="${
-                resource_dir +
-                dependencies[dependency].css_link}" rel="stylesheet">`;
+            for(let l of dependencies[dependency].css_link){
+                css_links +=`<link href="/${resource_dir+l}" rel="stylesheet">\n`;
+            }
         }
         if (dependencies[dependency].js_link !== undefined) {
-            js_links += `<script src="${
-                resource_dir +
-                dependencies[dependency].js_link}"></script>`;
+            for(let l of dependencies[dependency].js_link){
+                js_links +=`<script src="/${resource_dir+l}"></script>\n`;
+            }
         }
     }
 
@@ -96,7 +96,7 @@ function copile_HTML() {
     -->
     `
 
-    return gulp.src([`${src_dir}*.html`, `!${src_dir}template.html`])
+    return gulp.src([`${src_dir}**/*.html`, `!${src_dir}**/*template.html`, `!${src_dir}**/parts/**`])
         .pipe(nunjucks.compile())
         .pipe(inject.after("<!-- Vendor CSS Files -->", css_links))
         .pipe(inject.after("<!-- Vendor JS Files -->", js_links))

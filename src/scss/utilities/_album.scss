@@ -1,0 +1,82 @@
+.album-container {
+
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+
+    &.answer {
+        &::after {
+            content: "\f111";
+        }
+
+        &.selected {
+            .album-image {
+                &::after {
+                    font-family: "Font Awesome 5 Free";
+                    content: "\f14a";
+                    font-size: 2rem;
+                    color: #fff;
+                    display: grid;
+                    place-items: center;
+                    position: absolute;
+                    inset: 0;
+                    background-color: rgba(1,1,1,.3);
+                }
+            }
+        }
+    }
+
+    &::after {
+        font-family: "Font Awesome 5 Free";
+        content: "\f2ed";
+        font-size: 2rem;
+        color: #fff;
+        background-color: $dark;
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        transform: translateY(101%);
+        transition: transform .3s;
+    }
+
+    &:hover::after {
+        transform: translateY(0);
+    }
+
+    &.add-new-image {
+
+        border-radius: 50%!important;
+
+        &::after {
+            font-family: "Font Awesome 5 Free";
+            content: "\f0fe";
+        }
+
+        .album-image {
+
+            background-image: url('https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcenitpsicologos.com%2Fwp-content%2Fuploads%2F2019%2F07%2Fbrain-2.jpg&f=1&nofb=1');
+
+            &::after {
+                font-family: "Font Awesome 5 Free";
+                content: "\f0fe";
+                font-size: 2rem;
+                color: #fff;
+                display: grid;
+                place-items: center;
+                position: absolute;
+                inset: 0;
+                background-color: rgba(1,1,1,.5);
+            }
+        }
+    }
+
+    .album-image {
+        padding-top: 101%;
+        position: relative;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+
+    }
+}
