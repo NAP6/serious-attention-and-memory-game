@@ -5,7 +5,7 @@ import { Modal } from '../../helper_models/Modal.js';
 import { load_game_config_form } from './configGame_tmt.js';
 
 var data = TMTController.getAll();
-var nameLabels = ['ID', 'Nombre', 'Grupo', 'Descripcion'];
+var nameLabels = ['ID', 'Nombre', 'Grupo', 'Intentos', 'Descripcion'];
 var group_list = AdministratorController.get_groups_of(AdministratorController.get_active_adminitrator().id);
 var options_group = group_list.map((g)=> {
     var option = {
@@ -29,11 +29,15 @@ var form_structure = {
         label: 'Grupo',
         options: options_group
     },
+    maximum_attempsts: {
+        type: 'number',
+        label: 'Numero maximo de intentos'
+    },
     description: {
         type: 'textarea',
         label: 'Descripcion',
         required: false
-    }
+    },
 };
 
 // Update

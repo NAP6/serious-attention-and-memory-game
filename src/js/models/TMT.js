@@ -1,8 +1,8 @@
 import { Game } from "./Game.js";
 
 class TMT extends Game {
-    constructor(id, name, description, group) {
-        super(id, name, description, group);
+    constructor(id, name, description, group, maximum_attempsts=1) {
+        super(id, name, description, group, maximum_attempsts);
         this.levels = [];
     }
 
