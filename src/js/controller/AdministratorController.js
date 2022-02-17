@@ -18,23 +18,15 @@ class AdministratorController {
         return group_list;
     }
 
-    static login(email, password) {
-        var is_valid = (email == 'correo@ejemplo.com' && password == '123');
-        var res;
-        if(is_valid) {
-            res = {
-                status: 'ok',
-                is_valid: is_valid,
-                message: ''
-            }
-        } else {
-            res = {
-                status: 'error',
-                is_valid: is_valid,
-                message: 'Usuario no Encontrado'
-            }
-        }
-        return res;
+    static toClass(obj) {
+        var admin = new Administrator('', obj.name, obj.image);
+        return admin;
+    }
+    
+    static value = true;
+    static insert(obj, user_id) {
+        this.value = !this.value;
+        return this.value;
     }
 }
 

@@ -1,7 +1,7 @@
 import { Form } from '../helper_models/Form.js';
-import { AdministratorController } from '../controller/AdministratorController.js';
-import { PatientController } from '../controller/PatientContoller.js';
+import { LogController } from '../controller/LogController.js';
 
+document.getElementById('btn_new_account').href += window.location.search;
 var container = document.getElementById('login_form_container');
 var form_structure = {
     email: {
@@ -18,15 +18,16 @@ var btn_login = document.getElementById('btn_login');
 
 btn_login.onclick = ()=> {
     var user = form.getObject();
-    var logedin = AdministratorController.login(user.email, user.password);
-    if(logedin.is_valid) {
-        window.location.href = `${window.location.origin}/admin_portal/dashboard.html`
-    } else {
-        logedin = PatientController.login(user.email, user.password);
-        if(logedin.is_valid)
-            alert('redirigir portal de paciente')
-        else {
-            form.reset();
+    var logedin = LogController.login(user.email, user.password);
+
+    if(form.valid_required_are_filled) {
+        if(logedin.is_valid) {
+            if(logedin.user == 'administrator') {
+                window.location.href = `${window.location.origin}/admin_portal/dashboard.html${window.location.search}`;
+            } else {
+                alert('redirigir portal de paciente');
+            }
+        } else {
             form.report_invalid_input('email', 'Usuario o contraseña invalidos');
         }
     }

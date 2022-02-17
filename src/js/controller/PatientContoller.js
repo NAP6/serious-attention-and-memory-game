@@ -36,28 +36,14 @@ class PatientController {
         return this.aux_alertar;
     }
 
-    static insert(obj) {
+    static insert(obj, user_id, group_code) {
         this.aux_alertar = !this.aux_alertar;
         return this.aux_alertar;
     }
 
-    static login(email, password) {
-        var is_valid = (email == 'paciente@ejemplo.com' && password == '123');
-        var res;
-        if(is_valid) {
-            res = {
-                status: 'ok',
-                is_valid: is_valid,
-                message: ''
-            }
-        } else {
-            res = {
-                status: 'error',
-                is_valid: is_valid,
-                message: 'Usuario no Encontrado'
-            }
-        }
-        return res;
+    static toClass(obj) {
+        var patient = new Patient('', obj.name, obj.age, obj.gender, obj.schooling, obj.residence, obj.country_of_study, obj.image);
+        return patient;
     }
 }
 
