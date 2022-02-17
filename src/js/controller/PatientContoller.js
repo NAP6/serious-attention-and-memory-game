@@ -36,9 +36,14 @@ class PatientController {
         return this.aux_alertar;
     }
 
-    static insert(obj) {
+    static insert(obj, user_id, group_code) {
         this.aux_alertar = !this.aux_alertar;
         return this.aux_alertar;
+    }
+
+    static toClass(obj) {
+        var patient = new Patient('', obj.name, obj.age, obj.gender, obj.schooling, obj.residence, obj.country_of_study, obj.image);
+        return patient;
     }
 }
 

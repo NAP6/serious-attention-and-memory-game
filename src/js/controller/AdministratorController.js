@@ -17,6 +17,17 @@ class AdministratorController {
         }
         return group_list;
     }
+
+    static toClass(obj) {
+        var admin = new Administrator('', obj.name, obj.image);
+        return admin;
+    }
+    
+    static value = true;
+    static insert(obj, user_id) {
+        this.value = !this.value;
+        return this.value;
+    }
 }
 
 export { AdministratorController };

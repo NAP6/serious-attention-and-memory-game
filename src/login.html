@@ -1,86 +1,42 @@
-<!DOCTYPE html>
-<html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
+{% extends "start_form_template.html" %}
+
+<!--Metadata-->
+{% block meta %}
     <meta name="description" content="" />
     <meta name="author" content="" />
+{% endblock %}
 
-    <title>Login</title>
+<!--title-->
+{% block title %}Login{% endblock %}
 
-    <!-- Vendor CSS Files -->
-
-    <!-- Main CSS File -->
-    <link
-      href="assets/css/general_pages.css"
-      rel="stylesheet"
-      type="text/css"
-    />
-  </head>
-
-  <body class="bg-dark min-vh-100 d-flex align-items-center">
-    <div class="container">
-      <!-- Outer Row -->
-      <div class="row justify-content-center">
-        <div class="col-xl-10 col-lg-12 col-md-9">
-          <div class="card o-hidden border-0 shadow-lg my-5">
-            <div class="card-body p-0">
-              <!-- Nested Row within Card Body -->
-              <div class="row">
-                <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
-                <div class="col-lg-6">
-                  <div class="p-5">
-                    <div class="text-center">
-                      <h1 class="h4 text-gray-900 mb-4">
-                        Bienvenido de vuelta!
-                      </h1>
-                    </div>
-                    <form class="user">
-                      <div class="form-group mb-3">
-                        <input
-                          type="email"
-                          class="form-control"
-                          id="inputEmail"
-                          aria-describedby="mail_span"
-                          placeholder="Ingrese su correo electronico..."
-                        />
-                      </div>
-
-                      <div class="form-group mb-3">
-                        <input
-                          type="password"
-                          class="form-control"
-                          id="inputPassword"
-                          placeholder="Ingerse su contraseña"
-                        />
-                      </div>
-                      <div class="d-grid gap-1">
-                        <a
-                          class="btn btn-dark"
-                          href="admin_portal/dashboard.html"
-                          >Login</a
-                        >
-                      </div>
-                    </form>
-                    <hr />
-                    <div class="text-center">
-                      <a class="small" href="#">Crear una cuenta!</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
+<!--Content of form-->
+{% block content %}
+    <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+    <div class="col-lg-6">
+        <div class="p-5">
+            <div class="text-center">
+              <h1 class="h4 text-gray-900 mb-4">
+                Bienvenido de vuelta!
+              </h1>
             </div>
-          </div>
+            <div class="my-2" id="login_form_container"></div>
+            <div class="d-grid gap-1">
+              <button type="button" class="btn btn-dark" id="btn_login">
+                Login
+              </button>
+            </div>
+            <hr />
+            <div class="text-center">
+              <a class="small" href="register.html" id="btn_new_account">
+                Crear una cuenta!
+              </a
+              >
+            </div>
         </div>
-      </div>
     </div>
+{% endblock %}
 
-    <!-- Vendor JS Files -->
-
-    <!-- Main JS Files -->
-  </body>
-</html>
+<!--Scripts of forms-->
+{% block script %}
+    <script type="module" src="/assets/js/start_forms/login.js"></script>
+{% endblock %}

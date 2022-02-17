@@ -1,6 +1,6 @@
 class Form {
 
-    constructor(form_id, params={}, appendTo=null, missing_input_messenge = 'Por favor llena este campo') {
+    constructor(form_id, params={}, appendTo=null, missing_input_messenge = 'Por favor llena este campo correctamente') {
         var keys = Object.keys(params);
 
         var form = document.createElement('div');
@@ -103,7 +103,7 @@ class Form {
         var is_correct = true;
         var firs_detected = null;
         for(let input of Object.values(this.inputs)) {
-            if(input.required && input.validity.valueMissing) {
+            if(input.required && (input.validity.valueMissing || input.validity.typeMismatch)) {
                 input.setCustomValidity(this.missing_input_messenge);
                 firs_detected = firs_detected? firs_detected : input;
                 is_correct = false;
