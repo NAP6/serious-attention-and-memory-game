@@ -5,7 +5,25 @@
 {% endblock %} {% block content %}
 
 <main id="main">
-  <div id="game_list" class="d-none"></div>
+  <div id="game_list" class="d-none">
+    <h1 class="h3 mb-2 text-gray-800">Juegos Pendientes</h1>
+    <p class="mb-4">
+      Valla parece que tienes juegos pendientes, que te parece intentar uno ahora.
+    </p>
+
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-width-blod text-dark d-inline">Mi lista de juegos</h6>
+      </div>
+
+      <div class="card-body">
+        <div class="table-responsive">
+          <div id="dataTable_contaier"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
   <div id="no_games">
     <div class="row justify-content-center">
       <div class="col-11 col-md-5">
@@ -25,4 +43,6 @@
 {% endblock %}
 
 
-{% block script %}{% endblock %}
+{% block script %}
+  <script type="module" src="/assets/js/patient/pending_games.js"></script>
+{% endblock %}
