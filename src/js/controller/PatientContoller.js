@@ -41,6 +41,10 @@ class PatientController {
         return this.aux_alertar;
     }
 
+    static get_active_patient() {
+        return new Patient(1, 'Nicolas', 24, 'Masculino', 'Tercer Nivel', 'Cuenca', 'Ecuador', null);
+    }
+
     static toClass(obj) {
         var patient = new Patient('', obj.name, obj.age, obj.gender, obj.schooling, obj.residence, obj.country_of_study, obj.image);
         return patient;

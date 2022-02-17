@@ -1,0 +1,19 @@
+<nav
+  class="navbar navbar-expand navbar-light bg-white topbar mb-4 px-2 static-top shadow"
+>
+  <!--Sidebar Button on small window-->
+  <button
+    id="sidebarToggleTop"
+    class="btn btn-outline-dark d-md-none rounded-circle me-3"
+  >
+    <i class="fa fa-bars"></i>
+  </button>
+
+  <!--Top Navbar options-->
+  <ul class="navbar-nav ms-auto">
+    <div class="topbar-divider d-none d-sm-block"></div>
+
+    <!--Alerts button-->
+    {% include('patient_portal/parts/top_bar/profile_options.html') %}
+  </ul>
+</nav>

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
   <head>
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     {% block meta %}{% endblock %}
 
     <!-- Favicons -->
@@ -12,22 +12,18 @@
     <!-- Vendor CSS Files -->
 
     <!-- Main CSS File -->
-    <link href="/assets/css/admin.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/patient.css" rel="stylesheet" type="text/css" />
     {% block style %}{% endblock %}
-
   </head>
 
   <body>
-
     <div id="wrapper" class="d-flex">
-      {% include('admin_portal/parts/sidebar.html') %}
+      {% include('patient_portal/parts/sidebar.html') %}
       <div id="content-wrapper" class="d-flex flex-column w-100">
         <div id="content">
-          {% include('admin_portal/parts/top_bar.html') %}
+          {% include('patient_portal/parts/top_bar.html') %}
 
-          <div class="container-fluid">
-            {% block content %}{% endblock %}
-          </div>
+          <div class="container-fluid">{% block content %}{% endblock %}</div>
         </div>
       </div>
     </div>
@@ -35,9 +31,7 @@
     <!-- Vendor JS Files -->
 
     <!-- Main JS Files -->
-    <script type="module" src="/assets/js/admin/actions.js"></script>
-    <script type="module" src="/assets/js/admin/notification_actions.js"></script>
+    <script type="module" src="/assets/js/patient/actions.js"></script>
     {% block script %}{% endblock %}
-
   </body>
 </html>
