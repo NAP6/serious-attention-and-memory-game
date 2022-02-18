@@ -1,5 +1,6 @@
 import { PatientController } from "../controller/PatientContoller.js";
 import { Table } from "../helper_models/Table.js";
+import { TMT } from "../models/TMT.js";
 
 var no_game_container = document.getElementById('no_games');
 var game_list_container = document.getElementById('game_list');
@@ -26,5 +27,7 @@ if(games_list && games_list.length > 0) {
 }
 
 function play_game(game) {
-    console.log(game)
+    if(game instanceof TMT) {
+        window.location.href = `${window.location.origin}/patient_portal/TMT.html?game_id=${game.id}`;
+    }
 }
