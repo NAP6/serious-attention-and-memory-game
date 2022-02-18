@@ -5,7 +5,29 @@
 {% endblock %} {% block content %}
 
 <main id="main">
-  <h1>Hola Grupo!</h1>
+  <div>
+    <h1 class="h3 mb-2 text-gray-800">Grupos</h1>
+    <p class="mb-4">
+      A continuacion se listan todos los grupos a los que perteneces.
+    </p>
+
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-width-blod text-dark d-inline">Mis grupos</h6>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <div id="dataTable_contaier"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </main>
 
+{% endblock %}
+
+
+{% block script %}
+  <script type="module" src="/assets/js/patient/groups_action.js"></script>
 {% endblock %}
