@@ -15,34 +15,35 @@ btn_skip_tutorial.onclick = ()=> {
 }
 
 async function start_calibration_area() {
-    eye_tracker.build();
     Swal.fire({
         icon: 'info',
         title: 'Calibracion EyeTracker',
         text: 'Preciona 5 veces cada circulo hasta que se vuelva de color amarillo'
-    });
-    var calibration_area = await eye_tracker.calibration_area((start_calulate_process)=> {
-        Swal.fire({
-            icon: 'info',
-            title: 'Calibracion EyeTracker',
-            text: 'No dejes de ver el circulo del centro y no muevas el raton'
-        }).then(()=>{
-            start_calulate_process((precision)=> {
-                console.log(precision);
-                start_game();
+    }).then(async ()=> {
+        var calibration_area = await eye_tracker.calibration_area((start_calulate_process)=> {
+            Swal.fire({
+                icon: 'info',
+                title: 'Calibracion EyeTracker',
+                text: 'No dejes de ver el circulo del centro y no muevas el raton'
+            }).then(()=>{
+                start_calulate_process((precision)=> {
+                    start_game(precision);
+                })
             })
-        })
+        });
+        document.getElementById('eye_tracker_loading').remove();
+        calibrate_eye_tracker_section.appendChild(calibration_area);
     });
-    calibrate_eye_tracker_section.appendChild(calibration_area);
 }
 
-function start_game() {
+function start_game(eye_tracker_precision) {
     calibrate_eye_tracker_section.remove();
     game_section.classList.remove('d-none');
-    handler_game_start();
+    handler_game_start(eye_tracker_precision);
 }
 
 function set_on_game_start(handler) {
     handler_game_start = handler;
 }
+
 export { set_on_game_start, eye_tracker};
