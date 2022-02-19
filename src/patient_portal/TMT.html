@@ -14,7 +14,23 @@
 {% block tutorial %} {% endblock %}
 
 <!-- game -->
-{% block game %} {% endblock %}
+{% block game %}
+<div
+  class="vw-100 d-flex justify-content-center"
+  id="image_container"
+>
+  <div id="points_container" class="patient_play">
+    <img
+      class="img-fluid img_behind_dots"
+      id="game_image"
+      alt="Esperando imagen para editar"
+      src=""
+    />
+  </div>
+</div>
+{% endblock %}
 
 <!-- script -->
-{% block script %} {% endblock %}
+{% block script %}
+    <script type="module" src="/assets/js/patient/games/TMT_config.js"></script>
+{% endblock %}

@@ -28,10 +28,10 @@ class EyeTracker {
         this.is_builded = true;
     }
 
-    get_eye_position() {
+    async get_eye_position() {
         if(!this.is_builded)
             throw 'EyeTracker is not build';
-        var prediction = webgazer.getCurrentPrediction();
+        var prediction = await webgazer.getCurrentPrediction();
         if (prediction) {
             var x = prediction.x;
             var y = prediction.y;
