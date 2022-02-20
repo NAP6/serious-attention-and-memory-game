@@ -9,6 +9,11 @@
         transition: height 0.5s;
     }
 
+    &:hover {
+        background: $dark;
+        opacity: 0.8;
+    }
+
     &.header-scrolled {
         background: $dark;
         opacity: 0.8;

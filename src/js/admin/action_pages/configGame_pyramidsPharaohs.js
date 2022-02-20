@@ -7,7 +7,7 @@ function load_game_config_form(game, alert, notyf, onSave) {
     var level_container = config_form.querySelector('div #level_acordion');
 
     var i = 0;
-    var obj = new PyramidsPharaohs(game.id, game.name, game.description);
+    var obj = new PyramidsPharaohs(game.id, game.name, game.description, game.group, game.maximum_attempsts);
 
 
     if(game.levels.length > 0) {
