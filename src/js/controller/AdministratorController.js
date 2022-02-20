@@ -28,6 +28,10 @@ class AdministratorController {
         this.value = !this.value;
         return this.value;
     }
+
+    static add_to_group(group_id) {
+        return true;
+    }
 }
 
 export { AdministratorController };
