@@ -14,7 +14,7 @@ function load_game_config_form(game, alert, notyf, onSave) {
     var btn_delete = config_form.querySelector('#btn_delete_level');
 
     var i = 0;
-    var obj = new TMT(game.id, game.name, game.description);
+    var obj = new TMT(game.id, game.name, game.description, game.group, game.maximum_attempsts);
     var active_points = [];
     var NOT_LEVEL_SELECTED = -6;
 
