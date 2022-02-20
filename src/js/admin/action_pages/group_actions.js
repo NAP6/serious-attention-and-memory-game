@@ -111,7 +111,7 @@ de investigacion '${obj.name}'.
 Para leer la descripcion del grupo y
 unirte para colaborar en ese, accede al
 siguiente enlace:
-${window.location.origin}/invitation?id=${obj.id}
+${window.location.origin}/invitation?groupCode=${obj.name}-${obj.id}
         `);
         grp.notyf.success('La invitacion ha sido copiada en el portapapeles.');
     };

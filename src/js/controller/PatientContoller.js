@@ -59,6 +59,10 @@ class PatientController {
         var patient = new Patient('', obj.name, obj.age, obj.gender, obj.schooling, obj.residence, obj.country_of_study, obj.image);
         return patient;
     }
+
+    static add_to_group(group_id) {
+        return true;
+    }
 }
 
 export { PatientController };
