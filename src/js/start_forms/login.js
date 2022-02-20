@@ -25,7 +25,7 @@ btn_login.onclick = ()=> {
             if(logedin.user == 'administrator') {
                 window.location.href = `${window.location.origin}/admin_portal/dashboard.html${window.location.search}`;
             } else {
-                alert('redirigir portal de paciente');
+                window.location.href = `${window.location.origin}/patient_portal/dashboard.html`;
             }
         } else {
             form.report_invalid_input('email', 'Usuario o contraseña invalidos');

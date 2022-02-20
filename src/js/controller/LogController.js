@@ -1,12 +1,12 @@
 class LogController {
     static login(email, password) {
-        var is_valid = (email == 'correo@ejemplo.com' && password == '123');
+        var is_valid = ((email == 'admin@ejemplo.com' || email == 'patient@ejemplo.com') && password == '123');
         var res;
         if(is_valid) {
             res = {
                 status: 'ok',
                 is_valid: is_valid,
-                user: 'administrator',
+                user: email == 'admin@ejemplo.com'? 'administrator': 'patient',
                 message: ''
             }
         } else {

@@ -27,4 +27,25 @@
             cursor: grabbing;
         }
     }
+
+    &.patient_play {
+        max-height: 100vh;
+        height: 100vh;
+
+        img {
+            height: 100%;
+        }
+
+        .points {
+            cursor: pointer;
+
+            &.sucssess {
+                background-color: rgba(46, 245, 39, 0.5);
+            }
+
+            &.error {
+                background-color: rgba(245, 39, 39, 0.5);
+            }
+        }
+    }
 }

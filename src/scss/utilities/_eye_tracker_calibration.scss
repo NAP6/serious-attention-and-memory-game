@@ -1,0 +1,15 @@
+.eye_tracker_calibration_container {
+    width: 100vw;
+    height: 100vh;
+
+    .Calibration {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: red;
+        opacity: 0.2;
+        border-color: black;
+        border-style: solid;
+        position: fixed;
+    }
+}

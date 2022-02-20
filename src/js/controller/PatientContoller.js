@@ -1,5 +1,7 @@
 import { Patient } from "../models/Patient.js";
 import { Group } from "../models/Group.js";
+import { TMTController } from "./TMTController.js";
+import { PyramidsPharaohsController } from "./PyramidsPharaohsController.js";
 
 class PatientController {
 
@@ -39,6 +41,18 @@ class PatientController {
     static insert(obj, user_id, group_code) {
         this.aux_alertar = !this.aux_alertar;
         return this.aux_alertar;
+    }
+
+    static get_active_patient() {
+        return new Patient(1, 'Nicolas', 24, 'Masculino', 'Tercer Nivel', 'Cuenca', 'Ecuador', null);
+    }
+
+    static get_pending_games(patient_id) {
+        var games = [];
+        games.push(TMTController.getById(1));
+        games.push(PyramidsPharaohsController.getById(1));
+
+        return games;
     }
 
     static toClass(obj) {

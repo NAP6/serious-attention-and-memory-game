@@ -1,0 +1,60 @@
+{% extends "patient_portal/game_template.html" %}
+
+<!-- meta -->
+{% block meta %}
+<title>Web</title>
+<meta content="" name="description" />
+<meta content="" name="keywords" />
+{% endblock %}
+
+<!-- style -->
+{% block style %} {% endblock %}
+
+<!-- tutorial -->
+{% block tutorial %} {% endblock %}
+
+<!-- game -->
+{% block game %}
+<div
+  class="container"
+  id="album_container"
+>
+  <div class="card shadow">
+    <div class="card-body">
+      <div class="py-3">
+        <h6 class="h4">Grupo Ejemplo</h6>
+        <hr />
+        <div class="container-fluid my-4">
+          <div
+            id="example_group_container"
+            class="row justify-content-center"
+          ></div>
+        </div>
+      </div>
+      <div class="py-3">
+        <h6 class="h4">Grupo Respuesta</h6>
+        <hr />
+        <div class="container-fluid my-4">
+          <div
+            id="answer_group_container"
+            class="row justify-content-center answer"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<template id="album_image_template">
+  <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+    <div class="album-container rounded shadow m-2 p-0">
+      <div class="album-image w-100 h-100"></div>
+    </div>
+  </div>
+</template>
+{% endblock %}
+
+<!-- script -->
+{% block script %}
+    <script type="module" src="/assets/js/patient/games/pyramids_and_pharaohs_config.js"></script>
+{% endblock %}

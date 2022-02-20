@@ -1,0 +1,36 @@
+{% extends "patient_portal/game_template.html" %}
+
+<!-- meta -->
+{% block meta %}
+<title>Web</title>
+<meta content="" name="description" />
+<meta content="" name="keywords" />
+{% endblock %}
+
+<!-- style -->
+{% block style %} {% endblock %}
+
+<!-- tutorial -->
+{% block tutorial %} {% endblock %}
+
+<!-- game -->
+{% block game %}
+<div
+  class="vw-100 d-flex justify-content-center"
+  id="image_container"
+>
+  <div id="points_container" class="patient_play">
+    <img
+      class="img-fluid img_behind_dots d-none"
+      id="game_image"
+      alt="Esperando imagen para editar"
+      src=""
+    />
+  </div>
+</div>
+{% endblock %}
+
+<!-- script -->
+{% block script %}
+    <script type="module" src="/assets/js/patient/games/TMT_config.js"></script>
+{% endblock %}
