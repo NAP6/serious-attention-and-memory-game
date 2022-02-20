@@ -1,3 +1,4 @@
+{% set only_game_section=false %}
 <!DOCTYPE html>
 <html lang="es">
   <head>
@@ -18,7 +19,7 @@
 
   <body>
     <main>
-      <section id="tuorial_section">
+      <section id="tuorial_section" {% if only_game_section %}class="d-none"{% endif %}>
         {% block tutorial %}{% endblock %}
         <div class="text-center mt-4 mb-2">
           <button type="button" class="btn btn-primary" id="btn_skip_tutorial">
@@ -37,7 +38,7 @@
           </div>
         </div>
       </section>
-      <section id="game_section" class="d-none">
+      <section id="game_section" {% if not only_game_section %}class="d-none"{% endif %}>
         {% block game %}{% endblock %}
         <div id="sending_match" class="d-flex justify-content-center align-items-center vh-100 d-none fixed-top">
           <div class="text-center">

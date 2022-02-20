@@ -79,4 +79,20 @@
         background-position: center;
 
     }
+
+    &.patient_game {
+        &::after {
+            content: '';
+            background-color: transparent;
+            transform: translateY(0);
+        }
+
+        &.sucssess::after {
+            background-color: rgba(46, 245, 39, 0.5);;
+        }
+        
+        &.error::after {
+            background-color: rgba(245, 39, 39, 0.5);
+        }
+    }
 }

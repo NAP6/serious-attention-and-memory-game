@@ -1,21 +1,22 @@
 import { MatchCrontroller } from '../../controller/MatchController.js';
-import { TMTController } from '../../controller/TMTController.js';
+import { PyramidsPharaohsController } from '../../controller/PyramidsPharaohsController.js';
 import { Match } from '../../models/Match.js';
 import { set_on_game_start, eye_tracker } from '../game_start.js';
 
-var active_points = [];
-var points_container = document.getElementById('points_container');
-var game_image = document.getElementById('game_image');
-var correct_next_pos = 0;
 var index_level = -1;
 var eye_tracking_interval_id;
 var interval_milisecons_to_capture_eye_position = 100;
+var number_of_correct_answers = 0;
+var number_of_answer_found = 0;
+var active_points = [];
+var exaple_group = document.getElementById('example_group_container');
+var answer_group = document.getElementById('answer_group_container');
 
 var search_params_string = window.location.search;
 var search_params = new URLSearchParams(search_params_string);
 var id = search_params.get('game_id');
-var tmt = TMTController.getById(id);
-var this_match = new Match(null, tmt, tmt.group);
+var pap = PyramidsPharaohsController.getById(id);
+var this_match = new Match(null, pap, pap.group);
 set_on_game_start(game_start);
 
 function game_start(eye_tracker_precision) {
@@ -24,22 +25,19 @@ function game_start(eye_tracker_precision) {
 }
 
 function next_level() {
-    game_image.src = "";
-    game_image.classList.add('d-none');
-    active_points.every((itm)=> {itm.remove(); return true;});
-    active_points = [];
-    if(index_level + 1 >= tmt.levels.length) {
+    if(index_level + 1 >= pap.levels.length) {
         this_match.finish_level(index_level);
         finish_game();
     } else {
-        correct_next_pos = 0;
         index_level++;
         Swal.fire(
           `Nivel ${index_level+1}`,
           'Preciona Ok para inicar',
           'info'
         ).then(()=>{
-            charge_level(tmt.levels[index_level], index_level);
+            number_of_answer_found = 0;
+            number_of_correct_answers = 0;
+            charge_level(pap.levels[index_level], index_level);
             if(index_level == 0) {
                 this_match.start();
                 eye_tracking_interval_id = setInterval(record_eye_tracking, interval_milisecons_to_capture_eye_position);
@@ -53,6 +51,7 @@ function next_level() {
 function finish_game() {
     this_match.finish();
     clearInterval(eye_tracking_interval_id);
+    document.getElementById('album_container').remove();
     Swal.fire(
       `Terminaste`,
       'En hora buena, has terminado todos los niveles, porfavor envianos los datos',
@@ -64,66 +63,18 @@ function finish_game() {
     });
 }
 
-function charge_level(level, level_index) {
-    if(level){
-        game_image.src = level.image;
-        game_image.classList.remove('d-none');
-        var executed = false;
-        function load_points() {
-            if(game_image.src && game_image.src != '') {
-                active_points.every((itm)=> {itm.remove(); return true;});
-                active_points = [];
-                if(game_image.width != 0 && game_image.height !=0 && !executed) {
-                    executed = true;
-                    for(let point of level.points) {
-                        print_point(point, level_index);
-                    }
-                } else if(!executed) {
-                    setTimeout(load_points,200);
-                }
-            }
-        }
-        load_points();
-    } else {
-        game_image.classList.add('d-none');
-        game_image.src = '';
-        active_points.every((itm)=> {itm.remove(); return true;});
-        active_points = [];
-    }
-}
-
-function print_point(point=null, level_index) {
-    var circle = document.createElement('div');
-    circle.classList.add('points');
-
-    points_container.appendChild(circle);
-    active_points.push(circle);
-    var pos = point.recalculate_inner_position(
-        game_image.offsetLeft,
-        game_image.offsetTop,
-        game_image.width,
-        game_image.height
-    );
-    circle.style.top = `${pos.y}px`;
-    circle.style.left = `${pos.x}px`;
-    circle.style.width = pos.diameter + 'px';
-    circle.style.height = pos.diameter + 'px';
-    var index_point = active_points.length - 1;
-    circle.onclick = ()=> {
-        answer(point, circle, index_point, level_index);
-    };
-
-    return point;
-}
-
-function answer(point, element, index_point, level_index) {
-    if(index_point == correct_next_pos) {
-        correct_point(point, element, index_point, level_index);
-        correct_next_pos++;
-    } else {
+function answer(point, element, index_point, level_index, is_example, is_correct_answer) {
+    if(is_example) {
         error_point(point, element, index_point, level_index);
+    } else {
+        if(is_correct_answer) {
+            correct_point(point, element, index_point, level_index);
+            number_of_answer_found++;
+        } else {
+            error_point(point, element, index_point, level_index);
+        }
     }
-    if(correct_next_pos == active_points.length) {
+    if(number_of_correct_answers == number_of_answer_found) {
         next_level();
     }
 }
@@ -172,3 +123,41 @@ async function record_eye_tracking() {
     this_match.register_eye_position(eye.x, eye.y);
 }
 
+function charge_level(level, level_index) {
+    if(level){
+        number_of_correct_answers = level.pp_answer.filter((img)=>{ return img.selected }).length;
+        active_points.every((itm)=> {itm.remove(); return true;});
+        active_points = [];
+        for(let image of level.pp_example) {
+            var elem = chage_image(image, level_index, true);
+            exaple_group.appendChild(elem);
+            active_points.push(elem);
+        }
+        for(let image of level.pp_answer) {
+            var elem = chage_image(image, level_index, false);
+            answer_group.appendChild(elem);
+            active_points.push(elem);
+        }
+    }
+}
+
+function chage_image(image='', level_index, is_example) {
+    var image_item = document.getElementById('album_image_template')
+        .content.cloneNode(true);
+    var container = image_item.querySelector('.album-container');
+    container.classList.add('patient_game');
+    container.children[0].style.backgroundImage = `url(${image.image})`;
+    var index_image;
+    var is_correct_answer = false;
+    if(is_example) {
+        container.classList.add('example');
+        index_image = pap.levels[level_index].pp_example.indexOf(image);
+    } else {
+        is_correct_answer = image.selected;
+        container.classList.add('answer');
+        index_image = pap.levels[level_index].pp_answer.indexOf(image);
+    }
+    container.onclick = ()=>{ answer(image, container, index_image, level_index, is_example, is_correct_answer); };
+
+    return image_item.querySelector('div');
+}

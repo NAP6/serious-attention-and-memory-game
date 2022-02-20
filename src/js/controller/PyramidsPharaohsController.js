@@ -5,9 +5,16 @@ import { GroupController } from './GroupContoller.js';
 class PyramidsPharaohsController {
 
     static getById(id) {
-        if(!id) throw(['Se nececita un id']);
-        var group = new PyramidsPharaohs(1, 'Primer Juego', 'Es un juego de prueba', 'El Grupo');
-        return group;
+        var game = new PyramidsPharaohs(id, `Juego ${id}`, `Descripcion ${id}`, new Group(id, 'Grupo '+id, 'Des'));
+        game.add_level(
+            Array(3).fill('https://www.paturros.es/wp-content/uploads/2021/01/comprar-patito-goma-doc-brown.jpg'), 
+            Array(3).fill('https://www.paturros.es/wp-content/uploads/2021/01/comprar-patito-goma-marty-mcfly.jpg')
+            ,[1])
+        game.add_level(
+            Array(3).fill('https://www.paturros.es/wp-content/uploads/2021/01/comprar-patito-goma-marty-mcfly.jpg'),
+            Array(3).fill('https://www.paturros.es/wp-content/uploads/2021/01/comprar-patito-goma-doc-brown.jpg'), 
+            [0,2])
+        return game;
     }
 
     static getAll() {
