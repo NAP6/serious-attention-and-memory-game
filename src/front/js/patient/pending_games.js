@@ -29,9 +29,9 @@ if(games_list && games_list.length > 0) {
 
 function play_game(game) {
     if(game instanceof TMT) {
-        window.location.href = `${window.location.origin}/patient_portal/TMT.html?game_id=${game.id}`;
+        window.location.href = `${window.location.origin}/patient/tmt?game_id=${game.id}`;
     }
     else if(game instanceof PyramidsPharaohs) {
-        window.location.href = `${window.location.origin}/patient_portal/pyramids_and_pharaohs.html?game_id=${game.id}`;
+        window.location.href = `${window.location.origin}/patient/pdp?game_id=${game.id}`;
     }
 }
