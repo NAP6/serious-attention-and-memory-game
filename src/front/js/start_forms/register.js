@@ -129,7 +129,8 @@ btn_register.onclick = async ()=> {
                             var admin = AdministratorController.toClass(obj);
                             var is_registed = AdministratorController.insert(admin, id);
                             if(is_registed) {
-                                window.location.href = `${window.location.origin}/admin_portal/dashboard.html${window.location.search}`;
+                                await LogController.login(obj.email, obj.password)
+                                window.location.href = `${window.location.origin}/admin${window.location.search}`;
                             } else {
                                 Swal.fire({
                                     icon: 'error',
@@ -142,7 +143,8 @@ btn_register.onclick = async ()=> {
                             var patient = PatientController.toClass(obj);
                             var is_registed = PatientController.insert(patient, id, obj.group);
                             if(is_registed) {
-                                window.location.href = `${window.location.origin}/patient_portal/dashboard.html`;
+                                await LogController.login(obj.email, obj.password)
+                                window.location.href = `${window.location.origin}/patient`;
                             } else {
                                 Swal.fire({
                                     icon: 'error',

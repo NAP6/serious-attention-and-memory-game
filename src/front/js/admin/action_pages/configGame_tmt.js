@@ -1,4 +1,4 @@
-import { TMT, TMTPoint } from '../../../../models/TMT.js';
+import { TMT, TMTPoint } from '../../../../TMT.js';
 
 function load_game_config_form(game, alert, notyf, onSave) {
     var config_form = document.getElementById('config_game_template')

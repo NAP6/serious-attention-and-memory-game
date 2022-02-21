@@ -23,9 +23,9 @@ btn_login.onclick = async ()=> {
     if(form.valid_required_are_filled) {
         if(logedin.is_logged) {
             if(logedin.user == 'administrator') {
-                window.location.href = `${window.location.origin}/admin_portal/dashboard.html${window.location.search}`;
+                window.location.href = `${window.location.origin}/admin${window.location.search}`;
             } else {
-                window.location.href = `${window.location.origin}/patient_portal/dashboard.html`;
+                window.location.href = `${window.location.origin}/patient`;
             }
         } else {
             form.report_invalid_input('email', 'Usuario o contraseña invalidos');

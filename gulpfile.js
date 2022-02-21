@@ -98,12 +98,12 @@ function copile_HTML() {
     for (let dependency in dependencies) {
         if (dependencies[dependency].css_link !== undefined) {
             for(let l of dependencies[dependency].css_link){
-                css_links +=`<link href="/${resource_dir+l}" rel="stylesheet">\n`;
+                css_links +=`<link href="/${l}" rel="stylesheet">\n`;
             }
         }
         if (dependencies[dependency].js_link !== undefined) {
             for(let l of dependencies[dependency].js_link){
-                js_links +=`<script src="/${resource_dir+l}"></script>\n`;
+                js_links +=`<script src="/${l}"></script>\n`;
             }
         }
     }

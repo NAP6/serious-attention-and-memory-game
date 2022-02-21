@@ -37,7 +37,7 @@ class LogController {
     static logout(req, res) {
         req.session.is_logged = false;
         req.session.user_type = '';
-        rez.session.active_user = null;
+        req.session.active_user = null;
         res.json({is_logout: true});
     }
 
@@ -45,20 +45,15 @@ class LogController {
         var email = req.body.email;
         if(email && (email == 'admin@ejemplo.com' || email == 'patient@ejemplo.com')) {
             res.json({is_email_found: true});
+        } else {
+            res.json({is_email_found: false});
         }
-        res.json({is_email_found: false});
     }
 
-    static value = true;
     static register(req, res) {
         var email = req.body.email;
         var password = req.body.password;
-        this.value = !this.value;
-        if(this.value) {
             res.json({inserted_id: 1});
-        } else {
-            res.json({inserted_id: false});
-        }
     }
 
     static delete(req, res) {

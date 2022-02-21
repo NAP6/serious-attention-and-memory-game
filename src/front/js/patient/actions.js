@@ -1,5 +1,6 @@
 import { start_sidebar } from '../helper_models/sidebar.js';
 import { PatientController } from '../controller/PatientContoller.js';
+import { LogController } from '../controller/LogController.js';
 
 start_sidebar();
 
@@ -12,7 +13,7 @@ if(patient.image)
 document.getElementById('btn_logout').onclick = async ()=> {
     var is_logout = await LogController.logout();
     if(is_logout) {
-        window.location.href = `${window.location.origin}/index.html`;
+        window.location.href = `${window.location.origin}/`;
     }
 };
 

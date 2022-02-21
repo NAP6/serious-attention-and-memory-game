@@ -1,7 +1,7 @@
 import { PatientController } from "../controller/PatientContoller.js";
 import { Table } from "../helper_models/Table.js";
-import { TMT } from "../../../models/TMT.js";
-import { PyramidsPharaohs } from "../../../models/PyramidsPharaohs.js";
+import { TMT } from "../../../TMT.js";
+import { PyramidsPharaohs } from "../../../PyramidsPharaohs.js";
 
 var no_game_container = document.getElementById('no_games');
 var game_list_container = document.getElementById('game_list');

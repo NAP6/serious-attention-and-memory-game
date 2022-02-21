@@ -4,10 +4,11 @@ import body_parser from "body-parser";
 import morgan from "morgan";
 
 class Server {
-    constructor(port, static_route, routes, api) {
+    constructor(port, statics_route, routes) {
         this.app = express();
 
-        this.app.use(express.static(static_route));
+        for(let sr of statics_route)
+            this.app.use(express.static(sr));
         this.app.use(morgan('dev'));
         this.app.use(session({
           secret: 'keyboard cat',
@@ -17,8 +18,8 @@ class Server {
         this.app.use(body_parser.json());
         this.app.use(body_parser.urlencoded());
 
-        this.app.use(routes);
-        this.app.use(api);
+        for(let r of routes)
+            this.app.use(r);
 
         this.port = port;
     }

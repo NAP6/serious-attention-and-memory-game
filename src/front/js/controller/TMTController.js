@@ -1,5 +1,5 @@
-import { TMT, TMTPoint } from '../../../models/TMT.js';
-import { Group } from '../../../models/Group.js';
+import { TMT, TMTPoint } from '../../../TMT.js';
+import { Group } from '../../../Group.js';
 import { GroupController } from './GroupContoller.js';
 
 class TMTController {

@@ -14,7 +14,7 @@ if(admin.image)
 document.getElementById('btn_logout').onclick = async ()=> {
     var is_logout = await LogController.logout();
     if(is_logout) {
-        window.location.href = `${window.location.origin}/index.html`;
+        window.location.href = `${window.location.origin}/`;
     }
 };
 
