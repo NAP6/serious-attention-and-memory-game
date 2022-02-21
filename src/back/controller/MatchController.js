@@ -1,4 +1,4 @@
-import { Match } from '../../../models/Match.js';
+import { Match } from '../../models/Match.js';
 
 class MatchCrontroller {
     static get_by_patient(patient_id) {

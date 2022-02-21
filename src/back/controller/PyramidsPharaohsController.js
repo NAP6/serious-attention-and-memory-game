@@ -1,5 +1,5 @@
-import { PyramidsPharaohs } from '../../../models/PyramidsPharaohs.js';
-import { Group } from '../../../models/Group.js';
+import { PyramidsPharaohs } from '../../models/PyramidsPharaohs.js';
+import { Group } from '../../models/Group.js';
 import { GroupController } from './GroupContoller.js';
 
 class PyramidsPharaohsController {

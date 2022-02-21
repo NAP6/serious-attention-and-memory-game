@@ -1,5 +1,5 @@
-import { Administrator } from '../../../models/Administrator.js';
-import {Group} from '../../../models/Group.js';
+import { Administrator } from '../../models/Administrator.js';
+import {Group} from '../../models/Group.js';
 
 class AdministratorController {
     static getById(id) {

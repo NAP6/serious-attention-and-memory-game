@@ -1,5 +1,6 @@
 import { start_sidebar } from '../helper_models/sidebar.js';
 import { AdministratorController } from '../controller/AdministratorController.js';
+import { LogController } from '../controller/LogController.js';
 
 start_sidebar();
 
@@ -8,6 +9,14 @@ var admin = AdministratorController.get_active_adminitrator();
 document.getElementById('admin_profile_name').innerText = admin.name;
 if(admin.image)
     document.getElementById('admin_profile_image').setAttribute("src", admin.image);
+
+//set logout action
+document.getElementById('btn_logout').onclick = async ()=> {
+    var is_logout = await LogController.logout();
+    if(is_logout) {
+        window.location.href = `${window.location.origin}/index.html`;
+    }
+};
 
 //join to new group
 var query = window.location.search;

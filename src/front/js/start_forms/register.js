@@ -113,16 +113,16 @@ btn_select_patient.onclick = ()=> {
     }
 }
 
-btn_register.onclick = ()=> {
+btn_register.onclick = async ()=> {
     if(user_is_admin != null) {
         var is_valid = form.valid_required_are_filled();
         if(is_valid) {
             var obj = form.getObject();
             if(obj.password == obj.confirm_password) {
-                if(LogController.search_email(obj.email)) {
+                if(await LogController.search_email(obj.email)) {
                     form.report_invalid_input('email', 'El correo ya esta en uso');
                 } else {
-                    var id = LogController.register(obj.email, obj.password);
+                    var id = await LogController.register(obj.email, obj.password);
                     if(id) {
                         obj.image = loaded_image;
                         if(user_is_admin) {
@@ -136,7 +136,7 @@ btn_register.onclick = ()=> {
                                     title: 'Oops...',
                                     text: 'Algo salio mal no se pudo completar el registro'
                                 })
-                                LogController.delete(id);
+                                await LogController.delete(id);
                             }
                         } else {
                             var patient = PatientController.toClass(obj);
@@ -149,7 +149,7 @@ btn_register.onclick = ()=> {
                                     title: 'Oops...',
                                     text: 'Algo salio mal no se pudo completar el registro'
                                 })
-                                LogController.delete(id);
+                                await LogController.delete(id);
                             }
                         }
                     } else {

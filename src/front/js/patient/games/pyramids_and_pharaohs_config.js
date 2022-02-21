@@ -1,6 +1,6 @@
 import { MatchCrontroller } from '../../controller/MatchController.js';
 import { PyramidsPharaohsController } from '../../controller/PyramidsPharaohsController.js';
-import { Match } from '../../models/Match.js';
+import { Match } from '../../../../models/Match.js';
 import { set_on_game_start, eye_tracker } from '../game_start.js';
 
 var index_level = -1;

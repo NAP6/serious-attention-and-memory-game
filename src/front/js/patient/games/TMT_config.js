@@ -1,6 +1,6 @@
 import { MatchCrontroller } from '../../controller/MatchController.js';
 import { TMTController } from '../../controller/TMTController.js';
-import { Match } from '../../models/Match.js';
+import { Match } from '../../../../models/Match.js';
 import { set_on_game_start, eye_tracker } from '../game_start.js';
 
 var active_points = [];

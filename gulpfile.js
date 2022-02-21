@@ -1,3 +1,5 @@
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
 const del = require("del");
 const gulp = require("gulp");
 const browser_sync = require("browser-sync").create();
@@ -7,7 +9,7 @@ const beautify = require("gulp-beautify");
 const merge_stream = require("merge-stream");
 const sass = require("gulp-sass")(require("sass"));
 const autoPrefixer = require("gulp-autoprefixer");
-const nodemon = require('gulp-nodemon');
+const { fork } = require("child_process");
 
 const pkg = require("./package.json");
 const dependencies = require("./dependencies.json");
@@ -196,28 +198,77 @@ function copile_back_js() {
         .pipe(gulp.dest(`${copiled_dir}`));
 }
 
+
+/*
+* Init live server browser sync
+*
+* Start the browser to see changes
+*/
+function init_browser_sync(done) {
+    browser_sync.init(null, {
+        proxy: "http://localhost:3000/",
+        files: [`${copiled_dir + front}`],
+        port: 7000,
+    });
+    done();
+}
+
 /*
  * Init nodemon and live server browser sync
  *
  * Start the server with nodemon
  * Start the browser to see changes
  */
-function init_nodemon(cb) {
-    var started = false;
-    return nodemon({
-        script: copiled_dir + main_file
-    }).on('start', function () {
-        //to avoid nodemon being started multiple times
-        if (!started) {
-            cb();
-            started = true; 
-            browser_sync.init(null, {
-            proxy: "http://localhost:3000/",
-            files: [`${copiled_dir + front}`],
-            port: 7000,
+//function init_nodemon(cb) {
+    //var started = false;
+    //return nodemon({
+        //script: copiled_dir + main_file
+    //}).on('start', function () {
+        ////to avoid nodemon being started multiple times
+        //if (!started) {
+            //cb();
+            //started = true; 
+            //browser_sync.init(null, {
+            //proxy: "http://localhost:3000/",
+            //files: [`${copiled_dir + front}`],
+            //port: 7000,
+            //});
+        //} 
+    //});
+//}
+const server = {
+    instance: {},
+    path: copiled_dir + main_file,
+
+    start: ( callback )=> {
+        if(!server.instance.connected) {
+            process.execArgv.push( '--harmony'  );
+            server.instance = fork(server.path);
+            console.log(`Starting: server (PID: ${server.instance.pid})`);
+        } else
+            console.log('Problems on start server');
+        if( callback ) callback();
+    },
+
+    stop: ( callback )=> {
+        if(server.instance.connected) {
+            server.instance.on('close', (code)=> {
+                console.log(`Stopping: server (PID: ${server.instance.pid}, Code: ${code})`);
+                if( callback ) callback();
             });
-        } 
-    });
+            server.instance.kill( 'SIGINT'  );
+            return true;
+        }
+        return false;
+    },
+
+    restart: ( callback )=> {
+        console.log('Restarting Server')
+        var was_started = server.stop(server.start);
+        if(!was_started) 
+            server.start();
+        if( callback ) callback();
+    }
 }
 
 /*
@@ -231,7 +282,7 @@ function watch_files() {
     gulp.watch(`${src_dir + front + resource_dir}**/*`, copy_files)
     gulp.watch(`${src_dir + front}scss/**/*`, copile_scss)
     gulp.watch(`${src_dir + front}js/**/*`, copile_front_js)
-    gulp.watch([`${src_dir}**/*.js`, `!${src_dir + front}**/*.js`], copile_back_js)
+    gulp.watch([`${src_dir}**/*.js`, `!${src_dir + front}**/*.js`], gulp.series([copile_back_js, server.restart]))
 }
 
 
@@ -243,6 +294,7 @@ const create_copiled_dir = gulp.series(clean,
 
 
 //Export tasks
-exports.watch = gulp.series(create_copiled_dir, watch_files);
-exports.start = gulp.series(create_copiled_dir, gulp.parallel(watch_files, init_nodemon));
-exports.default = create_copiled_dir;
+gulp.task("default", create_copiled_dir);
+gulp.task("watch", gulp.series(create_copiled_dir, watch_files));
+gulp.task("start", gulp.series(create_copiled_dir,
+    gulp.parallel(watch_files, gulp.series(server.start, init_browser_sync))));

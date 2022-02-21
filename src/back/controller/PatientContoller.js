@@ -1,5 +1,5 @@
-import { Patient } from "../../../models/Patient.js";
-import { Group } from "../../../models/Group.js";
+import { Patient } from "../../models/Patient.js";
+import { Group } from "../../models/Group.js";
 import { TMTController } from "./TMTController.js";
 import { PyramidsPharaohsController } from "./PyramidsPharaohsController.js";
 

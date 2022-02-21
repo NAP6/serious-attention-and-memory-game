@@ -1,4 +1,4 @@
-import { PyramidsPharaohs, PPImage } from '../../models/PyramidsPharaohs.js';
+import { PyramidsPharaohs, PPImage } from '../../../../models/PyramidsPharaohs.js';
 
 function load_game_config_form(game, alert, notyf, onSave) {
     var config_form = document.getElementById('config_game_template')

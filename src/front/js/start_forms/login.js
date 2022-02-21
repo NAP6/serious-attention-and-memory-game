@@ -16,12 +16,12 @@ var form_structure = {
 var form = new Form('login_form', form_structure, container);
 var btn_login = document.getElementById('btn_login');
 
-btn_login.onclick = ()=> {
+btn_login.onclick = async ()=> {
     var user = form.getObject();
-    var logedin = LogController.login(user.email, user.password);
+    var logedin = await LogController.login(user.email, user.password);
 
     if(form.valid_required_are_filled) {
-        if(logedin.is_valid) {
+        if(logedin.is_logged) {
             if(logedin.user == 'administrator') {
                 window.location.href = `${window.location.origin}/admin_portal/dashboard.html${window.location.search}`;
             } else {

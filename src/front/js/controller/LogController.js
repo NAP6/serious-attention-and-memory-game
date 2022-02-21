@@ -1,48 +1,35 @@
+import { post_api } from "../helper_models/post_api.js";
+
 class LogController {
-    static login(email, password) {
-        var is_valid = ((email == 'admin@ejemplo.com' || email == 'patient@ejemplo.com') && password == '123');
-        var res;
-        if(is_valid) {
-            res = {
-                status: 'ok',
-                is_valid: is_valid,
-                user: email == 'admin@ejemplo.com'? 'administrator': 'patient',
-                message: ''
-            }
-        } else {
-            res = {
-                status: 'error',
-                is_valid: is_valid,
-                user: '',
-                message: 'Usuario no Encontrado'
-            }
-        }
+    static async login(email, password) {
+        var data = {email: email, password: password};
+        var res = await post_api(`${window.location.origin}/api/login`, data);
         return res;
     }
 
-    static logout() {
-        return true;
+    static async logout() {
+        var data = {logout: true};
+        var res = await post_api(`${window.location.origin}/api/logout`, data);
+        return res.is_logout;
     }
 
-    static search_email(email) {
-        if(email == 'correo@ejemplo.com') {
-            return true;
-        }
-        return false;
+    static async search_email(email) {
+        var data = {email: email};
+        var res = await post_api(`${window.location.origin}/api/search_email`, data);
+        return res.is_email_found;
     }
 
     static value = true;
-    static register(email, password) {
-        this.value = !this.value;
-        if(this.value) {
-            return 1;
-        } else {
-            return false;
-        }
+    static async register(email, password) {
+        var data = {email: email, password: password};
+        var res = await post_api(`${window.location.origin}/api/register`, data);
+        return res.inserted_id;
     }
 
-    static delete(id) {
-        return true;
+    static async delete(id) {
+        var data = {id: id};
+        var res = await post_api(`${window.location.origin}/api/delete`, data);
+        return res.is_deleted;
     }
 }
 

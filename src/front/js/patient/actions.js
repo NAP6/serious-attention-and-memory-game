@@ -8,6 +8,14 @@ document.getElementById('patient_profile_name').innerText = patient.name;
 if(patient.image)
     document.getElementById('patient_profile_image').setAttribute("src", patient.image);
 
+//set logout action
+document.getElementById('btn_logout').onclick = async ()=> {
+    var is_logout = await LogController.logout();
+    if(is_logout) {
+        window.location.href = `${window.location.origin}/index.html`;
+    }
+};
+
 //join to new group
 var query = window.location.search;
 var params = new URLSearchParams(query);
