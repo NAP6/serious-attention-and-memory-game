@@ -214,28 +214,9 @@ function init_browser_sync(done) {
 }
 
 /*
- * Init nodemon and live server browser sync
+ * Structure to start, stop and restart the server
  *
- * Start the server with nodemon
- * Start the browser to see changes
  */
-//function init_nodemon(cb) {
-    //var started = false;
-    //return nodemon({
-        //script: copiled_dir + main_file
-    //}).on('start', function () {
-        ////to avoid nodemon being started multiple times
-        //if (!started) {
-            //cb();
-            //started = true; 
-            //browser_sync.init(null, {
-            //proxy: "http://localhost:3000/",
-            //files: [`${copiled_dir + front}`],
-            //port: 7000,
-            //});
-        //} 
-    //});
-//}
 const server = {
     instance: {},
     path: copiled_dir + main_file,
