@@ -65,12 +65,13 @@ class PatientController {
     static async get_pending_games(req, res) {
         var patient_id = req.body.patient_id;
         console.log(patient_id);
-        var games = [];
+        var tmts = [];
+        var pdps = [];
 
-        games.push(await TMTController.getById(1));
-        games.push(await PyramidsPharaohsController.getById(1));
+        tmts.push(await TMTController.getById(1));
+        pdps.push(await PyramidsPharaohsController.getById(1));
 
-        res.json(games);
+        res.json({tmts: tmts, pdps: pdps});
     }
 
     static async add_to_group(req, res) {

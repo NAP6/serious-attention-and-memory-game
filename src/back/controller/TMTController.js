@@ -22,7 +22,7 @@ class TMTController {
 
     static async getById_external(req, res) {
         var id = req.body.id;
-        var tmt = await this.getById(id);
+        var tmt = await TMTController.getById(id);
         res.json(tmt);
     }
 

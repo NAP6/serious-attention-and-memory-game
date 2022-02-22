@@ -7,11 +7,11 @@ var eye_tracker = new EyeTracker();
 var handler_game_start;
 
 var btn_skip_tutorial = document.getElementById('btn_skip_tutorial');
-btn_skip_tutorial.onclick = ()=> {
+btn_skip_tutorial.onclick = async ()=> {
     tutorial_section.classList.add('d-none');
     calibrate_eye_tracker_section.classList.remove('d-none');
 
-    start_calibration_area();
+    await start_calibration_area();
 }
 
 async function start_calibration_area() {

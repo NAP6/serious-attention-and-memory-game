@@ -1,6 +1,8 @@
 import { Patient } from "../../../Patient.js";
 import { post_api } from "../helper_models/post_api.js";
 import { GroupController } from "./GroupContoller.js";
+import { TMTController } from "./TMTController.js";
+import { PyramidsPharaohsController } from "./PyramidsPharaohsController.js";
 
 class PatientController {
     static toClass(obj) {
@@ -11,6 +13,7 @@ class PatientController {
     static async get_active_patient() {
         var data = {};
         var res = await post_api(`${window.location.origin}/api/patient/get_active_patient`, data);
+        res = PatientController.toClass(res);
         console.log(res);
         return res;
     }
@@ -52,6 +55,16 @@ class PatientController {
     static async get_pending_games(patient_id) {
         var data = {patient_id: patient_id};
         var res = await post_api(`${window.location.origin}/api/patient/get_pending_games`, data);
+        var tmt = [];
+        for(let t of res.tmts) {
+            tmt.push(await TMTController.toClass(t));
+        }
+        var pdp = [];
+        for(let p of res.pdps) {
+            pdp.push(await PyramidsPharaohsController.toClass(p));
+        }
+
+        res = [].concat(tmt, pdp);
         console.log(res);
         return res;
     }

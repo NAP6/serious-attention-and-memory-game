@@ -6,8 +6,8 @@ import { PyramidsPharaohs } from "../../../PyramidsPharaohs.js";
 var no_game_container = document.getElementById('no_games');
 var game_list_container = document.getElementById('game_list');
 
-var patient_id = await PatientController.get_active_patient().id;
-var games_list = await PatientController.get_pending_games(patient_id);
+var active_patient = await PatientController.get_active_patient();
+var games_list = await PatientController.get_pending_games(active_patient.id);
 
 if(games_list && games_list.length > 0) {
     game_list_container.classList.remove('d-none');

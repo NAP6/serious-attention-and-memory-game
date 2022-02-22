@@ -16,19 +16,3 @@ var router = Router(FRONT_PATH);
 
 var server = new Server(PORT, [MODELS_PATH, FRONT_ASSETS_PATH], [router, api]);
 server.start();
-
-
-
-
-// simple express server
-//var express = require('express');
-
-//var app = express();
-//var router = express.Router();
-
-//app.use(express.static(path.join(__dirname, 'front')));
-//app.get('/', function(req, res) {
-    //res.sendfile('index.html');
-//});
-
-//app.listen(3000);

@@ -59,7 +59,7 @@ function finish_game() {
     ).then(async ()=>{
         document.getElementById('sending_match').classList.remove('d-none');
         await MatchCrontroller.insert(this_match);
-        window.location.href = `${window.location.origin}/patient_portal/dashboard.html`;
+        window.location.href = `${window.location.origin}/patient`;
     });
 }
 

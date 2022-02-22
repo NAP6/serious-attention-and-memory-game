@@ -8,6 +8,7 @@ class PyramidsPharaohsController {
     static async getById(id) {
         var data = {id: id};
         var res = await post_api(`${window.location.origin}/api/pdp/getById`, data);
+        res = await PyramidsPharaohsController.toClass(res);
         console.log(res);
         return res;
     }

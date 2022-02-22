@@ -8,6 +8,7 @@ class TMTController {
     static async getById(id) {
         var data = {id: id};
         var res = await post_api(`${window.location.origin}/api/tmt/getById`, data);
+        res = await TMTController.toClass(res);
         console.log(res);
         return res;
     }
@@ -51,10 +52,10 @@ class TMTController {
         }
         var new_obj = new TMT(obj.id, obj.name, obj.description, group, obj.maximum_attempsts);
         if(obj.levels && obj.levels.length > 0)
-            for(var level of obj.levels) {
+            for(let level of obj.levels) {
                 var new_level = new TMTLevel(level.image, [], level.label_image);
-                for(point of level.points) {
-                    var new_point = new TMTPoint(point.diamener, point.left, point.top, point.ax_left, point.ax_top, point.ax_width, point.ax_height);
+                for(let point of level.points) {
+                    var new_point = new TMTPoint(point.diameter, point.left, point.top, point.ax_left, point.ax_top, point.ax_width, point.ax_heigth);
                     new_level.points.push(new_point);
                     }
                 new_obj.levels.push(new_level);

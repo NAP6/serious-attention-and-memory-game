@@ -16,10 +16,10 @@ class EyeTracker {
     async build() {
         webgazer.params.showVideoPreview = true;
         await webgazer.setRegression('ridge')
-            .setGazeListener(function(data, clock) {
-            //console.log(data);
-            //console.log(clock);
-            })
+            // .setGazeListener(function(data, clock) {
+            // //console.log(data);
+            // //console.log(clock);
+            // })
         .begin();
 
         webgazer.showVideoPreview(this.show_camera)
@@ -41,8 +41,9 @@ class EyeTracker {
     }
 
     async calibration_area(calculate_presition_handler) {
-        if(!this.is_builded)
+        if(!this.is_builded){
             await this.build();
+        }
         var div = document.createElement('div');
         div.classList.add('eye_tracker_calibration_container');
         var canvas = document.createElement('canvas');
