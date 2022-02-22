@@ -4,7 +4,7 @@ import { LogController } from '../controller/LogController.js';
 
 start_sidebar();
 
-var patient = PatientController.get_active_patient();
+var patient = await PatientController.get_active_patient();
 document.getElementById('patient_profile_name').innerText = patient.name;
 if(patient.image)
     document.getElementById('patient_profile_image').setAttribute("src", patient.image);
@@ -35,10 +35,10 @@ if(gorupCode) {
             right bottom
             no-repeat
             `
-    }).then((result)=> {
+    }).then(async (result)=> {
         var notyf = new Notyf();
         if(result.isConfirmed) {
-            var is_added = PatientController.add_to_group(gorupCode.split('-')[1]);
+            var is_added = await PatientController.add_to_group(gorupCode.split('-')[1]);
             console.log(is_added)
             if(is_added) {
                 notyf.success('Ahora perteneces al grupo');

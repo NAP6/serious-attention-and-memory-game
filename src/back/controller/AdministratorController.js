@@ -2,35 +2,43 @@ import { Administrator } from '../../models/Administrator.js';
 import {Group} from '../../models/Group.js';
 
 class AdministratorController {
-    static getById(id) {
+    static async getById(id) {
         return new Administrator(1, 'Nicolas Alvarez', null);
-    }
-
-    static get_active_adminitrator() {
-        return new Administrator(1, 'Nicolas Alvarez', null);
-    }
-
-    static get_groups_of(administrator_id) {
-        var group_list = [];
-        for(var i = 0; i < 6; i++) {
-            group_list.push(new Group(i, `Grupo ${i}`, 'des'));
-        }
-        return group_list;
     }
 
     static toClass(obj) {
         var admin = new Administrator('', obj.name, obj.image);
         return admin;
     }
-    
-    static value = true;
-    static insert(obj, user_id) {
-        this.value = !this.value;
-        return this.value;
+
+    static async get_active_adminitrator(req, res) {
+        var admin = new Administrator(1, 'Nicolas Alvarez', null);
+        res.json(admin);
     }
 
-    static add_to_group(group_id) {
-        return true;
+    static async get_groups_of(req, res) {
+        var administrator_id = req.body.administrator_id;
+
+        var group_list = [];
+        for(var i = 0; i < 6; i++) {
+            group_list.push(new Group(i, `Grupo ${i}`, 'des'));
+        }
+        res.json(group_list);
+    }
+
+    static async insert(req, res) {
+        var admin = req.body.admin;
+        var user_id = req.body.user_id;
+        console.log(admin);
+        console.log(user_id);
+
+        res.json({is_inserted: true});
+    }
+
+    static async add_to_group(req, res) {
+        var group_id = req.body.group_id;
+        console.log(group_id);
+        res.json({is_added: true});
     }
 }
 

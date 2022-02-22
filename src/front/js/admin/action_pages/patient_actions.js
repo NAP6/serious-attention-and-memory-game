@@ -3,7 +3,7 @@ import { start_table_admin_page } from '../start_table_admin_page.js';
 import { Modal } from '../../helper_models/Modal.js';
 import { start_history_page } from './history_patients.js';
 
-var data = PatientController.getAll();
+var data = await PatientController.getAll();
 var nameLabels = ['ID', 'Nombre', 'Edad', 'Genero', 'Escolaridad', 'Residencia', 'País de esudio'];
 var form_structure = {
     id: {
@@ -62,10 +62,10 @@ var open_update_modal = (obj)=> {
     pat.modal.toggle();
 }
 
-var on_updateButton = (obj, tr)=> {
+var on_updateButton = async (obj, tr)=> {
     var obj = pat.form.getObject();
     pat.modal.hide();
-    PatientController.update(obj)
+    await PatientController.update(obj)
     pat.table.update(tr, obj)
 }
 
@@ -78,9 +78,9 @@ var onDeleteHandler = (obj, tr)=> {
       confirmButtonText: 'Eliminar',
       denyButtonText: 'Cancelar',
         showDenyButton: true,
-    }).then((result)=> {
+    }).then(async (result)=> {
         if(result.isConfirmed) {
-            var is_deleted = PatientController.delete(obj);
+            var is_deleted = await PatientController.delete(obj);
             if(is_deleted) {
                 pat.table.remove(tr);
                 pat.notyf.success('Se ha eliminado correctamente');
@@ -97,9 +97,9 @@ var onDeleteHandler = (obj, tr)=> {
 
 // Open History modal
 var empty_div = document.createElement('div');
-var open_history_modal = (obj, tr) => { 
+var open_history_modal = async (obj, tr) => { 
     pat.modal.title = 'Historia del paciente';
-    pat.modal.set_bodyContent(start_history_page(obj, pat.notyf));
+    pat.modal.set_bodyContent(await start_history_page(obj, pat.notyf));
     pat.modal.set_footerContent(empty_div);
     pat.modal.changeSize(Modal.FULL_SCREEN_SIZE);
     pat.modal.show();

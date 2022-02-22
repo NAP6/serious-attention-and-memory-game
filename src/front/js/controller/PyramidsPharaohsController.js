@@ -1,59 +1,67 @@
-import { PyramidsPharaohs } from '../../../PyramidsPharaohs.js';
+import { PyramidsPharaohs, PPLevel, PPImage } from '../../../PyramidsPharaohs.js';
 import { Group } from '../../../Group.js';
 import { GroupController } from './GroupContoller.js';
+import { post_api } from '../helper_models/post_api.js';
 
 class PyramidsPharaohsController {
 
-    static getById(id) {
-        var game = new PyramidsPharaohs(id, `Juego ${id}`, `Descripcion ${id}`, new Group(id, 'Grupo '+id, 'Des'));
-        game.add_level(
-            Array(3).fill('https://www.paturros.es/wp-content/uploads/2021/01/comprar-patito-goma-doc-brown.jpg'), 
-            Array(3).fill('https://www.paturros.es/wp-content/uploads/2021/01/comprar-patito-goma-marty-mcfly.jpg')
-            ,[1])
-        game.add_level(
-            Array(3).fill('https://www.paturros.es/wp-content/uploads/2021/01/comprar-patito-goma-marty-mcfly.jpg'),
-            Array(3).fill('https://www.paturros.es/wp-content/uploads/2021/01/comprar-patito-goma-doc-brown.jpg'), 
-            [0,2])
-        return game;
+    static async getById(id) {
+        var data = {id: id};
+        var res = await post_api(`${window.location.origin}/api/pdp/getById`, data);
+        console.log(res);
+        return res;
     }
 
-    static getAll() {
-        var list = [];
-        for(var i=0; i < 5; i++) {
-            var game = new PyramidsPharaohs(i, `Juego ${i}`, `Descripcion ${i}`, new Group(i, 'Grupo '+i, 'Des'));
-            if(i % 2 == 0) {
-                game.add_level(
-                    Array(3).fill('https://www.paturros.es/wp-content/uploads/2021/01/comprar-patito-goma-doc-brown.jpg'), 
-                    Array(3).fill('https://www.paturros.es/wp-content/uploads/2021/01/comprar-patito-goma-marty-mcfly.jpg')
-                    ,[1])
-            }
-            list.push(game);
+    static async getAll() {
+        var data = {};
+        var res = await post_api(`${window.location.origin}/api/pdp/getAll`, data);
+        var pdps = [];
+        for(let pdp of res) {
+            var new_pdp = await PyramidsPharaohsController.toClass(pdp);
+            pdps.push(new_pdp);
         }
-        return list;
+        console.log(pdps);
+        return pdps;
     }
 
-    static aux_alertar = false;
-    static update(obj) {
-        this.aux_alertar = !this.aux_alertar;
-        return this.aux_alertar;
+    static async update(pdp) {
+        var data = {pdp: pdp};
+        var res = await post_api(`${window.location.origin}/api/pdp/update`, data);
+        return res.is_updated;
     }
 
-    static delete(obj) {
-        this.aux_alertar = !this.aux_alertar;
-        return this.aux_alertar;
+    static async delete(pdp) {
+        var data = {pdp: pdp};
+        var res = await post_api(`${window.location.origin}/api/pdp/delete`, data);
+        return res.is_deleted;
     }
 
-    static insert(obj) {
-        this.aux_alertar = !this.aux_alertar;
-        return this.aux_alertar;
+    static async insert(pdp) {
+        var data = {pdp: pdp};
+        var res = await post_api(`${window.location.origin}/api/pdp/insert`, data);
+        return res.is_inserted;
     }
 
-    static toClass(obj) {
-        var group = GroupController.getById(obj.group);
-        var new_obj = new PyramidsPharaohs(obj.id, obj.name, obj.description, group, obj.maximum_attempsts);
-        if(obj.levels && obj.levels.length > 0)
-            new_obj.levels = obj.levels;
-        return new_obj;
+    static async toClass(pdp) {
+        var group;
+        if(typeof pdp.group === 'object') 
+            group = await GroupController.toClass(pdp.group);
+        else
+            group = await GroupController.getById(pdp.group);
+        var new_pdp = new PyramidsPharaohs(pdp.id, pdp.name, pdp.description, group, pdp.maximum_attempsts);
+        if(pdp.levels && pdp.levels.length > 0) {
+            for(let level of pdp.levels) {
+                var new_level = new PPLevel();
+                for(let example of level.pp_example) {
+                    new_level.example.push(new PPImage(example.image, example.selected));
+                }
+                for(let answer of level.pp_answer) {
+                    new_level.answer.push(new PPImage(answer.image, answer.selected));
+                }
+                new_pdp.levels.push(new_level);
+            }
+        }
+        return new_pdp;
     }
 }
 

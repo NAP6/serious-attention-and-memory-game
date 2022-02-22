@@ -14,7 +14,7 @@ var interval_milisecons_to_capture_eye_position = 100;
 var search_params_string = window.location.search;
 var search_params = new URLSearchParams(search_params_string);
 var id = search_params.get('game_id');
-var tmt = TMTController.getById(id);
+var tmt = await TMTController.getById(id);
 var this_match = new Match(null, tmt, tmt.group);
 set_on_game_start(game_start);
 
@@ -57,9 +57,9 @@ function finish_game() {
       `Terminaste`,
       'En hora buena, has terminado todos los niveles, porfavor envianos los datos',
       'info'
-    ).then(()=>{
+    ).then(async ()=>{
         document.getElementById('sending_match').classList.remove('d-none');
-        MatchCrontroller.insert(this_match);
+        await MatchCrontroller.insert(this_match);
         window.location.href = `${window.location.origin}/patient_portal/dashboard.html`;
     });
 }

@@ -126,8 +126,8 @@ btn_register.onclick = async ()=> {
                     if(id) {
                         obj.image = loaded_image;
                         if(user_is_admin) {
-                            var admin = AdministratorController.toClass(obj);
-                            var is_registed = AdministratorController.insert(admin, id);
+                            var admin = await AdministratorController.toClass(obj);
+                            var is_registed = await AdministratorController.insert(admin, id);
                             if(is_registed) {
                                 await LogController.login(obj.email, obj.password)
                                 window.location.href = `${window.location.origin}/admin${window.location.search}`;
@@ -140,8 +140,8 @@ btn_register.onclick = async ()=> {
                                 await LogController.delete(id);
                             }
                         } else {
-                            var patient = PatientController.toClass(obj);
-                            var is_registed = PatientController.insert(patient, id, obj.group);
+                            var patient = await PatientController.toClass(obj);
+                            var is_registed = await PatientController.insert(patient, id, obj.group);
                             if(is_registed) {
                                 await LogController.login(obj.email, obj.password)
                                 window.location.href = `${window.location.origin}/patient`;

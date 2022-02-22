@@ -1,35 +1,43 @@
 import { Group } from "../../models/Group.js";
 
 class GroupController {
-
-    static getById(id) {
+    static async getById(id) {
         if(!id) throw(['Se nececita un id']);
         var group = new Group(id, 'Grupo '+id, 'Es un grupo de prueba');
         return group;
     }
 
-    static getAll() {
+    static async getById_external(req, res) {
+        var id = req.body.id;
+        console.log(id);
+        var group = await GroupController.getById(id);
+        res.json(group);
+    }
+
+    static async getAll(req, res) {
         var list = [];
         for(var i=0; i < 10; i++) {
             list.push(new Group(i, `Grupo ${i}`, `Descripcion ${i}`));
         }
-        return list;
+        res.json(list);
     }
 
-    static aux_alertar = false;
-    static update(obj) {
-        this.aux_alertar = !this.aux_alertar;
-        return this.aux_alertar;
+    static async update(req, res) {
+        var group = req.body.group;
+        console.log(group);
+        res.json({is_updated: true});
     }
 
-    static delete(obj) {
-        this.aux_alertar = !this.aux_alertar;
-        return this.aux_alertar;
+    static async delete(req, res) {
+        var group = req.body.group;
+        console.log(group);
+        res.json({is_deleted: true});
     }
 
-    static insert(obj) {
-        this.aux_alertar = !this.aux_alertar;
-        return this.aux_alertar;
+    static async insert(req, res) {
+        var group = req.body.group;
+        console.log(group);
+        res.json({is_inserted: true});
     }
 }
 

@@ -4,7 +4,7 @@ import { GroupController } from './GroupContoller.js';
 
 class PyramidsPharaohsController {
 
-    static getById(id) {
+    static async getById(id) {
         var game = new PyramidsPharaohs(id, `Juego ${id}`, `Descripcion ${id}`, new Group(id, 'Grupo '+id, 'Des'));
         game.add_level(
             Array(3).fill('https://www.paturros.es/wp-content/uploads/2021/01/comprar-patito-goma-doc-brown.jpg'), 
@@ -17,7 +17,14 @@ class PyramidsPharaohsController {
         return game;
     }
 
-    static getAll() {
+    static async getById_external(req, res) {
+        var id = req.body.id;
+        console.log(id);
+        var pdp = await PyramidsPharaohsController.getById(id);
+        res.json(pdp);
+    }
+
+    static async getAll(req, res) {
         var list = [];
         for(var i=0; i < 5; i++) {
             var game = new PyramidsPharaohs(i, `Juego ${i}`, `Descripcion ${i}`, new Group(i, 'Grupo '+i, 'Des'));
@@ -29,27 +36,29 @@ class PyramidsPharaohsController {
             }
             list.push(game);
         }
-        return list;
+        res.json(list);
     }
 
-    static aux_alertar = false;
-    static update(obj) {
-        this.aux_alertar = !this.aux_alertar;
-        return this.aux_alertar;
+    static async update(req, res) {
+        var pdp = req.body.pdp;
+        console.log(pdp);
+        res.json({is_updated: true});
     }
 
-    static delete(obj) {
-        this.aux_alertar = !this.aux_alertar;
-        return this.aux_alertar;
+    static async delete(req, res) {
+        var pdp = req.body.pdp;
+        console.log(pdp);
+        res.json({is_deleted: true});
     }
 
-    static insert(obj) {
-        this.aux_alertar = !this.aux_alertar;
-        return this.aux_alertar;
+    static async insert(req, res) {
+        var pdp = req.body.pdp;
+        console.log(pdp);
+        res.json({is_inserted: true});
     }
 
-    static toClass(obj) {
-        var group = GroupController.getById(obj.group);
+    static async toClass(obj) {
+        var group = await GroupController.getById(obj.group);
         var new_obj = new PyramidsPharaohs(obj.id, obj.name, obj.description, group, obj.maximum_attempsts);
         if(obj.levels && obj.levels.length > 0)
             new_obj.levels = obj.levels;

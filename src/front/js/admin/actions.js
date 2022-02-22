@@ -5,7 +5,7 @@ import { LogController } from '../controller/LogController.js';
 start_sidebar();
 
 //change admin profile info on top bar
-var admin = AdministratorController.get_active_adminitrator();
+var admin = await AdministratorController.get_active_adminitrator();
 document.getElementById('admin_profile_name').innerText = admin.name;
 if(admin.image)
     document.getElementById('admin_profile_image').setAttribute("src", admin.image);
@@ -36,10 +36,10 @@ if(gorupCode) {
             right bottom
             no-repeat
             `
-    }).then((result)=> {
+    }).then(async (result)=> {
         var notyf = new Notyf();
         if(result.isConfirmed) {
-            var is_added = AdministratorController.add_to_group(gorupCode.split('-')[1]);
+            var is_added = await AdministratorController.add_to_group(gorupCode.split('-')[1]);
             console.log(is_added)
             if(is_added) {
                 notyf.success('Ahora perteneces al grupo');

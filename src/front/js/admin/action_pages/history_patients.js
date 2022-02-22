@@ -2,7 +2,7 @@ import { MatchCrontroller } from '../../controller/MatchController.js';
 import { PatientController } from '../../controller/PatientContoller.js';
 import { Table } from '../../helper_models/Table.js';
 
-function start_history_page(obj, notyf) {
+async function start_history_page(obj, notyf) {
     var config_form = document.getElementById('config_game_template')
         .content.cloneNode(true);
 
@@ -26,7 +26,8 @@ function start_history_page(obj, notyf) {
     if(obj.image)
         profile_image.src       = obj.image;
 
-    for(var o of PatientController.get_list_of_groups(obj.id)){
+    var group_list = await PatientController.get_list_of_groups(obj.id);
+    for(var o of group_list){
         var li = document.createElement('li');
         li.classList.add('list-group-item');
         li.innerText = o.name;
@@ -36,7 +37,7 @@ function start_history_page(obj, notyf) {
 
     var dataTable_match_contaier = config_form.querySelector('#dataTable_match_contaier');
 
-    var data = MatchCrontroller.get_by_patient(obj.id);
+    var data = await MatchCrontroller.get_by_patient(obj.id);
     data = data.map((m)=> {
         if(m.game_time)
             m.game_time = Number(m.game_time.toFixed(2));
@@ -74,11 +75,11 @@ function start_history_page(obj, notyf) {
             },
             buttonsStyling: false
         })
-        .then((result) => {
+        .then(async (result) => {
             if(result.isConfirmed) {
                 var before_adjusted_score = obj.adjusted_score;
                 obj.adjusted_score = Number(result.value);
-                var is_updated = MatchCrontroller.update(obj);
+                var is_updated = await MatchCrontroller.update(obj);
                 if(is_updated) {
                     table_match.update(tr, obj);
                     notyf.success('El Puntaje Ajustado ha sido actualizado');

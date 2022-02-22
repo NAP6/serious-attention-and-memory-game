@@ -4,8 +4,8 @@ import { start_table_admin_page } from '../start_table_admin_page.js';
 import { Modal } from '../../helper_models/Modal.js';
 import { load_game_config_form } from './configGame_pyramidsPharaohs.js';
 
-var data = PyramidsPharaohsController.getAll();
-var group_list = AdministratorController.get_groups_of(AdministratorController.get_active_adminitrator().id);
+var data = await PyramidsPharaohsController.getAll();
+var group_list = await AdministratorController.get_groups_of(await AdministratorController.get_active_adminitrator().id);
 var options_group = group_list.map((g)=> {
     var option = {
         value: g.id,
@@ -54,13 +54,18 @@ var open_update_modal = (obj, tr)=> {
     pap.btn.update.onclick = ()=> { on_updateButton(obj, tr); };
 };
 
-var on_updateButton = (obj_old, tr)=> {
+var on_updateButton = async (obj_old, tr)=> {
     var obj = pap.form.getObject();
-    obj = PyramidsPharaohsController.toClass(obj);
-    obj.levels = obj_old.levels;
+    obj_old.name = obj.name;
+    obj_old.group = obj.group;
+    obj_old.maximum_attempts = obj.maximum_attempts;
+    obj_old.description = obj.description;
+    console.log(obj_old);
+    var new_obj = await PyramidsPharaohsController.toClass(obj_old);
+    console.log(new_obj);
     pap.modal.hide();
-    PyramidsPharaohsController.update(obj)
-    pap.table.update(tr, obj);
+    await PyramidsPharaohsController.update(new_obj);
+    pap.table.update(tr, new_obj);
 };
 
 // Create
@@ -73,13 +78,13 @@ var open_create_modal = () => {
     pap.modal.set_bodyContent(pap.form.form);
 };
 
-var on_create_button = ()=> {
+var on_create_button = async ()=> {
     var is_valid = pap.form.valid_required_are_filled();
     if(is_valid) {
         var obj = pap.form.getObject();
         pap.modal.hide();
-        var classObj = PyramidsPharaohsController.toClass(obj);
-        PyramidsPharaohsController.insert(classObj);
+        var classObj = await PyramidsPharaohsController.toClass(obj);
+        await PyramidsPharaohsController.insert(classObj);
         pap.table.add(classObj);
     }
 };
@@ -93,9 +98,9 @@ var onDeleteHandler = (obj, tr)=> {
       confirmButtonText: 'Eliminar',
       denyButtonText: 'Cancelar',
         showDenyButton: true,
-    }).then((result)=> {
+    }).then(async (result)=> {
         if(result.isConfirmed) {
-            var is_deleted = PyramidsPharaohsController.delete(obj);
+            var is_deleted = await PyramidsPharaohsController.delete(obj);
             if(is_deleted) {
                 pap.table.remove(tr);
                 pap.notyf.success('Se ha eliminado correctamente');
@@ -121,8 +126,8 @@ var open_config_game_modal = (obj, tr) => {
     pap.modal.show();
 };
 
-var on_save_config_game_modal = (obj, tr)=> {
-    PyramidsPharaohsController.update(obj)
+var on_save_config_game_modal = async (obj, tr)=> {
+    await PyramidsPharaohsController.update(obj)
     pap.table.update(tr, obj);
     pap.modal.hide();
 }

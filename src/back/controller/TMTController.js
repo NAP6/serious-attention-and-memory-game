@@ -4,7 +4,7 @@ import { GroupController } from './GroupContoller.js';
 
 class TMTController {
 
-    static getById(id) {
+    static async getById(id) {
         if(!id) throw(['Se nececita un id']);
         var tmt = new TMT(1, 'Primer juego TMT', 'Juego de TMT', new Group(1, 'Grupo 1', 'una description'), 1);
         var level_1 = tmt.add_level('https://www.researchgate.net/profile/Alexander-Eriksson-3/publication/299465148/figure/fig5/AS:497128448499717@1495536066867/The-Trail-Making-Test-B-test-screen.png');
@@ -20,37 +20,46 @@ class TMTController {
         return tmt;
     }
 
-    static getAll() {
-        var list = [];
-        for(var i=0; i < 5; i++) {
-            list.push(new TMT(i, `TMT ${i}`, `Descripcion ${i}`, new Group(i, 'Grupo '+i, 'Des')));
-        }
-        return list;
+    static async getById_external(req, res) {
+        var id = req.body.id;
+        var tmt = await this.getById(id);
+        res.json(tmt);
     }
 
-    static aux_alertar = false;
-    static update(obj) {
-        this.aux_alertar = !this.aux_alertar;
-        return this.aux_alertar;
-    }
-
-    static delete(obj) {
-        this.aux_alertar = !this.aux_alertar;
-        return this.aux_alertar;
-    }
-
-    static insert(obj) {
-        this.aux_alertar = !this.aux_alertar;
-        return this.aux_alertar;
-    }
-
-    static toClass(obj) {
-        var group = GroupController.getById(obj.group);
+    static async toClass(obj) {
+        var group = await GroupController.getById(obj.group);
         var new_obj = new TMT(obj.id, obj.name, obj.description, group, obj.maximum_attempsts);
         if(obj.levels && obj.levels.length > 0)
             new_obj.levels = obj.levels;
         return new_obj;
     }
+
+    static async getAll(req, res) {
+        var list = [];
+        for(var i=0; i < 5; i++) {
+            list.push(new TMT(i, `TMT ${i}`, `Descripcion ${i}`, new Group(i, 'Grupo '+i, 'Des')));
+        }
+        res.json(list);
+    }
+
+    static async update(req, res) {
+        var tmt = req.body.tmt;
+        console.log(tmt);
+        res.json({is_updated: true});
+    }
+
+    static async delete(req, res) {
+        var tmt = req.body.tmt;
+        console.log(tmt);
+        res.json({is_deleted: true});
+    }
+
+    static async insert(req, res) {
+        var tmt = req.body.tmt;
+        console.log(tmt);
+        res.json({is_inserted: true});
+    }
+
 }
 
 export { TMTController };

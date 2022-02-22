@@ -4,9 +4,9 @@ import { start_table_admin_page } from '../start_table_admin_page.js';
 import { Modal } from '../../helper_models/Modal.js';
 import { load_game_config_form } from './configGame_tmt.js';
 
-var data = TMTController.getAll();
+var data = await TMTController.getAll();
 var nameLabels = ['ID', 'Nombre', 'Grupo', 'Intentos', 'Descripcion'];
-var group_list = AdministratorController.get_groups_of(AdministratorController.get_active_adminitrator().id);
+var group_list = await AdministratorController.get_groups_of(await AdministratorController.get_active_adminitrator().id);
 var options_group = group_list.map((g)=> {
     var option = {
         value: g.id,
@@ -53,12 +53,15 @@ var open_update_modal = (obj, tr)=> {
     tmt.btn.update.onclick = ()=> {on_updateButton(obj, tr);};
 }
 
-var on_updateButton = (obj_old, tr)=> {
+var on_updateButton = async (obj_old, tr)=> {
     var obj = tmt.form.getObject();
     tmt.modal.hide();
-    var classObj = TMTController.toClass(obj);
-    classObj.levels = obj_old.levels;
-    TMTController.update(classObj)
+    obj_old.name = obj.name;
+    obj_old.group = obj.group;
+    obj_old.maximum_attempts = obj.maximum_attempts;
+    obj_old.description = obj.description;
+    var classObj = await TMTController.toClass(obj_old);
+    await TMTController.update(classObj)
     tmt.table.update(tr, classObj);
 }
 
@@ -72,13 +75,13 @@ var open_create_modal = () => {
     tmt.modal.set_bodyContent(tmt.form.form);
 };
 
-var on_create_button = ()=> {
+var on_create_button = async ()=> {
     var is_valid = tmt.form.valid_required_are_filled();
     if(is_valid) {
         var obj = tmt.form.getObject();
         tmt.modal.hide();
-        var classObj = TMTController.toClass(obj);
-        TMTController.insert(classObj)
+        var classObj = await TMTController.toClass(obj);
+        await TMTController.insert(classObj)
         tmt.table.add(classObj);
     }
 }
@@ -92,9 +95,9 @@ var onDeleteHandler = (obj, tr)=> {
       confirmButtonText: 'Eliminar',
       denyButtonText: 'Cancelar',
         showDenyButton: true,
-    }).then((result)=> {
+    }).then(async (result)=> {
         if(result.isConfirmed) {
-            var is_deleted = TMTController.delete(obj);
+            var is_deleted = await TMTController.delete(obj);
             if(is_deleted) {
                 tmt.table.remove(tr);
                 tmt.notyf.success('Se ha eliminado correctamente');
@@ -120,8 +123,8 @@ var open_config_game_modal = (obj, tr) => {
     tmt.modal.show();
 };
 
-var on_save_config_game_modal = (obj, tr)=> {
-    TMTController.update(obj)
+var on_save_config_game_modal = async (obj, tr)=> {
+    await TMTController.update(obj)
     tmt.table.update(tr, obj);
     tmt.modal.hide();
 }

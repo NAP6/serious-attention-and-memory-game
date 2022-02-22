@@ -1,23 +1,30 @@
 import { Match } from '../../../Match.js';
+import { post_api } from '../helper_models/post_api.js';
 
 class MatchCrontroller {
-    static get_by_patient(patient_id) {
-        var list_matchs = [];
-        for(var i = 0; i < 5; i++) {
-            list_matchs.push(new Match(i, ['Piramides y Faraones', 'TMT'][(Math.random()>=0.5)? 1 : 0], `Grupo ${Math.floor(Math.random() * 11)}`, null, Math.random() * 100, 100, null));
-        }
-        return list_matchs;
+    static async get_by_patient(patient_id) {
+        var data = {patient_id: patient_id};
+        var res = await post_api(`${window.location.origin}/api/match/get_by_patient`, data);
+        res = res.map((m) => { return MatchCrontroller.toClass(m); });
+        console.log(res);
+        return res;
     }
 
-    static aux_alertar = false;
-    static update(obj) {
-        this.aux_alertar = !this.aux_alertar;
-        return this.aux_alertar;
+    static async update(match) {
+        var data = {match: match};
+        var res = await post_api(`${window.location.origin}/api/match/update`, data);
+        return res.is_updated;
     }
 
-    static insert(obj) {
-        this.aux_alertar = !this.aux_alertar;
-        return this.aux_alertar;
+    static async insert(match) {
+        var data = {match: match};
+        var res = await post_api(`${window.location.origin}/api/match/insert`, data);
+        return res.is_iserted;
+    }
+ 
+    static toClass(obj) {
+        var match = new Match(obj.id, obj.game, obj.group, obj.date, obj.game_time, obj.score, obj.adjusted_score);
+        return match;
     }
 }
 

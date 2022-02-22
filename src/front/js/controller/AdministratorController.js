@@ -1,36 +1,39 @@
 import { Administrator } from '../../../Administrator.js';
-import {Group} from '../../../Group.js';
+import { GroupController } from './GroupContoller.js';
+import { post_api } from '../helper_models/post_api.js';
 
 class AdministratorController {
-    static getById(id) {
-        return new Administrator(1, 'Nicolas Alvarez', null);
-    }
-
-    static get_active_adminitrator() {
-        return new Administrator(1, 'Nicolas Alvarez', null);
-    }
-
-    static get_groups_of(administrator_id) {
-        var group_list = [];
-        for(var i = 0; i < 6; i++) {
-            group_list.push(new Group(i, `Grupo ${i}`, 'des'));
-        }
-        return group_list;
-    }
-
-    static toClass(obj) {
-        var admin = new Administrator('', obj.name, obj.image);
+    static async toClass(obj) {
+        var admin = new Administrator(obj.id, obj.name, obj.image);
         return admin;
     }
-    
-    static value = true;
-    static insert(obj, user_id) {
-        this.value = !this.value;
-        return this.value;
+
+    static async get_active_adminitrator() {
+        var data = {};
+        var res = await post_api(`${window.location.origin}/api/administrator/get_active_adminitrator`, data);
+        res = await AdministratorController.toClass(res);
+        console.log(res);
+        return res;
     }
 
-    static add_to_group(group_id) {
-        return true;
+    static async get_groups_of(administrator_id) {
+        var data = {administrator_id: administrator_id};
+        var res = await post_api(`${window.location.origin}/api/administrator/get_groups_of`, data);
+        res = res.map((g) => { return GroupController.toClass(g); });
+        console.log(res);
+        return res;
+    }
+    
+    static async insert(admin, user_id) {
+        var data = {admin: admin, user_id: user_id};
+        var res = await post_api(`${window.location.origin}/api/administrator/insert`, data);
+        return res.is_inserted;
+    }
+
+    static async add_to_group(group_id) {
+        var data = {group_id: group_id};
+        var res = await post_api(`${window.location.origin}/api/administrator/add_to_group`, data);
+        return res.is_added;
     }
 }
 

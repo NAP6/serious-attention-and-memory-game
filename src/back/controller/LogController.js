@@ -2,7 +2,7 @@ import { AdministratorController } from "./AdministratorController.js";
 import { PatientController } from "./PatientContoller.js";
 
 class LogController {
-    static login(req, res) {
+    static async login(req, res) {
         var email = req.body.email;
         var password = req.body.password;
         var admin = 'admin@ejemplo.com';
@@ -34,14 +34,14 @@ class LogController {
         res.json(resp);
     }
 
-    static logout(req, res) {
+    static async logout(req, res) {
         req.session.is_logged = false;
         req.session.user_type = '';
         req.session.active_user = null;
         res.json({is_logout: true});
     }
 
-    static search_email(req, res) {
+    static async search_email(req, res) {
         var email = req.body.email;
         if(email && (email == 'admin@ejemplo.com' || email == 'patient@ejemplo.com')) {
             res.json({is_email_found: true});
@@ -50,13 +50,13 @@ class LogController {
         }
     }
 
-    static register(req, res) {
+    static async register(req, res) {
         var email = req.body.email;
         var password = req.body.password;
             res.json({inserted_id: 1});
     }
 
-    static delete(req, res) {
+    static async delete(req, res) {
         var id = req.body.id;
         res.json({is_deleted: true});
     }

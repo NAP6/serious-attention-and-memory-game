@@ -1,10 +1,9 @@
-import { PatientController } from '../controller/PatientContoller.js';
 import { GroupController } from '../controller/GroupContoller.js';
 import { Table } from '../helper_models/Table.js';
 
 var table_container = document.getElementById('dataTable_contaier');
 
-var groups = GroupController.getAll();
+var groups = await GroupController.getAll();
 
 var table = new Table(groups, {
     id: 'groups_table',

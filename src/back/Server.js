@@ -16,7 +16,7 @@ class Server {
           saveUninitialized: true
         }));
         this.app.use(body_parser.json());
-        this.app.use(body_parser.urlencoded());
+        this.app.use(body_parser.urlencoded({extended: false}));
 
         for(let r of routes)
             this.app.use(r);

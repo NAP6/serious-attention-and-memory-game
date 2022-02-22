@@ -1,35 +1,44 @@
 import { Group } from "../../../Group.js";
+import { post_api } from "../helper_models/post_api.js";
 
 class GroupController {
+    static async getById(id) {
+        var data = {id: id};
+        var res = await post_api(`${window.location.origin}/api/group/getById`, data);
+        res = GroupController.toClass(res);
+        console.log(res);
+        return res;
+    }
 
-    static getById(id) {
-        if(!id) throw(['Se nececita un id']);
-        var group = new Group(id, 'Grupo '+id, 'Es un grupo de prueba');
+    static async getAll() {
+        var data = {};
+        var res = await post_api(`${window.location.origin}/api/group/getAll`, data);
+        res = res.map((g) => { return GroupController.toClass(g); });
+        console.log(res);
+        return res;
+    }
+
+    static async update(group) {
+        var data = {group: group};
+        var res = await post_api(`${window.location.origin}/api/group/update`, data);
+        return res.is_updated;
+    }
+
+    static async delete(group) {
+        var data = {group: group};
+        var res = await post_api(`${window.location.origin}/api/group/delete`, data);
+        return res.is_deleted;
+    }
+
+    static async insert(group) {
+        var data = {group: group};
+        var res = await post_api(`${window.location.origin}/api/group/insert`, data);
+        return res.is_iserted;
+    }
+
+    static toClass(obj) {
+        var group = new Group(obj.id, obj.name, obj.description);
         return group;
-    }
-
-    static getAll() {
-        var list = [];
-        for(var i=0; i < 10; i++) {
-            list.push(new Group(i, `Grupo ${i}`, `Descripcion ${i}`));
-        }
-        return list;
-    }
-
-    static aux_alertar = false;
-    static update(obj) {
-        this.aux_alertar = !this.aux_alertar;
-        return this.aux_alertar;
-    }
-
-    static delete(obj) {
-        this.aux_alertar = !this.aux_alertar;
-        return this.aux_alertar;
-    }
-
-    static insert(obj) {
-        this.aux_alertar = !this.aux_alertar;
-        return this.aux_alertar;
     }
 }
 

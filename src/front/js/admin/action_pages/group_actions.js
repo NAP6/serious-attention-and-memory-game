@@ -2,7 +2,7 @@ import { GroupController } from '../../controller/GroupContoller.js';
 import { start_table_admin_page } from '../start_table_admin_page.js';
 import { Modal } from '../../helper_models/Modal.js';
 
-var data = GroupController.getAll();
+var data = await GroupController.getAll();
 var nameLabels = ['ID', 'Nombre', 'Descripcion'];
 var form_structure = {
     id: {
@@ -35,10 +35,10 @@ var open_update_modal = (obj)=> {
     grp.modal.show();
 }
 
-var on_updateButton = (obj, tr)=> {
+var on_updateButton = async (obj, tr)=> {
     var obj = grp.form.getObject();
     grp.modal.hide();
-    GroupController.update(obj)
+    await GroupController.update(obj)
     grp.table.update(tr, obj);
 }
 
@@ -52,18 +52,18 @@ var open_create_modal = () => {
     grp.modal.title = 'Crear Grupo';
 };
 
-var on_create_button = ()=> {
+var on_create_button = async ()=> {
     var is_valid = grp.form.valid_required_are_filled();
     if(is_valid) {
         var obj = grp.form.getObject();
         grp.modal.hide();
-        GroupController.insert(obj)
+        await GroupController.insert(obj)
         grp.table.add(obj);
     }
 }
 
 // Delete
-var onDeleteHandler = (obj, tr)=> {
+var onDeleteHandler = async (obj, tr)=> {
     grp.alert.fire({
       title: 'Borrar',
       text: '¿Esta seguro de que desea continuar?',
@@ -71,9 +71,9 @@ var onDeleteHandler = (obj, tr)=> {
       confirmButtonText: 'Eliminar',
       denyButtonText: 'Cancelar',
         showDenyButton: true,
-    }).then((result)=> {
+    }).then(async (result)=> {
         if(result.isConfirmed) {
-            var is_deleted = GroupController.delete(obj);
+            var is_deleted = await GroupController.delete(obj);
             if(is_deleted) {
                 grp.table.remove(tr);
                 grp.notyf.success('Se ha eliminado correctamente');

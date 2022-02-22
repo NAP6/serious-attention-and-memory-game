@@ -1,67 +1,65 @@
 import { Patient } from "../../../Patient.js";
-import { Group } from "../../../Group.js";
-import { TMTController } from "./TMTController.js";
-import { PyramidsPharaohsController } from "./PyramidsPharaohsController.js";
+import { post_api } from "../helper_models/post_api.js";
+import { GroupController } from "./GroupContoller.js";
 
 class PatientController {
-
-    static getById(id) {
-        if(!id) throw(['Se nececita un id']);
-        var group = new Patient('0104438643', "Fabian Nicolas Alvarez Palacios", 24, 'Masculino', 'Estudios universitarios', 'Cuenca', 'Ecuador');
-        return group;
-    }
-
-    static getAll() {
-        var list = [];
-        for(var i=0; i < 50; i++) {
-            list.push(new Patient(i, `Paciente ${i}`, Math.floor(Math.random() * 11) + 60, ['Masculino', 'Femenino'][(Math.random()>=0.5)? 1 : 0], `Escolaridad ${i}`, `Cuenca`, `Ecuador`));
-        }
-        return list;
-    }
-
-    static get_list_of_groups(patient_id) {
-        var group_list = [];
-        for(var i = 0; i < 3; i++) {
-            group_list.push(new Group(i, 'Grupo '+i, 'Descripcion'));
-        }
-        return group_list;
-    }
-
-    static aux_alertar = false;
-    static update(obj) {
-        this.aux_alertar = !this.aux_alertar;
-        return this.aux_alertar;
-    }
-
-    static delete(obj) {
-        this.aux_alertar = !this.aux_alertar;
-        return this.aux_alertar;
-    }
-
-    static insert(obj, user_id, group_code) {
-        this.aux_alertar = !this.aux_alertar;
-        return this.aux_alertar;
-    }
-
-    static get_active_patient() {
-        return new Patient(1, 'Nicolas', 24, 'Masculino', 'Tercer Nivel', 'Cuenca', 'Ecuador', null);
-    }
-
-    static get_pending_games(patient_id) {
-        var games = [];
-        games.push(TMTController.getById(1));
-        games.push(PyramidsPharaohsController.getById(1));
-
-        return games;
-    }
-
     static toClass(obj) {
-        var patient = new Patient('', obj.name, obj.age, obj.gender, obj.schooling, obj.residence, obj.country_of_study, obj.image);
+        var patient = new Patient(obj.id, obj.name, obj.age, obj.gender, obj.schooling, obj.residence, obj.country_of_study, obj.image);
         return patient;
     }
 
-    static add_to_group(group_id) {
-        return true;
+    static async get_active_patient() {
+        var data = {};
+        var res = await post_api(`${window.location.origin}/api/patient/get_active_patient`, data);
+        console.log(res);
+        return res;
+    }
+
+    static async getAll() {
+        var data = {};
+        var res = await post_api(`${window.location.origin}/api/patient/getAll`, data);
+        res = res.map((p) => { return PatientController.toClass(p); });
+        console.log(res);
+        return res;
+    }
+
+    static async get_list_of_groups(patient_id) {
+        var data = {patient_id: patient_id};
+        var res = await post_api(`${window.location.origin}/api/patient/get_list_of_groups`, data);
+        res = res.map((g) => { return GroupController.toClass(g); });
+        console.log(res);
+        return res;
+    }
+
+    static async update(patient) {
+        var data = {patient: patient};
+        var res = await post_api(`${window.location.origin}/api/patient/update`, data);
+        return res.is_updated;
+    }
+
+    static async delete(patient) {
+        var data = {patient: patient};
+        var res = await post_api(`${window.location.origin}/api/patient/delete`, data);
+        return res.is_deleted;
+    }
+
+    static async insert(patient, user_id, group_code) {
+        var data = {patient: patient, user_id: user_id, group_code: group_code};
+        var res = await post_api(`${window.location.origin}/api/patient/insert`, data);
+        return res.is_inserted;
+    }
+
+    static async get_pending_games(patient_id) {
+        var data = {patient_id: patient_id};
+        var res = await post_api(`${window.location.origin}/api/patient/get_pending_games`, data);
+        console.log(res);
+        return res;
+    }
+
+    static async add_to_group(group_id) {
+        var data = {group_id: group_id};
+        var res = await post_api(`${window.location.origin}/api/patient/add_to_group`, data);
+        return res.is_added;
     }
 }
 

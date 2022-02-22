@@ -4,7 +4,8 @@ import { Table } from '../helper_models/Table.js';
 
 var table_container = document.getElementById('dataTable_contaier');
 
-var matches = MatchCrontroller.get_by_patient(PatientController.get_active_patient().id);
+var patient_id = await PatientController.get_active_patient().id
+var matches = await MatchCrontroller.get_by_patient(patient_id);
 matches = matches.map((m)=> {
     if(m.game_time)
         m.game_time = Number(m.game_time.toFixed(2));

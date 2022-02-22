@@ -67,4 +67,4 @@ class TMTPoint {
     }
 }
 
-export { TMT, TMTPoint };
+export { TMT, TMTLevel, TMTPoint };
