@@ -9,19 +9,19 @@ function start_DataTable(table_id, func) {
                 infoEmpty:      "Mostrando 0 a 0 de 0 entradas",
                 infoFiltered:   "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
                 infoPostFix:    "",
-                //loadingRecords: "Chargement en cours...",
-                //zeroRecords:    "Aucun &eacute;l&eacute;ment &agrave; afficher",
-                //emptyTable:     "Aucune donnée disponible dans le tableau",
+                loadingRecords: "Cargando...",
+                zeroRecords:    "No hay registros",
+                emptyTable:     "No hay datos disponibles en la tabla",
                 paginate: {
                     first:      " << ",
                     previous:   " < ",
                     next:       " > ",
                     last:       " >> "
                 },
-                //aria: {
-                    //sortAscending:  ": activer pour trier la colonne par ordre croissant",
-                    //sortDescending: ": activer pour trier la colonne par ordre décroissant"
-                //}
+                aria: {
+                    sortAscending:  ": activar para ordenar la columna ascendente",
+                    sortDescending: ": activar para ordenar la columna descendente"
+                }
             }
         });
         func(dt);

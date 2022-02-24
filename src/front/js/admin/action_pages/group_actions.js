@@ -9,7 +9,8 @@ var form_structure = {
         type: 'number',
         label: 'ID',
         position_class: ['col-12', 'col-md-6'],
-        //disabled: true
+        disabled: true,
+        required: false
     },
     name: {
         label: 'Nombre',
@@ -27,7 +28,7 @@ var form_structure = {
 var open_update_modal = (obj)=> {
     grp.form.reset();
     grp.form.fill(obj);
-    grp.form.get_input('id').disabled = true;
+    // grp.form.get_input('id').disabled = true;
     grp.modal.title = 'Modificar Grupo';
     grp.modal.set_bodyContent(grp.form.form);
     grp.modal.set_footerContent(grp.btn.update);
@@ -45,7 +46,7 @@ var on_updateButton = async (obj, tr)=> {
 // Create
 var open_create_modal = () => { 
     grp.form.reset();
-    grp.form.enableAll();
+    // grp.form.enableAll();
     grp.modal.set_footerContent(grp.btn.create)
     grp.modal.set_bodyContent(grp.form.form);
     grp.modal.changeSize(Modal.LARGE_SIZE);
@@ -57,7 +58,8 @@ var on_create_button = async ()=> {
     if(is_valid) {
         var obj = grp.form.getObject();
         grp.modal.hide();
-        await GroupController.insert(obj)
+        var group_id = await GroupController.insert(obj)
+        obj.id = group_id;
         grp.table.add(obj);
     }
 }

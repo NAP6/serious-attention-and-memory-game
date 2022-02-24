@@ -13,7 +13,9 @@ class GroupController {
     static async getAll() {
         var data = {};
         var res = await post_api(`${window.location.origin}/api/group/getAll`, data);
+        if(res)
         res = res.map((g) => { return GroupController.toClass(g); });
+        else res = [];
         console.log(res);
         return res;
     }
@@ -33,7 +35,7 @@ class GroupController {
     static async insert(group) {
         var data = {group: group};
         var res = await post_api(`${window.location.origin}/api/group/insert`, data);
-        return res.is_iserted;
+        return res.inserted_id;
     }
 
     static toClass(obj) {

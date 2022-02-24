@@ -21,8 +21,8 @@ class LogController {
     }
 
     static value = true;
-    static async register(email, password) {
-        var data = {email: email, password: password};
+    static async register(email, password, user_type) {
+        var data = {email: email, password: password, type: user_type};
         var res = await post_api(`${window.location.origin}/api/register`, data);
         return res.inserted_id;
     }
