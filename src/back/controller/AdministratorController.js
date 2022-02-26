@@ -1,6 +1,11 @@
 import { Administrator } from '../../models/Administrator.js';
 import {Group} from '../../models/Group.js';
 import { database } from "../database/database.js";
+import { save_image } from "../save_image.js";
+
+import { join, dirname  } from "path";
+import {fileURLToPath} from 'url';
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 class AdministratorController {
     static async getById(id) {
@@ -22,12 +27,13 @@ class AdministratorController {
 
     static async get_groups_of(req, res) {
         var administrator_id = req.body.administrator_id;
-
-        var group_list = [];
-        for(var i = 0; i < 6; i++) {
-            group_list.push(new Group(i, `Grupo ${i}`, 'des'));
+        var sql = `call get_groups_of_administrator(${administrator_id})`;
+        var [rows, fields] = await database.query(sql);
+        if(!rows) res.json([]);
+        else {
+            var groups = rows[0][0].group_list;
+            res.json(groups);
         }
-        res.json(group_list);
     }
 
     static async insert(req, res) {
@@ -35,6 +41,13 @@ class AdministratorController {
         var user_id = req.body.user_id;
         admin['id'] = user_id;
         console.log(admin);
+        if(admin.image && admin.image.length > 0) {
+            var decodeBase64 = save_image.decodeBase64(admin.image);
+            var path = `/img/${user_id}.${decodeBase64.type.split('/').pop()}`;
+            save_image.save(join(__dirname, `../../front/assets${path}`), decodeBase64.data);
+            admin.image = path;
+        }
+
         var [rows, fields] = await database.query(`call insert_administrator('${JSON.stringify(admin)}')`);
         if(!rows) res.json({is_inserted: false});
         else{
@@ -50,8 +63,8 @@ class AdministratorController {
         var [rows, fields] = await database.query(sql);
         if(!rows) res.json({is_added: false});
         else{
-            var is_inserted = rows[0][0].result.is_inserted;
-            res.json({is_added: is_inserted?true:false});
+            var is_added = rows[0][0].result.is_added;
+            res.json({is_added: is_added?true:false});
         }
     }
 }

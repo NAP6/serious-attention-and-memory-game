@@ -23,7 +23,6 @@ class LogController {
                 req.session.active_user = await AdministratorController.getById(user.id);
             else
                 req.session.active_user = await PatientController.getById(user.id);
-            
         } else {
             resp = {
                 status: 'error',

@@ -60,7 +60,12 @@ var on_create_button = async ()=> {
         grp.modal.hide();
         var group_id = await GroupController.insert(obj)
         obj.id = group_id;
-        grp.table.add(obj);
+        try {
+            grp.table.add(obj);
+        } catch(e) {
+            console.log(e);
+            location.reload(true);
+        }
     }
 }
 

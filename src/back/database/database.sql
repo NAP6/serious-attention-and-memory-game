@@ -32,15 +32,17 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `serious_game`.`tb_patient` (
   `pa_id` INT NOT NULL AUTO_INCREMENT,
+  `pa_passport` VARCHAR(45) NOT NULL,
   `pa_name` VARCHAR(45) NOT NULL,
   `pa_age` INT NOT NULL,
   `pa_gender` VARCHAR(45) NOT NULL,
   `pa_schooling` VARCHAR(45) NOT NULL,
   `pa_residence` VARCHAR(45) NOT NULL,
   `pa_country_of_study` VARCHAR(45) NOT NULL,
-  `pa_image` BLOB NULL,
+  `pa_image` VARCHAR(100) NULL,
   `pa_is_deleted` TINYINT NOT NULL DEFAULT 0,
   PRIMARY KEY (`pa_id`),
+  UNIQUE INDEX `pa_passport_UNIQUE` (`pa_passport` ASC) VISIBLE,
   CONSTRAINT `fk_tb_patient_tb_users1`
     FOREIGN KEY (`pa_id`)
     REFERENCES `serious_game`.`tb_users` (`us_id`)
@@ -138,7 +140,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `serious_game`.`tb_administrator` (
   `adm_id` INT NOT NULL AUTO_INCREMENT,
   `adm_name` VARCHAR(45) NULL,
-  `adm_image` BLOB NULL,
+  `adm_image` VARCHAR(100) NULL,
   PRIMARY KEY (`adm_id`),
   CONSTRAINT `fk_table_administrator_tb_users1`
     FOREIGN KEY (`adm_id`)
@@ -336,7 +338,7 @@ BEGIN
     set result = JSON_OBJECT('is_exist', is_exist);
     
     SELECT result;
-END;$$
+END$$
 
 DELIMITER ;
 
@@ -372,7 +374,7 @@ BEGIN
     
     SELECT COUNT(adm_id)
     INTO administrator_count
-    FROM tb_adminstrator
+    FROM tb_administrator
     WHERE adm_id = user_id;
     
     SELECT COUNT(pa_id)
@@ -383,7 +385,7 @@ BEGIN
     IF (administrator_count + patient_count) > 0 THEN
 		SELECT JSON_OBJECT('is_deleted', false) as result;
 	ELSE
-		DELETE FROM tb_user WHERE us_id = user_id;
+		DELETE FROM tb_users WHERE us_id = user_id;
 		SELECT JSON_OBJECT('is_deleted', true) as result;
 	END IF;
 END$$
@@ -443,7 +445,7 @@ BEGIN
 	select json_object(
 		'id', adm_id,
         'name', adm_name,
-        'image', convert(adm_image using utf8mb4)
+        'image', adm_image
         ) as administrator
     from tb_administrator
     where adm_id = _id;
@@ -530,7 +532,7 @@ DELIMITER ;
 
 DELIMITER $$
 USE `serious_game`$$
-CREATE PROCEDURE `delete_group`(IN _id INT)
+CREATE PROCEDURE delete_group(IN _id INT)
 BEGIN
 	update tb_group
     set gr_is_deleted = true
@@ -575,6 +577,203 @@ BEGIN
 		VALUES (_grou_id, _admin_id);
     
     select true as is_added;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure bring_patients_from_an_administrator
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `serious_game`$$
+CREATE PROCEDURE bring_patients_from_an_administrator (IN _admin_id INT)
+BEGIN
+select json_arrayagg(patient) as patients from
+(select distinct
+		json_object(
+			'id', pa.pa_id,
+            'passport', pa.pa_passport,
+			'name', pa.pa_name,
+			'age', pa.pa_age,
+			'gender', pa.pa_gender,
+			'schooling', pa.pa_schooling,
+			'residence', pa.pa_residence,
+			'country_of_study', pa.pa_country_of_study,
+			'image', pa.pa_image
+	) as patient
+from tb_patient pa
+inner join tb_patient_has_group pa_gr
+	on pa.pa_id = pa_gr.pa_id
+inner join tb_administrator_has_group ad_gr
+	on pa_gr.gr_id = ad_gr.gr_id
+where
+	pa.pa_is_deleted = false and
+	ad_gr.adm_id = _admin_id) tb;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure add_patient_to_a_group
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `serious_game`$$
+CREATE PROCEDURE add_patient_to_a_group(IN _grou_id INT, IN _patient_id INT)
+BEGIN
+	INSERT INTO tb_patient_has_group (gr_id, pa_id) 
+		VALUES (_grou_id, _patient_id);
+    
+    select true as is_added;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure delete_patient
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `serious_game`$$
+CREATE PROCEDURE delete_patient(IN _id INT)
+BEGIN
+	update tb_patient
+    set pa_is_deleted = true
+    where pa_id = _id;
+    
+    select true as is_deleted;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure get_groups_of_patient
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `serious_game`$$
+CREATE PROCEDURE get_groups_of_patient(IN _patient_id INT)
+BEGIN
+	select 
+        json_arrayagg(
+			json_object('id', grp.gr_id, 'name', grp.gr_name, 'description', grp.gr_description) 
+		) as group_list
+    from tb_group grp
+    inner join tb_patient_has_group pa_grp
+    on grp.gr_id = pa_grp.gr_id
+    where 
+		grp.gr_is_deleted = false and
+		pa_grp.pa_id = _patient_id;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure get_patient
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `serious_game`$$
+CREATE PROCEDURE get_patient(IN _id INT)
+BEGIN
+	select json_object(
+			'id', pa.pa_id,
+            'passport', pa.pa_passport,
+			'name', pa.pa_name,
+			'age', pa.pa_age,
+			'gender', pa.pa_gender,
+			'schooling', pa.pa_schooling,
+			'residence', pa.pa_residence,
+			'country_of_study', pa.pa_country_of_study,
+			'image', pa.pa_image
+		) as patient
+    from tb_patient pa
+    where pa_id = _id;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure insert_patient
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `serious_game`$$
+CREATE PROCEDURE insert_patient(IN _patient JSON)
+BEGIN
+	declare _id int;
+	declare _passport varchar(45);
+    declare _name varchar(45);
+    declare _age int;
+    declare _gender varchar(45);
+    declare _schooling varchar(45);
+    declare _residence varchar(45);
+    declare _country_of_study varchar(45);
+    declare _image blob;
+    
+    set _id = _patient ->> "$.id";
+    set _passport = _patient ->> "$.passport";
+    set _name = _patient ->> "$.name";
+    set _age = _patient ->> "$.age";
+    set _gender = _patient ->> "$.gender";
+    set _schooling = _patient ->> "$.schooling";
+    set _residence = _patient ->> "$.residence";
+    set _country_of_study = _patient ->> "$.country_of_study";
+    set _image = _patient ->> "$.image";
+    
+    insert into tb_patient
+    (pa_id, pa_passport, pa_name, pa_age, pa_gender, pa_schooling, pa_residence, pa_country_of_study, pa_image)
+    values
+    (_id, _passport, _name, _age, _gender, _schooling, _residence, _country_of_study, _image);
+    
+    select true as is_inserted;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure update_patient
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `serious_game`$$
+CREATE PROCEDURE update_patient(IN _patient JSON)
+BEGIN
+	declare _id int;
+	declare _passport varchar(45);
+    declare _name varchar(45);
+    declare _age int;
+    declare _gender varchar(45);
+    declare _schooling varchar(45);
+    declare _residence varchar(45);
+    declare _country_of_study varchar(45);
+    declare _image blob;
+    
+    set _id = _patient ->> "$.id";
+    set _passport = _patient ->> "$.passport";
+    set _name = _patient ->> "$.name";
+    set _age = _patient ->> "$.age";
+    set _gender = _patient ->> "$.gender";
+    set _schooling = _patient ->> "$.schooling";
+    set _residence = _patient ->> "$.residence";
+    set _country_of_study = _patient ->> "$.country_of_study";
+    set _image = _patient ->> "$.image";
+    
+    update tb_patient
+    set
+		pa_passport = _passport, 
+		pa_name = _name, 
+		pa_age = _age, 
+		pa_gender = _gender, 
+		pa_schooling = _schooling, 
+		pa_residence = _residence, 
+		pa_country_of_study = _country_of_study, 
+		pa_image = _image
+    where
+		pa_id = _id;
+    
+    select true as is_updated;
 END$$
 
 DELIMITER ;

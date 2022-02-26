@@ -6,7 +6,7 @@ import { PyramidsPharaohsController } from "./PyramidsPharaohsController.js";
 
 class PatientController {
     static toClass(obj) {
-        var patient = new Patient(obj.id, obj.name, obj.age, obj.gender, obj.schooling, obj.residence, obj.country_of_study, obj.image);
+        var patient = new Patient(obj.id, obj.passport, obj.name, obj.age, obj.gender, obj.schooling, obj.residence, obj.country_of_study, obj.image);
         return patient;
     }
 
@@ -21,6 +21,7 @@ class PatientController {
     static async getAll() {
         var data = {};
         var res = await post_api(`${window.location.origin}/api/patient/getAll`, data);
+        console.log(res)
         res = res.map((p) => { return PatientController.toClass(p); });
         console.log(res);
         return res;

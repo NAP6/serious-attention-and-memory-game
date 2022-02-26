@@ -38,7 +38,7 @@ var form_patient_structure = {
         type: 'text',
         label: 'Codigo de Grupo'
     },
-    id: {
+    passport: {
         type: 'text',
         label: 'Cedula / Pasaporte',
         position_class: ['col-12', 'col-md-6'],

@@ -6,7 +6,8 @@ import { load_game_config_form } from './configGame_tmt.js';
 
 var data = await TMTController.getAll();
 var nameLabels = ['ID', 'Nombre', 'Grupo', 'Intentos', 'Descripcion'];
-var group_list = await AdministratorController.get_groups_of(await AdministratorController.get_active_adminitrator().id);
+var active_admin = await AdministratorController.get_active_adminitrator();
+var group_list = await AdministratorController.get_groups_of(active_admin.id);
 var options_group = group_list.map((g)=> {
     var option = {
         value: g.id,

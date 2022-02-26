@@ -5,7 +5,8 @@ import { Modal } from '../../helper_models/Modal.js';
 import { load_game_config_form } from './configGame_pyramidsPharaohs.js';
 
 var data = await PyramidsPharaohsController.getAll();
-var group_list = await AdministratorController.get_groups_of(await AdministratorController.get_active_adminitrator().id);
+var active_patient = await AdministratorController.get_active_adminitrator();
+var group_list = await AdministratorController.get_groups_of(active_patient.id);
 var options_group = group_list.map((g)=> {
     var option = {
         value: g.id,

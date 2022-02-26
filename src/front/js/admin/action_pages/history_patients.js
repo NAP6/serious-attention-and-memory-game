@@ -7,6 +7,7 @@ async function start_history_page(obj, notyf) {
         .content.cloneNode(true);
 
     var id = config_form.querySelector('#profile_id');
+    var passport = config_form.querySelector('#profile_passport');
     var name = config_form.querySelector('#profile_name');
     var age = config_form.querySelector('#profile_age');
     var gender = config_form.querySelector('#profile_gender');
@@ -17,6 +18,7 @@ async function start_history_page(obj, notyf) {
     var list_group = config_form.querySelector('#list_group');
 
     id.innerText                = obj.id;
+    passport.innerText          = obj.passport;
     name.innerText              = obj.name;
     age.innerText               = obj.age;
     gender.innerText            = obj.gender;
@@ -25,6 +27,10 @@ async function start_history_page(obj, notyf) {
     country_of_study.innerText  = obj.country_of_study;
     if(obj.image)
         profile_image.src       = obj.image;
+    else {
+        console.log('no image');
+        console.log(obj);
+    }
 
     var group_list = await PatientController.get_list_of_groups(obj.id);
     for(var o of group_list){
