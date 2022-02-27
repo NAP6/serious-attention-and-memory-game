@@ -81,7 +81,7 @@ class TMTController {
         var [rows, fields] = await database.query(sql);
         if(!rows || !rows[0] || !rows[0][0]) res.json({is_updated: false});
         else{
-            res.json({is_updated: rows[0][0].is_deleted});
+            res.json({is_updated: rows[0][0].is_updated});
         }
     }
 

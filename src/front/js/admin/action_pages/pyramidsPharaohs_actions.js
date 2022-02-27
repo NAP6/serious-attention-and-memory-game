@@ -20,6 +20,8 @@ var form_structure = {
         type: 'number',
         label: 'ID',
         position_class: ['col-12', 'col-md-6'],
+        disabled: true,
+        required: false
     },
     name: {
         label: 'Nombre',
@@ -46,7 +48,7 @@ var form_structure = {
 var open_update_modal = (obj, tr)=> {
     pap.form.reset();
     pap.form.fill(obj);
-    pap.form.get_input('id').disabled = true;
+    // pap.form.get_input('id').disabled = true;
     pap.modal.title = 'Modificar Juego';
     pap.modal.set_footerContent(pap.btn.update);
     pap.modal.changeSize(Modal.LARGE_SIZE);
@@ -72,7 +74,7 @@ var on_updateButton = async (obj_old, tr)=> {
 // Create
 var open_create_modal = () => { 
     pap.form.reset();
-    pap.form.enableAll();
+    // pap.form.enableAll();
     pap.modal.set_footerContent(pap.btn.create)
     pap.modal.title = 'Crear Juego';
     pap.modal.changeSize(Modal.LARGE_SIZE);

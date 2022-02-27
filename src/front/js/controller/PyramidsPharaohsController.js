@@ -16,6 +16,7 @@ class PyramidsPharaohsController {
     static async getAll() {
         var data = {};
         var res = await post_api(`${window.location.origin}/api/pdp/getAll`, data);
+        console.log(res);
         var pdps = [];
         for(let pdp of res) {
             var new_pdp = await PyramidsPharaohsController.toClass(pdp);
@@ -52,14 +53,16 @@ class PyramidsPharaohsController {
         var new_pdp = new PyramidsPharaohs(pdp.id, pdp.name, pdp.description, group, pdp.maximum_attempsts);
         if(pdp.levels && pdp.levels.length > 0) {
             for(let level of pdp.levels) {
-                var new_level = new PPLevel();
-                for(let example of level.pp_example) {
-                    new_level.example.push(new PPImage(example.image, example.selected));
+                if(level) {
+                    var new_level = new PPLevel();
+                    for(let example of level.pp_example) {
+                        new_level.example.push(new PPImage(example.image, example.selected));
+                    }
+                    for(let answer of level.pp_answer) {
+                        new_level.answer.push(new PPImage(answer.image, answer.selected));
+                    }
+                    new_pdp.levels.push(new_level);
                 }
-                for(let answer of level.pp_answer) {
-                    new_level.answer.push(new PPImage(answer.image, answer.selected));
-                }
-                new_pdp.levels.push(new_level);
             }
         }
         return new_pdp;
