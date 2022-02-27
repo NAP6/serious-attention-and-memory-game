@@ -221,6 +221,27 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `serious_game`.`tb_pdp_image`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `serious_game`.`tb_pdp_image` (
+  `pdp_index` INT NOT NULL,
+  `pdp_image` VARCHAR(100) NOT NULL,
+  `pdp_selected` TINYINT NOT NULL,
+  `pdp_group` VARCHAR(45) NOT NULL,
+  `pdp_level` INT NOT NULL,
+  `gm_id` INT NOT NULL,
+  `gm_version` INT NOT NULL,
+  PRIMARY KEY (`pdp_index`, `gm_id`, `gm_version`, `pdp_level`, `pdp_group`),
+  INDEX `fk_tb_pdp_image_tb_game1_idx` (`gm_id` ASC) VISIBLE,
+  CONSTRAINT `fk_tb_pdp_image_tb_game1`
+    FOREIGN KEY (`gm_id`)
+    REFERENCES `serious_game`.`tb_game` (`gm_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `serious_game`.`tb_tmt_level`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `serious_game`.`tb_tmt_level` (
@@ -264,27 +285,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `serious_game`.`tb_pdp_image`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `serious_game`.`tb_pdp_image` (
-  `pdp_id` INT NOT NULL AUTO_INCREMENT,
-  `pap_image` VARCHAR(100) NULL,
-  `pdp_selected` TINYINT NULL,
-  `pdp_group` VARCHAR(45) NULL,
-  `pdp_level` INT NULL,
-  `gm_id` INT NOT NULL,
-  `gm_version` INT NOT NULL,
-  PRIMARY KEY (`pdp_id`, `gm_id`, `gm_version`),
-  INDEX `fk_tb_pdp_image_tb_game1_idx` (`gm_id` ASC) VISIBLE,
-  CONSTRAINT `fk_tb_pdp_image_tb_game1`
-    FOREIGN KEY (`gm_id`)
-    REFERENCES `serious_game`.`tb_game` (`gm_id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `serious_game`.`tb_match_event`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `serious_game`.`tb_match_event` (
@@ -299,28 +299,32 @@ CREATE TABLE IF NOT EXISTS `serious_game`.`tb_match_event` (
   `eve_is_correct` TINYINT NULL,
   `eve_eye_x` DOUBLE NULL,
   `eve_eye_y` DOUBLE NULL,
-  `poi_id` INT NOT NULL,
   `ma_id` INT NOT NULL,
-  `pdp_id` INT NOT NULL,
-  PRIMARY KEY (`eve_id`, `poi_id`, `ma_id`, `pdp_id`),
-  INDEX `fk_tb_match_event_tb_tmt_point1_idx` (`poi_id` ASC) VISIBLE,
-  INDEX `fk_tb_match_event_tb_pdp_image1_idx` (`pdp_id` ASC) VISIBLE,
+  `gm_id` INT NOT NULL,
+  `gm_version` INT NOT NULL,
+  `pdp_level` INT NULL,
+  `pdp_index` INT NULL,
+  `poi_index` INT NULL,
+  `tmt_index` INT NULL,
+  PRIMARY KEY (`eve_id`),
   INDEX `fk_tb_match_event_tb_match1_idx` (`ma_id` ASC) VISIBLE,
-  CONSTRAINT `fk_tb_match_event_tb_tmt_point1`
-    FOREIGN KEY (`poi_id`)
-    REFERENCES `serious_game`.`tb_tmt_point` (`poi_index`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_tb_match_event_tb_pdp_image1`
-    FOREIGN KEY (`pdp_id`)
-    REFERENCES `serious_game`.`tb_pdp_image` (`pdp_id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
+  INDEX `fk_tb_match_event_tb_pdp_image1_idx` (`pdp_index` ASC, `gm_id` ASC, `gm_version` ASC, `pdp_level` ASC) VISIBLE,
+  INDEX `fk_tb_match_event_tb_tmt_point1_idx` (`poi_index` ASC, `tmt_index` ASC, `gm_id` ASC, `gm_version` ASC) VISIBLE,
   CONSTRAINT `fk_tb_match_event_tb_match1`
     FOREIGN KEY (`ma_id`)
     REFERENCES `serious_game`.`tb_match` (`ma_id`)
     ON DELETE CASCADE
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_tb_match_event_tb_pdp_image1`
+    FOREIGN KEY (`pdp_index` , `gm_id` , `gm_version` , `pdp_level`)
+    REFERENCES `serious_game`.`tb_pdp_image` (`pdp_index` , `gm_id` , `gm_version` , `pdp_level`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tb_match_event_tb_tmt_point1`
+    FOREIGN KEY (`poi_index` , `tmt_index` , `gm_id` , `gm_version`)
+    REFERENCES `serious_game`.`tb_tmt_point` (`poi_index` , `tmt_index` , `gm_id` , `gm_version`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 USE `serious_game` ;
@@ -329,6 +333,11 @@ USE `serious_game` ;
 -- Placeholder table for view `serious_game`.`tmt_game`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `serious_game`.`tmt_game` (`gm_id` INT, `gr_id` INT, `tmt` INT);
+
+-- -----------------------------------------------------
+-- Placeholder table for view `serious_game`.`pdp_game`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `serious_game`.`pdp_game` (`gm_id` INT, `gr_id` INT, `pdp` INT);
 
 -- -----------------------------------------------------
 -- procedure is_email_exist
@@ -957,6 +966,136 @@ END$$
 DELIMITER ;
 
 -- -----------------------------------------------------
+-- procedure update_pdp
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `serious_game`$$
+CREATE PROCEDURE `update_pdp`(IN _pdp JSON)
+BEGIN
+	declare _game_id int;
+	declare _name varchar(45);
+    declare _group_id int;
+    declare _max_attempts int;
+    declare _description varchar(200);
+    declare _levels json;
+    declare _version int;
+    
+	declare _length_level bigint unsigned;
+    declare _index_level bigint unsigned;
+    declare _length_group bigint unsigned;
+    declare _index_group bigint unsigned;
+    declare _aux_group json;
+    
+	set _game_id = _pdp ->> "$.id";
+    set _name = _pdp ->> "$.name";
+    set _group_id = _pdp ->> "$.group.id";
+    set _max_attempts = _pdp ->> "$.maximum_attempsts";
+    set _description = _pdp ->> "$.description";
+    set _levels = _pdp ->> "$.levels";
+        
+    set _length_level = json_length(_levels);
+    set _index_level = 0;
+    
+    select gm_version
+    into _version
+    from tb_game
+    where gm_id = _game_id;
+    
+    if `_length_level` > 0 then
+		set _version := _version + 1;
+    end if;
+    
+    update tb_game
+    set 
+		gm_name = _name,
+        gm_maximum_attempsts = _max_attempts,
+        gm_description = _description,
+        gm_version = _version
+	where gm_id = _game_id;
+
+	while `_index_level` < `_length_level` do
+        # example group ====================================================================
+		set _aux_group := json_extract(_levels, concat('$[', _index_level, '].pp_example'));
+        set _index_group:= 0;
+        set _length_group := json_length(_aux_group);
+        while `_index_group` < `_length_group` do
+			#aqui el insert de los ejemplos
+            insert into tb_pdp_image
+            (pdp_index, pdp_image, pdp_selected, pdp_group, pdp_level, gm_id, gm_version)
+            values (
+				_index_group,
+                JSON_UNQUOTE(json_extract(_aux_group, concat('$[', _index_group, '].image'))),
+                json_extract(_aux_group, concat('$[', _index_group, '].selected')),
+                'example',
+                _index_level,
+                _game_id,
+                _version
+            );
+			set _index_group := _index_group + 1;
+        end while;
+        # aswer group ====================================================================
+        set _aux_group := json_extract(_levels, concat('$[', _index_level, '].pp_answer'));
+        set _index_group:= 0;
+        set _length_group := json_length(_aux_group);
+       while `_index_group` < `_length_group` do
+			#aqui el insert de las respuestas
+            insert into tb_pdp_image
+            (pdp_index, pdp_image, pdp_selected, pdp_group, pdp_level, gm_id, gm_version)
+            values (
+				_index_group,
+                JSON_UNQUOTE(json_extract(_aux_group, concat('$[', _index_group, '].image'))),
+                json_extract(_aux_group, concat('$[', _index_group, '].selected')),
+                'answer',
+                _index_level,
+                _game_id,
+                _version
+            );
+			set _index_group := _index_group + 1;
+        end while;
+       set _index_level := _index_level + 1;
+    end while;
+    
+	select true as is_updated;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure bring_pdps_from_an_administrator
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `serious_game`$$
+CREATE PROCEDURE `bring_pdps_from_an_administrator`(IN _admin_id INT)
+BEGIN
+	select 
+		json_arrayagg(pdp) as pdps
+	from pdp_game pdp
+	inner join tb_administrator_has_group ad_gr
+		on pdp.gr_id = ad_gr.gr_id
+	where
+		ad_gr.adm_id = _admin_id;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure get_pdp
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `serious_game`$$
+CREATE PROCEDURE `get_pdp` (IN _game_id INT)
+BEGIN
+	select pdp
+	from pdp_game
+	where gm_id = _game_id;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
 -- View `serious_game`.`tmt_game`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `serious_game`.`tmt_game`;
@@ -1009,6 +1148,71 @@ right join tb_game gm
 where
 	gm.gm_is_deleted = false and
 	gm.gm_type = 'tmt';
+
+-- -----------------------------------------------------
+-- View `serious_game`.`pdp_game`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `serious_game`.`pdp_game`;
+USE `serious_game`;
+CREATE  OR REPLACE VIEW `pdp_game` AS
+    SELECT 
+        gm.gm_id,
+        gm.gr_id,
+        JSON_OBJECT('id',
+                gm.gm_id,
+                'name',
+                gm.gm_name,
+                'description',
+                gm.gm_description,
+                'maximum_attempsts',
+                gm.gm_maximum_attempsts,
+                'group',
+                gm.gr_id,
+                'levels',
+                lv._game_levels) AS pdp
+    FROM
+        (SELECT 
+            gm1.gm_id, JSON_ARRAYAGG(tb_lv._level) _game_levels
+        FROM
+            (SELECT 
+            img_e.pdp_level,
+                img_e.gm_id,
+                img_e.gm_version,
+                JSON_OBJECT('pp_example', img_e._image, 'pp_answer', img_a._image) AS _level
+        FROM
+            (SELECT 
+            pdp.pdp_group,
+                pdp.pdp_level,
+                pdp.gm_id,
+                pdp.gm_version,
+                JSON_ARRAYAGG(JSON_OBJECT('image', pdp.pdp_image, 'selected', pdp.pdp_selected)) AS _image
+        FROM
+            tb_pdp_image pdp
+        WHERE
+            pdp.pdp_group = 'example'
+        GROUP BY pdp.pdp_group , pdp.pdp_level , pdp.gm_id , pdp.gm_version) img_e
+        JOIN (SELECT 
+            pdp.pdp_group,
+                pdp.pdp_level,
+                pdp.gm_id,
+                pdp.gm_version,
+                JSON_ARRAYAGG(JSON_OBJECT('image', pdp.pdp_image, 'selected', pdp.pdp_selected)) AS _image
+        FROM
+            tb_pdp_image pdp
+        WHERE
+            pdp.pdp_group = 'answer'
+        GROUP BY pdp.pdp_group , pdp.pdp_level , pdp.gm_id , pdp.gm_version) img_a ON img_e.pdp_level = img_a.pdp_level
+            AND img_e.gm_id = img_a.gm_id
+            AND img_e.gm_version = img_a.gm_version) tb_lv
+        RIGHT JOIN tb_game gm1 ON gm1.gm_id = tb_lv.gm_id
+            AND gm1.gm_version = tb_lv.gm_version
+        WHERE
+            gm1.gm_type = 'pdp'
+        GROUP BY gm1.gm_id) lv
+            RIGHT JOIN
+        tb_game gm ON lv.gm_id = gm.gm_id
+    WHERE
+        gm.gm_type = 'pdp';
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
