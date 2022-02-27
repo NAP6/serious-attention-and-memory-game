@@ -231,11 +231,9 @@ function load_game_config_form(game, alert, notyf, onSave) {
 
     function delete_level() {
         var level_to_delete = select_levels.value;
-        console.log('eliminar nivel')
         if(level_to_delete != -6) {
             var options = select_levels.querySelectorAll('option');
             Array.from(options).every((option)=> {
-                console.log(option.innerText, option.value)
                 if(option.value == level_to_delete) {
                     option.remove();
                     obj.remove_level(level_to_delete);

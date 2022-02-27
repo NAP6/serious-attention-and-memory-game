@@ -92,12 +92,14 @@ CREATE TABLE IF NOT EXISTS `serious_game`.`tb_game` (
   `gm_id` INT NOT NULL AUTO_INCREMENT,
   `gm_name` VARCHAR(45) NOT NULL,
   `gm_maximum_attempsts` INT NOT NULL,
-  `gm_description` VARCHAR(45) NULL,
-  `gm_type` INT NOT NULL,
+  `gm_description` VARCHAR(200) NULL,
+  `gm_type` VARCHAR(10) NOT NULL,
   `gm_is_deleted` TINYINT NOT NULL DEFAULT 0,
+  `gm_version` INT NOT NULL DEFAULT 0,
   `gr_id` INT NOT NULL,
   PRIMARY KEY (`gm_id`, `gr_id`),
-  INDEX `fk_tb_game_tb_group1_idx` (`gr_id` ASC) VISIBLE,
+  INDEX `fk_tb_game_tb_group1_idx` (`gr_id` ASC) INVISIBLE,
+  INDEX `fk_tb_game_tb_group_version_idx` (`gm_version` ASC) VISIBLE,
   CONSTRAINT `fk_tb_game_tb_group1`
     FOREIGN KEY (`gr_id`)
     REFERENCES `serious_game`.`tb_group` (`gr_id`)
@@ -222,10 +224,11 @@ ENGINE = InnoDB;
 -- Table `serious_game`.`tb_tmt_level`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `serious_game`.`tb_tmt_level` (
-  `tmt_id` INT NOT NULL AUTO_INCREMENT,
-  `tmt_image` BLOB NULL,
+  `tmt_index` INT NOT NULL,
+  `tmt_image` VARCHAR(100) NULL,
   `gm_id` INT NOT NULL,
-  PRIMARY KEY (`tmt_id`, `gm_id`),
+  `gm_version` INT NOT NULL,
+  PRIMARY KEY (`tmt_index`, `gm_id`, `gm_version`),
   INDEX `fk_tb_tmt_level_tb_game1_idx` (`gm_id` ASC) VISIBLE,
   CONSTRAINT `fk_tb_tmt_level_tb_game1`
     FOREIGN KEY (`gm_id`)
@@ -239,7 +242,7 @@ ENGINE = InnoDB;
 -- Table `serious_game`.`tb_tmt_point`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `serious_game`.`tb_tmt_point` (
-  `poi_id` INT NOT NULL AUTO_INCREMENT,
+  `poi_index` INT NOT NULL,
   `poi_diameter` DOUBLE NULL,
   `poi_left` DOUBLE NULL,
   `poi_top` DOUBLE NULL,
@@ -247,14 +250,16 @@ CREATE TABLE IF NOT EXISTS `serious_game`.`tb_tmt_point` (
   `poi_ax_top` DOUBLE NULL,
   `poi_width` DOUBLE NULL,
   `poi_height` DOUBLE NULL,
-  `tmt_id` INT NOT NULL,
-  PRIMARY KEY (`poi_id`, `tmt_id`),
-  INDEX `fk_tb_tmt_point_tb_tmt_level1_idx` (`tmt_id` ASC) VISIBLE,
+  `tmt_index` INT NOT NULL,
+  `gm_id` INT NOT NULL,
+  `gm_version` INT NOT NULL,
+  PRIMARY KEY (`poi_index`, `tmt_index`, `gm_id`, `gm_version`),
+  INDEX `fk_tb_tmt_point_tb_tmt_level1_idx` (`tmt_index` ASC, `gm_id` ASC, `gm_version` ASC) VISIBLE,
   CONSTRAINT `fk_tb_tmt_point_tb_tmt_level1`
-    FOREIGN KEY (`tmt_id`)
-    REFERENCES `serious_game`.`tb_tmt_level` (`tmt_id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
+    FOREIGN KEY (`tmt_index` , `gm_id` , `gm_version`)
+    REFERENCES `serious_game`.`tb_tmt_level` (`tmt_index` , `gm_id` , `gm_version`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -263,12 +268,13 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `serious_game`.`tb_pdp_image` (
   `pdp_id` INT NOT NULL AUTO_INCREMENT,
-  `pap_image` BLOB NULL,
+  `pap_image` VARCHAR(100) NULL,
   `pdp_selected` TINYINT NULL,
   `pdp_group` VARCHAR(45) NULL,
   `pdp_level` INT NULL,
   `gm_id` INT NOT NULL,
-  PRIMARY KEY (`pdp_id`, `gm_id`),
+  `gm_version` INT NOT NULL,
+  PRIMARY KEY (`pdp_id`, `gm_id`, `gm_version`),
   INDEX `fk_tb_pdp_image_tb_game1_idx` (`gm_id` ASC) VISIBLE,
   CONSTRAINT `fk_tb_pdp_image_tb_game1`
     FOREIGN KEY (`gm_id`)
@@ -302,7 +308,7 @@ CREATE TABLE IF NOT EXISTS `serious_game`.`tb_match_event` (
   INDEX `fk_tb_match_event_tb_match1_idx` (`ma_id` ASC) VISIBLE,
   CONSTRAINT `fk_tb_match_event_tb_tmt_point1`
     FOREIGN KEY (`poi_id`)
-    REFERENCES `serious_game`.`tb_tmt_point` (`poi_id`)
+    REFERENCES `serious_game`.`tb_tmt_point` (`poi_index`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_tb_match_event_tb_pdp_image1`
@@ -318,6 +324,11 @@ CREATE TABLE IF NOT EXISTS `serious_game`.`tb_match_event` (
 ENGINE = InnoDB;
 
 USE `serious_game` ;
+
+-- -----------------------------------------------------
+-- Placeholder table for view `serious_game`.`tmt_game`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `serious_game`.`tmt_game` (`gm_id` INT, `gr_id` INT, `tmt` INT);
 
 -- -----------------------------------------------------
 -- procedure is_email_exist
@@ -777,6 +788,227 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure insert_game
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `serious_game`$$
+CREATE PROCEDURE `insert_game`(IN _game JSON, IN _type varchar(10))
+BEGIN
+	declare _name varchar(45);
+    declare _group_id int;
+    declare _max_attempts int;
+    declare _description varchar(200);
+    
+    set _name = _game ->> "$.name";
+    set _group_id = _game ->> "$.group.id";
+    set _max_attempts = _game ->> "$.maximum_attempsts";
+    set _description = _game ->> "$.description";
+    
+    insert into tb_game
+    (gm_name, gm_description, gm_maximum_attempsts, gm_type, gr_id)
+    values
+    (_name, _description, _max_attempts, _type, _group_id);
+        
+	select last_insert_id() as inserted_id;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure update_tmt
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `serious_game`$$
+CREATE PROCEDURE update_tmt(IN _tmt JSON)
+BEGIN
+	declare _game_id int;
+	declare _name varchar(45);
+    declare _group_id int;
+    declare _max_attempts int;
+    declare _description varchar(200);
+    declare _levels json;
+    declare _version int;
+    
+    
+    declare _length_level bigint unsigned;
+    declare _index_level bigint unsigned;
+    declare _length_points bigint unsigned;
+    declare _index_points bigint unsigned;
+    declare _aux_point json;
+    
+    set _game_id = _tmt ->> "$.id";
+    set _name = _tmt ->> "$.name";
+    set _group_id = _tmt ->> "$.group.id";
+    set _max_attempts = _tmt ->> "$.maximum_attempsts";
+    set _description = _tmt ->> "$.description";
+    set _levels = _tmt ->> "$.levels";
+    
+    set _length_level = json_length(_levels);
+    set _index_level = 0;
+    
+    select gm_version
+    into _version
+    from tb_game
+    where gm_id = _game_id;
+    
+    if `_length_level` > 0 then
+		set _version := _version + 1;
+    end if;
+    
+    update tb_game
+    set 
+		gm_name = _name,
+        gm_maximum_attempsts = _max_attempts,
+        gm_description = _description,
+        gm_version = _version
+	where gm_id = _game_id;
+    
+    while `_index_level` < `_length_level` do
+        set _aux_point := json_extract(_levels, concat('$[', _index_level, '].points'));
+		insert into tb_tmt_level (tmt_index, tmt_image, gm_id, gm_version)
+        value(
+			_index_level,
+			JSON_UNQUOTE(json_extract(_levels, concat('$[', _index_level, '].image'))),
+            _game_id,
+            _version
+		);
+        set _index_points:= 0;
+        set _length_points := json_length(_aux_point);
+        while `_index_points` < `_length_points` do
+			insert into tb_tmt_point (poi_index, poi_diameter, poi_left, poi_top, poi_ax_left, poi_ax_top, poi_height, poi_width, tmt_index, gm_id, gm_version)
+            value(
+				_index_points,
+                json_extract(_aux_point, concat('$[', _index_points, '].diameter')),
+                json_extract(_aux_point, concat('$[', _index_points, '].left')),
+                json_extract(_aux_point, concat('$[', _index_points, '].top')),
+                json_extract(_aux_point, concat('$[', _index_points, '].ax_left')),
+                json_extract(_aux_point, concat('$[', _index_points, '].ax_top')),
+                json_extract(_aux_point, concat('$[', _index_points, '].ax_heigth')),
+                json_extract(_aux_point, concat('$[', _index_points, '].ax_width')),
+                _index_level,
+                _game_id,
+                _version
+			);
+            set _index_points := _index_points + 1;
+        end while;
+        set _index_level := _index_level + 1;
+    end while;
+    
+    select true as is_updated;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure bring_tmts_from_an_administrator
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `serious_game`$$
+CREATE PROCEDURE `bring_tmts_from_an_administrator`(IN _admin_id INT)
+BEGIN
+	select 
+		json_arrayagg(tmt) as tmts
+	from tmt_game tmt
+	inner join tb_administrator_has_group ad_gr
+		on tmt.gr_id = ad_gr.gr_id
+	where
+		ad_gr.adm_id = _admin_id;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure delete_game
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `serious_game`$$
+CREATE PROCEDURE `delete_game`(IN _game_id INT)
+BEGIN
+	update tb_game
+    set
+		gm_is_deleted = true
+	where
+		gm_id = _game_id;
+        
+	select true as is_deleted;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure get_tmt
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `serious_game`$$
+CREATE PROCEDURE `get_tmt` (IN _game_id INT)
+BEGIN
+	select tmt
+	from tmt_game
+	where gm_id = _game_id;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- View `serious_game`.`tmt_game`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `serious_game`.`tmt_game`;
+USE `serious_game`;
+CREATE  OR REPLACE VIEW `tmt_game` AS
+ select gm.gm_id, gm.gr_id,
+	json_object(
+		'id', gm.gm_id,
+        'name', gm.gm_name,
+        'description', gm.gm_description,
+        'maximum_attempsts', gm.gm_maximum_attempsts,
+        'group', gm.gr_id,
+        'levels', tl._level
+    ) as tmt
+ from
+ (select lv.gm_id, lv.gm_version,
+	json_arrayagg(
+		json_object(
+			'index', lv.tmt_index,
+            'image', lv.tmt_image,
+            'points', tp._point
+        )
+	) as _level
+ from
+ (
+ select poi.tmt_index, poi.gm_id, poi.gm_version,
+	json_arrayagg(
+		json_object(
+			'index', poi_index,
+			'diameter', poi_diameter,
+			'left', poi_left,
+			'top', poi_top,
+			'ax_left', poi_ax_left,
+			'ax_top', poi_ax_top,
+			'ax_width', poi_width,
+			'ax_heigth', poi_height
+		)
+	) as _point
+ from tb_tmt_point poi
+ group by poi.tmt_index, poi.gm_id, poi.gm_version
+ ) tp
+ right join tb_tmt_level lv
+	on  tp.tmt_index = lv.tmt_index and
+		tp.gm_id = lv.gm_id and
+        tp.gm_version = lv.gm_version
+group by lv.gm_id, lv.gm_version) tl
+right join tb_game gm
+	on tl.gm_id = gm.gm_id and
+		tl.gm_version = gm.gm_version
+where
+	gm.gm_is_deleted = false and
+	gm.gm_type = 'tmt';
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

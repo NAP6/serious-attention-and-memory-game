@@ -16,6 +16,7 @@ class TMTController {
     static async getAll() {
         var data = {};
         var res = await post_api(`${window.location.origin}/api/tmt/getAll`, data);
+        console.log(res);
         var tmts = [];
         for(var tmt of res) {
             var tmt_obj = await TMTController.toClass(tmt);
@@ -40,7 +41,7 @@ class TMTController {
     static async insert(tmt) {
         var data = {tmt: tmt};
         var res = await post_api(`${window.location.origin}/api/tmt/insert`, data);
-        return res.is_inserted;
+        return res;
     }
 
     static async toClass(obj) {

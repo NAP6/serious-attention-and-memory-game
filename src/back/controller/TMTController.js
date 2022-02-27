@@ -1,23 +1,23 @@
 import { TMT, TMTPoint } from '../../models/TMT.js';
 import { Group } from '../../models/Group.js';
 import { GroupController } from './GroupContoller.js';
+import { database } from "../database/database.js";
+import { save_image } from "../save_image.js";
+
+import { join, dirname  } from "path";
+import {fileURLToPath} from 'url';
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 class TMTController {
 
     static async getById(id) {
-        if(!id) throw(['Se nececita un id']);
-        var tmt = new TMT(1, 'Primer juego TMT', 'Juego de TMT', new Group(1, 'Grupo 1', 'una description'), 1);
-        var level_1 = tmt.add_level('https://www.researchgate.net/profile/Alexander-Eriksson-3/publication/299465148/figure/fig5/AS:497128448499717@1495536066867/The-Trail-Making-Test-B-test-screen.png');
-        var level_2 = tmt.add_level('https://3.bp.blogspot.com/-vzDanfc42Og/V1_GhqrpCFI/AAAAAAAAADo/_DjUrRXQFEwFFinPUPP7W9IddaLSMtx4QCLcB/s1600/Evernote%2BSnapshot%2B20160614%2B130136.png');
-
-        level_1.points.push(new TMTPoint(60,650,483,216,16,728,629));
-        level_1.points.push(new TMTPoint(60,577,129,216,16,728,626));
-
-        level_2.points.push(new TMTPoint(31, 347, 382, 131, 16, 897, 634));
-        level_2.points.push(new TMTPoint(31, 717, 491, 131, 16, 897, 634));
-        level_2.points.push(new TMTPoint(31, 856, 479, 131, 16, 897, 634));
-
-        return tmt;
+        var sql = `call get_tmt('${id}')`;
+        var [rows, fields] = await database.query(sql);
+        if(!rows || !rows[0] || !rows[0][0]) return {};
+        else{
+            var tmt = rows[0][0].tmt;
+            return await TMTController.toClass(tmt);
+        }
     }
 
     static async getById_external(req, res) {
@@ -27,39 +27,87 @@ class TMTController {
     }
 
     static async toClass(obj) {
-        var group = await GroupController.getById(obj.group);
+        var group;
+        if(typeof obj.group == "object") {
+            group = await GroupController.toClass(obj.group);
+        }else {
+            var group = await GroupController.getById(obj.group);
+        }
         var new_obj = new TMT(obj.id, obj.name, obj.description, group, obj.maximum_attempsts);
         if(obj.levels && obj.levels.length > 0)
-            new_obj.levels = obj.levels;
+            for(let level of obj.levels) {
+                var new_level = new TMTLevel(level.image, [], level.label_image);
+                for(let point of level.points) {
+                    var new_point = new TMTPoint(point.diameter, point.left, point.top, point.ax_left, point.ax_top, point.ax_width, point.ax_heigth);
+                    new_level.points.push(new_point);
+                    }
+                new_obj.levels.push(new_level);
+            }
         return new_obj;
     }
 
     static async getAll(req, res) {
-        var list = [];
-        for(var i=0; i < 5; i++) {
-            list.push(new TMT(i, `TMT ${i}`, `Descripcion ${i}`, new Group(i, 'Grupo '+i, 'Des')));
+        var admin_id = req.session.active_user.id;
+        var sql = `call bring_tmts_from_an_administrator('${admin_id}')`;
+        console.log(sql);
+        var [rows, fields] = await database.query(sql);
+        if(
+            !rows || 
+            !rows[0] || 
+            !rows[0][0] || 
+            !rows[0][0].tmts
+        ) res.json([]);
+        else{
+            console.log(rows[0]);
+            var tmts = rows[0][0].tmts;
+            res.json(tmts);
         }
-        res.json(list);
     }
 
     static async update(req, res) {
         var tmt = req.body.tmt;
         console.log(tmt);
-        res.json({is_updated: true});
+        if(tmt.levels.length > 0) {
+            for(var i=0; i < tmt.levels.length; i++) {
+                if(tmt.levels[i].image && tmt.levels[i].image.startsWith('data:image')) {
+                    var decodeBase64 = save_image.decodeBase64(tmt.levels[i].image);
+                    var path = `/img/tmt_${tmt.id}_${i}.${decodeBase64.type.split('/').pop()}`;
+                    save_image.save(join(__dirname, `../../front/assets${path}`), decodeBase64.data);
+                    tmt.levels[i].image = path;
+                }
+            }
+        }
+        var sql = `call update_tmt('${JSON.stringify(tmt)}')`;
+        var [rows, fields] = await database.query(sql);
+        if(!rows || !rows[0] || !rows[0][0]) res.json({is_updated: false});
+        else{
+            res.json({is_updated: rows[0][0].is_deleted});
+        }
     }
 
     static async delete(req, res) {
         var tmt = req.body.tmt;
         console.log(tmt);
-        res.json({is_deleted: true});
+        var sql = `call delete_game('${tmt.id}')`;
+        var [rows, fields] = await database.query(sql);
+        if(!rows || !rows[0] || !rows[0][0]) res.json({is_deleted: false});
+        else{
+            res.json({is_deleted: rows[0][0].is_deleted});
+        }
     }
 
     static async insert(req, res) {
         var tmt = req.body.tmt;
         console.log(tmt);
-        res.json({is_inserted: true});
+        var sql = `call insert_game('${JSON.stringify(tmt)}', 'tmt')`;
+        var [rows, fields] = await database.query(sql);
+        if(rows && rows[0] && rows[0][0]) {
+            var inserted_id = rows[0][0].inserted_id;
+            res.json({is_inserted: inserted_id? true: false, inserted_id: inserted_id});
+        } else {
+            res.json({is_inserted: false});
+        }
     }
-
 }
 
 export { TMTController };
