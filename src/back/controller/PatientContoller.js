@@ -100,11 +100,17 @@ class PatientController {
     static async get_pending_games(req, res) {
         var patient_id = req.body.patient_id;
         console.log(patient_id);
+        var sql_tmt = `call pending_tmt_games_of_patient(${patient_id})`;
+        var sql_pdp = `call pending_pdp_games_of_patient(${patient_id})`;
         var tmts = [];
         var pdps = [];
 
-        tmts.push(await TMTController.getById(1));
-        pdps.push(await PyramidsPharaohsController.getById(1));
+        var [rows_tmt, fields] = await database.query(sql_tmt);
+        var [rows_pdp, fields] = await database.query(sql_pdp);
+        if(rows_tmt && rows_tmt[0] && rows_tmt[0][0] && rows_tmt[0][0].tmts)
+            tmts = rows_tmt[0][0].tmts;
+        if(rows_pdp && rows_pdp[0] && rows_pdp[0][0] && rows_pdp[0][0].pdps)
+            pdps = rows_pdp[0][0].pdps;
 
         res.json({tmts: tmts, pdps: pdps});
     }

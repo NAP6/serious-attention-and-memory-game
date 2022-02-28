@@ -61,7 +61,7 @@ var on_updateButton = async (obj_old, tr)=> {
     var obj = pap.form.getObject();
     obj_old.name = obj.name;
     obj_old.group = obj.group;
-    obj_old.maximum_attempts = obj.maximum_attempts;
+    obj_old.maximum_attempsts = obj.maximum_attempsts;
     obj_old.description = obj.description;
     console.log(obj_old);
     var new_obj = await PyramidsPharaohsController.toClass(obj_old);
@@ -87,7 +87,7 @@ var on_create_button = async ()=> {
         var obj = pap.form.getObject();
         pap.modal.hide();
         var classObj = await PyramidsPharaohsController.toClass(obj);
-        await PyramidsPharaohsController.insert(classObj);
+        classObj.id = await PyramidsPharaohsController.insert(classObj);
         pap.table.add(classObj);
     }
 };

@@ -1,4 +1,4 @@
-import { PyramidsPharaohs } from '../../models/PyramidsPharaohs.js';
+import { PyramidsPharaohs, PPLevel, PPImage } from '../../models/PyramidsPharaohs.js';
 import { Group } from '../../models/Group.js';
 import { GroupController } from './GroupContoller.js';
 import { database } from "../database/database.js";
@@ -16,7 +16,7 @@ class PyramidsPharaohsController {
         if(!rows || !rows[0] || !rows[0][0]) return {};
         else{
             var pdp = rows[0][0].pdp;
-            return await TMTController.toClass(pdp);
+            return await PyramidsPharaohsController.toClass(pdp);
         }
     }
 

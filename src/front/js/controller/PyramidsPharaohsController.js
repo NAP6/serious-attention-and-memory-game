@@ -41,7 +41,7 @@ class PyramidsPharaohsController {
     static async insert(pdp) {
         var data = {pdp: pdp};
         var res = await post_api(`${window.location.origin}/api/pdp/insert`, data);
-        return res.is_inserted;
+        return res.inserted_id;
     }
 
     static async toClass(pdp) {

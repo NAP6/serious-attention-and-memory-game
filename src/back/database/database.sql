@@ -1096,58 +1096,145 @@ END$$
 DELIMITER ;
 
 -- -----------------------------------------------------
+-- procedure pending_games_of_patient
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `serious_game`$$
+CREATE PROCEDURE `pending_games_of_patient`(IN _patient_id INT)
+BEGIN
+select 
+	tg.count,
+    gm.gm_maximum_attempsts,
+    tmt
+from
+(select
+	gm.gm_id,
+	count(mc.ma_id) as count,
+	gm.tmt
+from tmt_game gm
+inner join tb_patient_has_group pa_gr
+	on gm.gr_id = pa_gr.gr_id
+left join tb_match mc
+	on gm.gm_id = mc.gm_id and pa_gr.pa_id = mc.pa_id
+where
+	pa_gr.pa_id = _patient_id
+group by gm.tmt, gm.gm_id) tg
+inner join tb_game gm
+	on tg.gm_id = gm.gm_id
+where
+	gm.gm_maximum_attempsts > tg.count;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure pending_tmt_games_of_patient
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `serious_game`$$
+CREATE PROCEDURE `pending_tmt_games_of_patient`(IN _patient_id INT)
+BEGIN
+select 
+	json_arrayagg(tmt) as tmts
+from
+(select
+	gm.gm_id,
+	count(mc.ma_id) as count,
+	gm.tmt
+from tmt_game gm
+inner join tb_patient_has_group pa_gr
+	on gm.gr_id = pa_gr.gr_id
+left join tb_match mc
+	on gm.gm_id = mc.gm_id and pa_gr.pa_id = mc.pa_id
+where
+	pa_gr.pa_id = _patient_id
+group by gm.tmt, gm.gm_id) tg
+inner join tb_game gm
+	on tg.gm_id = gm.gm_id
+where
+	gm.gm_maximum_attempsts > tg.count;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure pending_pdp_games_of_patient
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `serious_game`$$
+CREATE PROCEDURE `pending_pdp_games_of_patient`(IN _patient_id INT)
+BEGIN
+select 
+	json_arrayagg(pdp) as pdps
+from
+(select
+	gm.gm_id,
+	count(mc.ma_id) as count,
+	gm.pdp
+from pdp_game gm
+inner join tb_patient_has_group pa_gr
+	on gm.gr_id = pa_gr.gr_id
+left join tb_match mc
+	on gm.gm_id = mc.gm_id and pa_gr.pa_id = mc.pa_id
+where
+	pa_gr.pa_id = _patient_id
+group by gm.pdp, gm.gm_id) tg
+inner join tb_game gm
+	on tg.gm_id = gm.gm_id
+where
+	gm.gm_maximum_attempsts > tg.count;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
 -- View `serious_game`.`tmt_game`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `serious_game`.`tmt_game`;
 USE `serious_game`;
 CREATE  OR REPLACE VIEW `tmt_game` AS
- select gm.gm_id, gm.gr_id,
-	json_object(
-		'id', gm.gm_id,
-        'name', gm.gm_name,
-        'description', gm.gm_description,
-        'maximum_attempsts', gm.gm_maximum_attempsts,
-        'group', gm.gr_id,
-        'levels', tl._level
-    ) as tmt
- from
- (select lv.gm_id, lv.gm_version,
-	json_arrayagg(
-		json_object(
-			'index', lv.tmt_index,
-            'image', lv.tmt_image,
-            'points', tp._point
-        )
-	) as _level
- from
- (
- select poi.tmt_index, poi.gm_id, poi.gm_version,
-	json_arrayagg(
-		json_object(
-			'index', poi_index,
-			'diameter', poi_diameter,
-			'left', poi_left,
-			'top', poi_top,
-			'ax_left', poi_ax_left,
-			'ax_top', poi_ax_top,
-			'ax_width', poi_width,
-			'ax_heigth', poi_height
-		)
-	) as _point
- from tb_tmt_point poi
- group by poi.tmt_index, poi.gm_id, poi.gm_version
- ) tp
- right join tb_tmt_level lv
-	on  tp.tmt_index = lv.tmt_index and
-		tp.gm_id = lv.gm_id and
-        tp.gm_version = lv.gm_version
-group by lv.gm_id, lv.gm_version) tl
-right join tb_game gm
-	on tl.gm_id = gm.gm_id and
-		tl.gm_version = gm.gm_version
-where
-	gm.gm_is_deleted = false and
-	gm.gm_type = 'tmt';
+    SELECT 
+        gm.gm_id,
+        gm.gr_id,
+        JSON_OBJECT('id',
+                gm.gm_id,
+                'name',
+                gm.gm_name,
+                'description',
+                gm.gm_description,
+                'maximum_attempsts',
+                gm.gm_maximum_attempsts,
+                'group',
+                gm.gr_id,
+                'levels',
+                tl._level) AS tmt
+    FROM
+        (SELECT 
+            lv.gm_id,
+                lv.gm_version,
+                JSON_ARRAYAGG(JSON_OBJECT('index', lv.tmt_index, 'image', lv.tmt_image, 'points', tp._point)) AS _level
+        FROM
+            (SELECT 
+            poi.tmt_index,
+                poi.gm_id,
+                poi.gm_version,
+                JSON_ARRAYAGG(JSON_OBJECT('index', poi_index, 'diameter', poi_diameter, 'left', poi_left, 'top', poi_top, 'ax_left', poi_ax_left, 'ax_top', poi_ax_top, 'ax_width', poi_width, 'ax_heigth', poi_height)) AS _point
+        FROM
+            tb_tmt_point poi
+        GROUP BY poi.tmt_index , poi.gm_id , poi.gm_version) tp
+        RIGHT JOIN tb_tmt_level lv ON tp.tmt_index = lv.tmt_index
+            AND tp.gm_id = lv.gm_id
+            AND tp.gm_version = lv.gm_version
+        GROUP BY lv.gm_id , lv.gm_version) tl
+            RIGHT JOIN
+        tb_game gm ON tl.gm_id = gm.gm_id
+            AND tl.gm_version = gm.gm_version
+    WHERE
+        gm.gm_is_deleted = FALSE
+            AND gm.gm_type = 'tmt';
 
 -- -----------------------------------------------------
 -- View `serious_game`.`pdp_game`
@@ -1212,7 +1299,8 @@ CREATE  OR REPLACE VIEW `pdp_game` AS
             RIGHT JOIN
         tb_game gm ON lv.gm_id = gm.gm_id
     WHERE
-        gm.gm_type = 'pdp';
+        gm.gm_is_deleted = FALSE
+            AND gm.gm_type = 'pdp';
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
