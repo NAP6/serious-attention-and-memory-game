@@ -7,6 +7,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema serious_game
 -- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `serious_game` ;
 
 -- -----------------------------------------------------
 -- Schema serious_game
@@ -114,7 +115,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `serious_game`.`tb_match` (
   `ma_id` INT NOT NULL AUTO_INCREMENT,
   `ma_date` DATE NULL,
-  `ma_game_time` DOUBLE NULL,
+  `ma_game_time` BIGINT(20) NULL,
   `ma_score` DOUBLE NULL,
   `ma_adjusted_score` DOUBLE NULL,
   `ma_eye_tracker_precision_estimate` DOUBLE NULL,
@@ -183,18 +184,18 @@ CREATE TABLE IF NOT EXISTS `serious_game`.`tb_MatchCronometer` (
   `cron_finish_at` BIGINT(20) NULL,
   `cron_total_time` BIGINT(20) NULL,
   `cron_game_level` INT NULL,
-  `ma_id_total` INT NOT NULL,
-  `ma_id1_level` INT NOT NULL,
-  PRIMARY KEY (`cron_id`, `ma_id_total`, `ma_id1_level`),
+  `ma_id_total` INT NULL,
+  `ma_id_level` INT NULL,
+  PRIMARY KEY (`cron_id`),
   INDEX `fk_tb_MatchCronometer_tb_match1_idx` (`ma_id_total` ASC) VISIBLE,
-  INDEX `fk_tb_MatchCronometer_tb_match2_idx` (`ma_id1_level` ASC) VISIBLE,
+  INDEX `fk_tb_MatchCronometer_tb_match2_idx` (`ma_id_level` ASC) VISIBLE,
   CONSTRAINT `fk_tb_MatchCronometer_tb_match1`
     FOREIGN KEY (`ma_id_total`)
     REFERENCES `serious_game`.`tb_match` (`ma_id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_tb_MatchCronometer_tb_match2`
-    FOREIGN KEY (`ma_id1_level`)
+    FOREIGN KEY (`ma_id_level`)
     REFERENCES `serious_game`.`tb_match` (`ma_id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
@@ -291,7 +292,8 @@ CREATE TABLE IF NOT EXISTS `serious_game`.`tb_match_event` (
   `eve_id` INT NOT NULL AUTO_INCREMENT,
   `eve_time` BIGINT(20) NULL,
   `item_tag` VARCHAR(45) NULL,
-  `eve_item_index` INT NULL,
+  `eve_viewport_height` DOUBLE NULL,
+  `eve_viewport_width` DOUBLE NULL,
   `eve_element_top` DOUBLE NULL,
   `eve_element_left` DOUBLE NULL,
   `eve_element_width` DOUBLE NULL,
@@ -304,11 +306,12 @@ CREATE TABLE IF NOT EXISTS `serious_game`.`tb_match_event` (
   `gm_version` INT NOT NULL,
   `pdp_level` INT NULL,
   `pdp_index` INT NULL,
+  `pdp_group` VARCHAR(45) NULL,
   `poi_index` INT NULL,
   `tmt_index` INT NULL,
   PRIMARY KEY (`eve_id`),
   INDEX `fk_tb_match_event_tb_match1_idx` (`ma_id` ASC) VISIBLE,
-  INDEX `fk_tb_match_event_tb_pdp_image1_idx` (`pdp_index` ASC, `gm_id` ASC, `gm_version` ASC, `pdp_level` ASC) VISIBLE,
+  INDEX `fk_tb_match_event_tb_pdp_image1_idx` (`pdp_index` ASC, `gm_id` ASC, `gm_version` ASC, `pdp_level` ASC, `pdp_group` ASC) VISIBLE,
   INDEX `fk_tb_match_event_tb_tmt_point1_idx` (`poi_index` ASC, `tmt_index` ASC, `gm_id` ASC, `gm_version` ASC) VISIBLE,
   CONSTRAINT `fk_tb_match_event_tb_match1`
     FOREIGN KEY (`ma_id`)
@@ -316,8 +319,8 @@ CREATE TABLE IF NOT EXISTS `serious_game`.`tb_match_event` (
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_tb_match_event_tb_pdp_image1`
-    FOREIGN KEY (`pdp_index` , `gm_id` , `gm_version` , `pdp_level`)
-    REFERENCES `serious_game`.`tb_pdp_image` (`pdp_index` , `gm_id` , `gm_version` , `pdp_level`)
+    FOREIGN KEY (`pdp_index` , `gm_id` , `gm_version` , `pdp_level` , `pdp_group`)
+    REFERENCES `serious_game`.`tb_pdp_image` (`pdp_index` , `gm_id` , `gm_version` , `pdp_level` , `pdp_group`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_tb_match_event_tb_tmt_point1`
@@ -1186,6 +1189,199 @@ inner join tb_game gm
 	on tg.gm_id = gm.gm_id
 where
 	gm.gm_maximum_attempsts > tg.count;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure insert_match
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `serious_game`$$
+CREATE PROCEDURE `insert_match`(IN _patient_id INT, IN _match JSON)
+BEGIN
+	declare _game_id int;
+	declare _date date;
+    declare _game_time bigint(20);
+    declare _score double;
+    declare _eye_tracker_precision double;
+    declare _game_cronometer json;
+    declare _levels_cronometers json;
+    declare _events json;
+    declare _eye_traking json;
+    
+    declare _match_id int;
+    declare _game_version int;
+    declare _game_type varchar(10);
+    declare _pdp_aux varchar(45);
+    
+    declare _index int;
+    declare _max_index int;
+    
+    set _game_id = _match ->> "$.game.id";
+    set _date = STR_TO_DATE(_match ->> "$.date", "%d/%m/%Y");
+    set _game_time = _match ->> "$.game_time";
+    set _score = _match ->> "$.score";
+    set _eye_tracker_precision = _match ->> "$.eye_tracker_precision_estimate";
+	set _game_cronometer = _match ->> "$.game_cronometer";
+    set _levels_cronometers = _match ->> "$.levels_cronometers";
+    set _events = _match ->> "$.events";
+    set _eye_traking = _match ->> "$.eye_traking";
+    
+SELECT 
+    gm_version, gm_type
+INTO _game_version , _game_type FROM
+    tb_game
+WHERE
+    gm_id = _game_id;
+    
+    insert into tb_match (ma_date, ma_game_time, ma_score, ma_eye_tracker_precision_estimate, pa_id, gm_id)
+    values (_date, _game_time, _score, _eye_tracker_precision, _patient_id, _game_id);
+    
+    set _match_id = last_insert_id();
+    
+    #Cronometer of total game
+    insert into tb_MatchCronometer (cron_start_at, cron_finish_at, cron_total_time, ma_id_total)
+    values ( 
+		_game_cronometer ->> "$.start",
+        _game_cronometer ->> "$.finish",
+        _game_cronometer ->> "$.total_time",
+        _match_id
+        );
+    
+    #Cronometer of each level
+    set _index = 0;
+    set _max_index = json_length( JSON_KEYS(_levels_cronometers));
+    
+    while `_index` < `_max_index` do
+		insert into tb_MatchCronometer (cron_start_at, cron_finish_at, cron_total_time, cron_game_level, ma_id_level)
+		values ( 
+			json_extract(_levels_cronometers, concat('$."', _index, '".start')),
+			json_extract(_levels_cronometers, concat('$."', _index, '".finish')),
+			json_extract(_levels_cronometers, concat('$."', _index, '".total_time')),
+            _index,
+			_match_id
+			);
+		set _index := _index + 1;
+    end while;
+    
+    #Position of eyes
+    set _index = 0;
+    set _max_index = json_length(_eye_traking);
+    
+    while `_index` < `_max_index` do
+		insert into tb_eye_focus_point (eye_pos_x, eye_pos_y, eye_time_at, ma_id)
+		values ( 
+			json_extract(_eye_traking, concat('$[', _index, '].x')),
+			json_extract(_eye_traking, concat('$[', _index, '].y')),
+			json_extract(_eye_traking, concat('$[', _index, '].time')),
+			_match_id
+			);
+		set _index := _index + 1;
+    end while;
+    
+        #Events
+    set _index = 0;
+    set _max_index = json_length(_events);
+    
+    while `_index` < `_max_index` do
+    
+		if _game_type = 'tmt' then
+			insert into tb_match_event (eve_time, item_tag, eve_viewport_height, eve_viewport_width, eve_element_top, eve_element_left, eve_element_width, eve_element_height, eve_is_correct, eve_eye_x, eve_eye_y, ma_id, gm_id, gm_version, tmt_index, poi_index)
+			values ( 
+				json_extract(_events, concat('$[', _index, '].time')),
+				json_extract(_events, concat('$[', _index, '].item_tag')),
+				json_extract(_events, concat('$[', _index, '].vewport_height')),
+                json_extract(_events, concat('$[', _index, '].vewport_width')),
+                json_extract(_events, concat('$[', _index, '].element_top')),
+                json_extract(_events, concat('$[', _index, '].element_left')),
+                json_extract(_events, concat('$[', _index, '].vewport_width')),
+                json_extract(_events, concat('$[', _index, '].element_height')),
+                json_extract(_events, concat('$[', _index, '].is_correct')),
+                json_extract(_events, concat('$[', _index, '].eye_position.x')),
+                json_extract(_events, concat('$[', _index, '].eye_position.y')),
+				_match_id,
+                _game_id,
+                _game_version,
+                json_extract(_events, concat('$[', _index, '].level_id')),
+                json_extract(_events, concat('$[', _index, '].item_index'))
+				);
+		else
+			if json_extract(_events, concat('$[', _index, '].item_tag')) = 'pp_example' then
+				set _pdp_aux = 'example';
+			else 
+				set _pdp_aux = 'answer';
+            end if;
+			insert into tb_match_event (eve_time, item_tag, eve_viewport_height, eve_viewport_width, eve_element_top, eve_element_left, eve_element_width, eve_element_height, eve_is_correct, eve_eye_x, eve_eye_y, ma_id, gm_id, gm_version, pdp_level, pdp_index, pdp_group)
+			values ( 
+				json_extract(_events, concat('$[', _index, '].time')),
+				json_extract(_events, concat('$[', _index, '].item_tag')),
+				json_extract(_events, concat('$[', _index, '].vewport_height')),
+                json_extract(_events, concat('$[', _index, '].vewport_width')),
+                json_extract(_events, concat('$[', _index, '].element_top')),
+                json_extract(_events, concat('$[', _index, '].element_left')),
+                json_extract(_events, concat('$[', _index, '].vewport_width')),
+                json_extract(_events, concat('$[', _index, '].element_height')),
+                json_extract(_events, concat('$[', _index, '].is_correct')),
+                json_extract(_events, concat('$[', _index, '].eye_position.x')),
+                json_extract(_events, concat('$[', _index, '].eye_position.y')),
+				_match_id,
+                _game_id,
+                _game_version,
+                json_extract(_events, concat('$[', _index, '].level_id')),
+                json_extract(_events, concat('$[', _index, '].item_index')),
+                _pdp_aux
+				);
+
+        end if;
+		set _index := _index + 1;
+    end while;
+SELECT TRUE AS is_inserted;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure get_match_by_patient
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `serious_game`$$
+CREATE PROCEDURE `get_match_by_patient`(IN _patient_id INT)
+BEGIN
+	select 
+	json_arrayagg(
+		json_object(
+			'id', ma.ma_id,
+			'game', json_object('id', gm.gm_id, 'name', gm.gm_name, 'group', gm.gr_id),
+			'date', DATE_FORMAT(ma.ma_date,'%d/%m/%Y'),
+			'game_time', ma.ma_game_time,
+			'score', ma.ma_score,
+			'adjusted_score', ma.ma_adjusted_score,
+			'eye_tracker_precision_estimate', ma.ma_eye_tracker_precision_estimate
+			)
+        ) as matchs
+from tb_match ma
+inner join tb_game gm
+	on ma.gm_id = gm.gm_id
+where ma.pa_id = _patient_id;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure update_adjusted_score_of_match
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `serious_game`$$
+CREATE PROCEDURE `update_adjusted_score_of_match`(IN _match_id INT, IN _adjusted_score DOUBLE)
+BEGIN
+	update tb_match
+    set ma_adjusted_score = _adjusted_score
+    where ma_id = _match_id;
+	select true as is_updated;
 END$$
 
 DELIMITER ;
