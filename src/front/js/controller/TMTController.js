@@ -9,20 +9,17 @@ class TMTController {
         var data = {id: id};
         var res = await post_api(`${window.location.origin}/api/tmt/getById`, data);
         res = await TMTController.toClass(res);
-        console.log(res);
         return res;
     }
 
     static async getAll() {
         var data = {};
         var res = await post_api(`${window.location.origin}/api/tmt/getAll`, data);
-        console.log(res);
         var tmts = [];
         for(var tmt of res) {
             var tmt_obj = await TMTController.toClass(tmt);
             tmts.push(tmt_obj);
         }
-        console.log(tmts);
         return tmts;
     }
 

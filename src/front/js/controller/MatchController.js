@@ -6,7 +6,6 @@ class MatchCrontroller {
         var data = {patient_id: patient_id};
         var res = await post_api(`${window.location.origin}/api/match/get_by_patient`, data);
         res = res.map((m) => { return MatchCrontroller.toClass(m); });
-        console.log(res);
         return res;
     }
 

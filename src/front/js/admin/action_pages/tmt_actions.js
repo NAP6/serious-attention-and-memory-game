@@ -58,16 +58,12 @@ var open_update_modal = (obj, tr)=> {
 
 var on_updateButton = async (obj_old, tr)=> {
     var obj = tmt.form.getObject();
-    console.log(obj);
-    console.log(obj_old);
     tmt.modal.hide();
     obj_old.name = obj.name;
     obj_old.group = obj.group;
     obj_old.maximum_attempsts = obj.maximum_attempsts;
     obj_old.description = obj.description;
-    console.log(obj_old);
     var classObj = await TMTController.toClass(obj_old);
-    console.log(classObj);
     await TMTController.update(classObj)
     tmt.table.update(tr, classObj);
 }

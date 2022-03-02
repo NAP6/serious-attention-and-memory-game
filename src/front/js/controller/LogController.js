@@ -4,7 +4,6 @@ class LogController {
     static async login(email, password) {
         var data = {email: email, password: password};
         var res = await post_api(`${window.location.origin}/api/login`, data);
-        console.log(res);
         return res;
     }
 

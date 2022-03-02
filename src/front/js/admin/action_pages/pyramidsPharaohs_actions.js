@@ -63,9 +63,7 @@ var on_updateButton = async (obj_old, tr)=> {
     obj_old.group = obj.group;
     obj_old.maximum_attempsts = obj.maximum_attempsts;
     obj_old.description = obj.description;
-    console.log(obj_old);
     var new_obj = await PyramidsPharaohsController.toClass(obj_old);
-    console.log(new_obj);
     pap.modal.hide();
     await PyramidsPharaohsController.update(new_obj);
     pap.table.update(tr, new_obj);

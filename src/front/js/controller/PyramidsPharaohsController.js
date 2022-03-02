@@ -9,20 +9,17 @@ class PyramidsPharaohsController {
         var data = {id: id};
         var res = await post_api(`${window.location.origin}/api/pdp/getById`, data);
         res = await PyramidsPharaohsController.toClass(res);
-        console.log(res);
         return res;
     }
 
     static async getAll() {
         var data = {};
         var res = await post_api(`${window.location.origin}/api/pdp/getAll`, data);
-        console.log(res);
         var pdps = [];
         for(let pdp of res) {
             var new_pdp = await PyramidsPharaohsController.toClass(pdp);
             pdps.push(new_pdp);
         }
-        console.log(pdps);
         return pdps;
     }
 

@@ -6,7 +6,6 @@ class GroupController {
         var data = {id: id};
         var res = await post_api(`${window.location.origin}/api/group/getById`, data);
         res = GroupController.toClass(res);
-        console.log(res);
         return res;
     }
 
@@ -16,7 +15,6 @@ class GroupController {
         if(res)
         res = res.map((g) => { return GroupController.toClass(g); });
         else res = [];
-        console.log(res);
         return res;
     }
 

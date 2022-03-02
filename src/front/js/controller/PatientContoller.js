@@ -14,16 +14,13 @@ class PatientController {
         var data = {};
         var res = await post_api(`${window.location.origin}/api/patient/get_active_patient`, data);
         res = PatientController.toClass(res);
-        console.log(res);
         return res;
     }
 
     static async getAll() {
         var data = {};
         var res = await post_api(`${window.location.origin}/api/patient/getAll`, data);
-        console.log(res)
         res = res.map((p) => { return PatientController.toClass(p); });
-        console.log(res);
         return res;
     }
 
@@ -31,7 +28,6 @@ class PatientController {
         var data = {patient_id: patient_id};
         var res = await post_api(`${window.location.origin}/api/patient/get_list_of_groups`, data);
         res = res.map((g) => { return GroupController.toClass(g); });
-        console.log(res);
         return res;
     }
 
@@ -66,7 +62,6 @@ class PatientController {
         }
 
         res = [].concat(tmt, pdp);
-        console.log(res);
         return res;
     }
 
