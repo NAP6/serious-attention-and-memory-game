@@ -34,14 +34,12 @@ class PatientController {
         if(!rows || !rows[0][0].patients) res.json([]);
         else{
             var patients = rows[0][0].patients;
-            console.log(patients);
             res.json(patients);
         }
     }
 
     static async get_list_of_groups(req, res) {
         var patient_id = req.body.patient_id;
-        console.log(patient_id);
         var sql = `call get_groups_of_patient(${patient_id})`;
         var [rows, fields] = await database.query(sql);
         if(!rows) res.json([]);
@@ -53,7 +51,6 @@ class PatientController {
 
     static async update(req, res) {
         var patient = req.body.patient;
-        console.log(patient);
         var [rows, fields] = await database.query(`call update_patient('${JSON.stringify(patient)}')`);
         if(!rows) res.json({is_updated: false});
         else{ 
@@ -63,7 +60,6 @@ class PatientController {
     }
 
     static async delete(req, res) {
-        console.log('Entra en delete')
         var patient = req.body.patient;
         var [rows, fields] = await database.query(`call delete_patient(${patient.id})`);
         if(!rows) res.json({is_deleted: false});
@@ -78,8 +74,6 @@ class PatientController {
         var user_id = req.body.user_id;
         var group_code = req.body.group_code;
         patient.id = user_id;
-        console.log(patient);
-        console.log(group_code);
         if(patient.image && patient.image.length > 0) {
             var decodeBase64 = save_image.decodeBase64(patient.image);
             var path = `/img/${user_id}.${decodeBase64.type.split('/').pop()}`;
@@ -99,7 +93,6 @@ class PatientController {
 
     static async get_pending_games(req, res) {
         var patient_id = req.body.patient_id;
-        console.log(patient_id);
         var sql_tmt = `call pending_tmt_games_of_patient(${patient_id})`;
         var sql_pdp = `call pending_pdp_games_of_patient(${patient_id})`;
         var tmts = [];
@@ -117,7 +110,6 @@ class PatientController {
 
     static async add_to_group(req, res) {
         var group_id = req.body.group_id;
-        console.log(group_id);
         var sql = `call add_patient_to_a_group(${group_id}, ${req.session.active_user.id})`;
         var [rows, fields] = await database.query(sql);
         if(!rows) res.json({is_added: false});

@@ -40,7 +40,6 @@ class AdministratorController {
         var admin = req.body.admin;
         var user_id = req.body.user_id;
         admin['id'] = user_id;
-        console.log(admin);
         if(admin.image && admin.image.length > 0) {
             var decodeBase64 = save_image.decodeBase64(admin.image);
             var path = `/img/${user_id}.${decodeBase64.type.split('/').pop()}`;
@@ -58,7 +57,6 @@ class AdministratorController {
 
     static async add_to_group(req, res) {
         var group_id = req.body.group_id;
-        console.log(group_id);
         var sql = `call add_administrator_to_a_group(${group_id}, ${req.session.active_user.id})`;
         var [rows, fields] = await database.query(sql);
         if(!rows) res.json({is_added: false});

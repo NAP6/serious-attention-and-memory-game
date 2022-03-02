@@ -22,7 +22,6 @@ class PyramidsPharaohsController {
 
     static async getById_external(req, res) {
         var id = req.body.id;
-        console.log(id);
         var pdp = await PyramidsPharaohsController.getById(id);
         res.json(pdp);
     }
@@ -30,7 +29,6 @@ class PyramidsPharaohsController {
     static async getAll(req, res) {
         var admin_id = req.session.active_user.id;
         var sql = `call bring_pdps_from_an_administrator('${admin_id}')`;
-        console.log(sql);
         var [rows, fields] = await database.query(sql);
         if(
             !rows || 
@@ -39,7 +37,6 @@ class PyramidsPharaohsController {
             !rows[0][0].pdps
         ) res.json([]);
         else{
-            console.log(rows[0]);
             var pdps = rows[0][0].pdps;
             res.json(pdps);
         }
@@ -47,7 +44,6 @@ class PyramidsPharaohsController {
 
     static async update(req, res) {
         var pdp = req.body.pdp;
-        console.log(pdp);
         if(pdp.levels.length > 0) {
             for(var i=0; i < pdp.levels.length; i++) {
                 //example
@@ -73,7 +69,6 @@ class PyramidsPharaohsController {
             }
         }
         var sql = `call update_pdp('${JSON.stringify(pdp)}')`;
-        console.log(sql);
         var [rows, fields] = await database.query(sql);
         if(!rows || !rows[0] || !rows[0][0]) res.json({is_updated: false});
         else{
@@ -83,9 +78,7 @@ class PyramidsPharaohsController {
 
     static async delete(req, res) {
         var pdp = req.body.pdp;
-        console.log(pdp);
         var sql = `call delete_game('${pdp.id}')`;
-        console.log(sql);
         var [rows, fields] = await database.query(sql);
         if(!rows || !rows[0] || !rows[0][0]) res.json({is_deleted: false});
         else{
@@ -95,9 +88,7 @@ class PyramidsPharaohsController {
 
     static async insert(req, res) {
         var pdp = req.body.pdp;
-        console.log(pdp);
         var sql = `call insert_game('${JSON.stringify(pdp)}', 'pdp')`;
-        console.log(sql);
         var [rows, fields] = await database.query(sql);
         if(rows && rows[0] && rows[0][0]) {
             var inserted_id = rows[0][0].inserted_id;

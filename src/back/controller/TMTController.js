@@ -49,7 +49,6 @@ class TMTController {
     static async getAll(req, res) {
         var admin_id = req.session.active_user.id;
         var sql = `call bring_tmts_from_an_administrator('${admin_id}')`;
-        console.log(sql);
         var [rows, fields] = await database.query(sql);
         if(
             !rows || 
@@ -58,7 +57,6 @@ class TMTController {
             !rows[0][0].tmts
         ) res.json([]);
         else{
-            console.log(rows[0]);
             var tmts = rows[0][0].tmts;
             res.json(tmts);
         }
@@ -66,7 +64,6 @@ class TMTController {
 
     static async update(req, res) {
         var tmt = req.body.tmt;
-        console.log(tmt);
         if(tmt.levels.length > 0) {
             for(var i=0; i < tmt.levels.length; i++) {
                 if(tmt.levels[i].image && tmt.levels[i].image.startsWith('data:image')) {
@@ -87,7 +84,6 @@ class TMTController {
 
     static async delete(req, res) {
         var tmt = req.body.tmt;
-        console.log(tmt);
         var sql = `call delete_game('${tmt.id}')`;
         var [rows, fields] = await database.query(sql);
         if(!rows || !rows[0] || !rows[0][0]) res.json({is_deleted: false});
@@ -98,7 +94,6 @@ class TMTController {
 
     static async insert(req, res) {
         var tmt = req.body.tmt;
-        console.log(tmt);
         var sql = `call insert_game('${JSON.stringify(tmt)}', 'tmt')`;
         var [rows, fields] = await database.query(sql);
         if(rows && rows[0] && rows[0][0]) {

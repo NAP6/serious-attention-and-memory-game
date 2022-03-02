@@ -10,7 +10,6 @@ class LogController {
         var resp;
         if(rows && rows[0][0]) {
             var user = rows[0][0].user;
-            console.log(user);
             resp = {
                 status: 'ok',
                 is_logged: true,
@@ -59,7 +58,6 @@ class LogController {
         if(!rows) res.json({is_registered: false});
         else{
             var inserted_id = rows[0][0].result.inserted_id;
-            console.log(inserted_id);
             res.json({inserted_id: inserted_id});
         }
     }

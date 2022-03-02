@@ -18,7 +18,6 @@ class GroupController {
 
     static async getById_external(req, res) {
         var id = req.body.id;
-        console.log(id);
         var group = await GroupController.getById(id);
         res.json(group);
     }
@@ -27,13 +26,11 @@ class GroupController {
         var user = req.session.active_user;
         var is_admin = req.session.user_type == 'Administrator';
         var sql ='';
-        console.log(is_admin);
         if(is_admin) 
             sql = `call get_groups_of_administrator(${user.id})`;
         else
             sql = `call get_groups_of_patient(${user.id})`;
         
-        console.log(sql);
         var [rows, fields] = await database.query(sql);
         if(!rows) res.json([]);
         else {
@@ -44,7 +41,6 @@ class GroupController {
 
     static async update(req, res) {
         var group = req.body.group;
-        console.log(group);
         var [rows, fields] = await database.query(`call update_group('${JSON.stringify(group)}')`);
         if(!rows) res.json({is_updated: false});
         else{ 
@@ -55,7 +51,6 @@ class GroupController {
 
     static async delete(req, res) {
         var group = req.body.group;
-        console.log(group);
         var [rows, fields] = await database.query(`call delete_group(${group.id})`);
         if(!rows) res.json({is_deleted: false});
         else {
@@ -66,7 +61,6 @@ class GroupController {
 
     static async insert(req, res) {
         var group = req.body.group;
-        console.log(group);
         var [rows, fields] = await database.query(`call insert_group('${JSON.stringify(group)}')`);
         if(!rows) res.json({is_inserted: false});
         else {
