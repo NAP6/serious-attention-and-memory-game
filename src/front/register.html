@@ -1,0 +1,70 @@
+{% extends "start_form_template.html" %}
+
+<!--Metadata-->
+{% block meta %}
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+{% endblock %}
+
+<!--title-->
+{% block title %}Register{% endblock %}
+
+<!--Content of form-->
+{% block content %}
+    <div class="col-12 bg-register-image"></div>
+    <div class="col-12">
+        <div class="p-5">
+            <div class="text-center">
+              <h1 class="h4 text-gray-900 mb-4">
+                Bienvenido al proyecto!
+              </h1>
+            </div>
+            <div class="my-2" id="register_type_container">
+                <h2 class="text-center mb-3">¿Que tipo de usuario seras?</h2>
+                <div class="row">
+                    <div class="col d-grid">
+                        <button type="button" class="btn btn-outline-dark" id="btn_select_admin">
+                            <i class="fas fa-satellite fa-7x"></i>
+                            <p class="h3 mt-2">Administrador</p>
+                        </button>
+                    </div>
+                    <div class="col d-grid">
+                        <button type="button" class="btn btn-outline-primary" id="btn_select_patient">
+                            <i class="fas fa-user-astronaut fa-7x"></i>
+                            <p class="h3 mt-2">Paciente</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="my-2 d-none" id="register_form_container">
+                <div>
+                    <div class="register_image_profile">
+                        <img
+                          alt="Foto de perfil"
+                          id="profile_image"
+                          class="img-profile rounded-circle h-100"
+                          src="/img/undraw_profile.svg"
+                        />
+                    </div>
+                    <input placeholder="ghost" type="file" id="profile_image_input" class="d-none" accept="image/*">
+                </div>
+            </div>
+            <div class="d-grid gap-1">
+              <button type="button" class="btn btn-dark d-none" id="btn_register">
+                Registrarme
+              </button>
+            </div>
+            <hr />
+            <div class="text-center">
+              <a class="small" href="/login" id="btn_have_account">
+                Ya tengo una cuenta!
+              </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+<!--Scripts of forms-->
+{% block script %}
+    <script type="module" src="/js/start_forms/register.js"></script>
+{% endblock %}

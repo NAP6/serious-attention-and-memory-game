@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    {% block meta %}{% endblock %}
+
+    <!-- Favicons -->
+    <!--<link href="img/favicon.png" rel="icon">-->
+    <!--<link href="img/apapple-touch-icon.png" rel="apapple-touch-icon">-->
+
+    <!-- Vendor CSS Files -->
+
+    <!-- Main CSS File -->
+    <link href="css/general_pages.css" rel="stylesheet" type="text/css">
+
+  </head>
+
+  <body class="d-flex flex-column h-100">
+
+    {% include('parts/header.html') %}
+
+    {% block content %}{% endblock %}
+
+    {% include('parts/footer.html') %}
+
+    <!-- Vendor JS Files -->
+
+    <!-- Main JS Files -->
+    <script src="js/header/backGround_menu.js"></script>
+
+  </body>
+</html>

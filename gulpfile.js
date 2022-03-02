@@ -1,3 +1,5 @@
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
 const del = require("del");
 const gulp = require("gulp");
 const browser_sync = require("browser-sync").create();
@@ -7,9 +9,27 @@ const beautify = require("gulp-beautify");
 const merge_stream = require("merge-stream");
 const sass = require("gulp-sass")(require("sass"));
 const autoPrefixer = require("gulp-autoprefixer");
+const { fork } = require("child_process");
 
 const pkg = require("./package.json");
 const dependencies = require("./dependencies.json");
+
+/*
+ * Set name of the main file where app start.
+ */
+const main_file = 'app.js';
+
+/*
+ * Set name of Front End folder.
+ * This directory is where all views and public files are.
+ */
+const front = 'front/';
+
+/*
+ * set name of Back End folder.
+ * This directory is where all apis, routes and oter server files are.
+ */
+const back = 'back/';
 
 /*
  * Set the destination/production directory.
@@ -58,8 +78,8 @@ function clean() {
  * source code folder to copiled directory.
  */
 function copy_files() {
-    const resource_folder = gulp.src([src_dir + resource_dir + "**/*"])
-        .pipe(gulp.dest(copiled_dir + resource_dir))
+    const resource_folder = gulp.src([src_dir + front + resource_dir + "**/*"])
+        .pipe(gulp.dest(copiled_dir + front + resource_dir))
         .pipe(browser_sync.stream());
 
     return merge_stream(resource_folder)
@@ -78,12 +98,12 @@ function copile_HTML() {
     for (let dependency in dependencies) {
         if (dependencies[dependency].css_link !== undefined) {
             for(let l of dependencies[dependency].css_link){
-                css_links +=`<link href="/${resource_dir+l}" rel="stylesheet">\n`;
+                css_links +=`<link href="/${l}" rel="stylesheet">\n`;
             }
         }
         if (dependencies[dependency].js_link !== undefined) {
             for(let l of dependencies[dependency].js_link){
-                js_links +=`<script src="/${resource_dir+l}"></script>\n`;
+                js_links +=`<script src="/${l}"></script>\n`;
             }
         }
     }
@@ -96,13 +116,13 @@ function copile_HTML() {
     -->
     `
 
-    return gulp.src([`${src_dir}**/*.html`, `!${src_dir}**/*template.html`, `!${src_dir}**/parts/**`])
+    return gulp.src([`${src_dir + front}**/*.html`, `!${src_dir + front}**/*template.html`, `!${src_dir + front}**/parts/**`])
         .pipe(nunjucks.compile())
         .pipe(inject.after("<!-- Vendor CSS Files -->", css_links))
         .pipe(inject.after("<!-- Vendor JS Files -->", js_links))
         .pipe(beautify.html({ indent_size: 2, max_preserve_newlines: 1 }))
         .pipe(inject.before("</head>", credits_in_html_comentary))
-        .pipe(gulp.dest(copiled_dir))
+        .pipe(gulp.dest(copiled_dir + front))
         .pipe(browser_sync.stream());
 }
 
@@ -121,6 +141,7 @@ function copy_dependencies() {
                 gulp.src(dependencies[dependency].src)
                 .pipe(gulp.dest(
                     copiled_dir + 
+                    front +
                     resource_dir + 
                     dependencies[dependency].dest
                 ))
@@ -138,7 +159,7 @@ function copy_dependencies() {
  * css file, add credits and reload browser.
  */
 function copile_scss() {
-    return gulp.src(`./${src_dir}scss/**/*.scss`)
+    return gulp.src(`./${src_dir + front}scss/**/*.scss`)
         .pipe(sass({
             outputStyle: "expanded"
         })
@@ -147,38 +168,88 @@ function copile_scss() {
             cascade: false
         }))
         .pipe(inject.prepend(`/*\n${credits.join("\n")}\n*/\n\n`))
-        .pipe(gulp.dest(`${copiled_dir + resource_dir}css`))
+        .pipe(gulp.dest(`${copiled_dir + front + resource_dir}css`))
         .pipe(browser_sync.stream());
 }
 
 /*
- * Copile JS
+ * Copile Front JS
  *
  * This function add credits to js, use beautify
  * and reload browser
  */
-function copile_js() {
-    return gulp.src(`./${src_dir}js/**/*.js`)
+function copile_front_js() {
+    return gulp.src(`./${src_dir + front}js/**/*.js`)
         .pipe(beautify.js({ indent_size: 2, max_preserve_newlines: 2 }))
         .pipe(inject.prepend(`/*\n${credits.join("\n")}\n*/\n\n`))
-        .pipe(gulp.dest(`${copiled_dir + resource_dir}js`))
+        .pipe(gulp.dest(`${copiled_dir + front + resource_dir}js`))
         .pipe(browser_sync.stream());
 }
 
 /*
- * Init live server browser sync
+ * Copile Back JS
  *
- * Start the browser to see changes
+ * This function add credits to js, use beautify
  */
+function copile_back_js() {
+    return gulp.src([`${src_dir}**/*.js`, `!${src_dir + front}**/*.js`])
+        .pipe(beautify.js({ indent_size: 2, max_preserve_newlines: 2 }))
+        .pipe(inject.prepend(`/*\n${credits.join("\n")}\n*/\n\n`))
+        .pipe(gulp.dest(`${copiled_dir}`));
+}
+
+
+/*
+* Init live server browser sync
+*
+* Start the browser to see changes
+*/
 function init_browser_sync(done) {
-    browser_sync.init({
-        server: {
-            baseDir: copiled_dir
-        },
-        port: 3000,
-        notify: false
+    browser_sync.init(null, {
+        proxy: "http://localhost:3000/",
+        files: [`${copiled_dir + front}`],
+        port: 7000,
     });
     done();
+}
+
+/*
+ * Structure to start, stop and restart the server
+ *
+ */
+const server = {
+    instance: {},
+    path: copiled_dir + main_file,
+
+    start: ( callback )=> {
+        if(!server.instance.connected) {
+            process.execArgv.push( '--harmony'  );
+            server.instance = fork(server.path);
+            console.log(`Starting: server (PID: ${server.instance.pid})`);
+        } else
+            console.log('Problems on start server');
+        if( callback ) callback();
+    },
+
+    stop: ( callback )=> {
+        if(server.instance.connected) {
+            server.instance.on('close', (code)=> {
+                console.log(`Stopping: server (PID: ${server.instance.pid}, Code: ${code})`);
+                if( callback ) callback();
+            });
+            server.instance.kill( 'SIGINT'  );
+            return true;
+        }
+        return false;
+    },
+
+    restart: ( callback )=> {
+        console.log('Restarting Server')
+        var was_started = server.stop(server.start);
+        if(!was_started) 
+            server.start();
+        if( callback ) callback();
+    }
 }
 
 /*
@@ -188,10 +259,11 @@ function init_browser_sync(done) {
  * files.
  */
 function watch_files() {
-    gulp.watch(`${src_dir}**/*.html`, copile_HTML)
-    gulp.watch(`${src_dir + resource_dir}**/*`, copy_files)
-    gulp.watch(`${src_dir}scss/**/*`, copile_scss)
-    gulp.watch(`${src_dir}js/**/*`, copile_js)
+    gulp.watch(`${src_dir + front}**/*.html`, copile_HTML)
+    gulp.watch(`${src_dir + front + resource_dir}**/*`, copy_files)
+    gulp.watch(`${src_dir + front}scss/**/*`, copile_scss)
+    gulp.watch(`${src_dir + front}js/**/*`, copile_front_js)
+    gulp.watch([`${src_dir}**/*.js`, `!${src_dir + front}**/*.js`], gulp.series([copile_back_js, server.restart]))
 }
 
 
@@ -199,10 +271,11 @@ function watch_files() {
  * Set the Tasck to create a all the copiled directory.
  */
 const create_copiled_dir = gulp.series(clean, 
-    gulp.parallel(copy_files, copile_HTML, copile_scss, copile_js, copy_dependencies));
+    gulp.parallel(copy_files, copile_HTML, copile_scss, copile_front_js, copile_back_js, copy_dependencies));
 
 
 //Export tasks
-exports.watch = gulp.series(create_copiled_dir, watch_files);
-exports.start = gulp.series(create_copiled_dir, gulp.parallel(watch_files, init_browser_sync));
-exports.default = create_copiled_dir;
+gulp.task("default", create_copiled_dir);
+gulp.task("watch", gulp.series(create_copiled_dir, watch_files));
+gulp.task("start", gulp.series(create_copiled_dir,
+    gulp.parallel(watch_files, gulp.series(server.start, init_browser_sync))));

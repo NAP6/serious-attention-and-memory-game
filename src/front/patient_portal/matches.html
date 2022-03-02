@@ -1,0 +1,33 @@
+{% extends "patient_portal/template.html" %} {% block meta %}
+<title>Web</title>
+<meta content="" name="description" />
+<meta content="" name="keywords" />
+{% endblock %} {% block content %}
+
+<main id="main">
+  <div>
+    <h1 class="h3 mb-2 text-gray-800">Partidas Jugadas</h1>
+    <p class="mb-4">
+      A continuacion se listan todas las partidas jugadas.
+    </p>
+
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-width-blod text-dark d-inline">Mi lista de juegos</h6>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <div id="dataTable_contaier"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+{% endblock %}
+
+
+{% block script %}
+  <script type="module" src="/js/patient/matches_action.js"></script>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "admin_portal/table_template.html" %}
+
+<!-- Title -->
+
+{% block title %} TMT {% endblock %}
+
+<!-- Description -->
+
+{% block description %}
+    TMT es un juego para medir la atencion, y todo eso que debemos poner.
+ {% endblock %}
+
+<!-- Talbel Title -->
+
+{% block tableTitle %} Base de datos de jugeo {% endblock %}
+
+<!-- Put "d-none" class if wanth to hide -->
+
+{% block class_addButton %}{% endblock %}
+
+<!-- Template section -->
+
+{% block templates %}
+    {% include('admin_portal/parts/TMT/template_config.html') %}
+{% endblock %}
+
+<!-- Scripts for this page -->
+
+{% block script %}
+
+    <script type="module" src="/js/admin/action_pages/tmt_actions.js"></script>
+
+{% endblock %}
