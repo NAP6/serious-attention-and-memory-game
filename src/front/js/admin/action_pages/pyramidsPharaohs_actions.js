@@ -5,7 +5,8 @@ import { Modal } from '../../helper_models/Modal.js';
 import { load_game_config_form } from './configGame_pyramidsPharaohs.js';
 
 var data = await PyramidsPharaohsController.getAll();
-var group_list = await AdministratorController.get_groups_of(await AdministratorController.get_active_adminitrator().id);
+var active_patient = await AdministratorController.get_active_adminitrator();
+var group_list = await AdministratorController.get_groups_of(active_patient.id);
 var options_group = group_list.map((g)=> {
     var option = {
         value: g.id,
@@ -19,6 +20,8 @@ var form_structure = {
         type: 'number',
         label: 'ID',
         position_class: ['col-12', 'col-md-6'],
+        disabled: true,
+        required: false
     },
     name: {
         label: 'Nombre',
@@ -45,7 +48,7 @@ var form_structure = {
 var open_update_modal = (obj, tr)=> {
     pap.form.reset();
     pap.form.fill(obj);
-    pap.form.get_input('id').disabled = true;
+    // pap.form.get_input('id').disabled = true;
     pap.modal.title = 'Modificar Juego';
     pap.modal.set_footerContent(pap.btn.update);
     pap.modal.changeSize(Modal.LARGE_SIZE);
@@ -58,11 +61,9 @@ var on_updateButton = async (obj_old, tr)=> {
     var obj = pap.form.getObject();
     obj_old.name = obj.name;
     obj_old.group = obj.group;
-    obj_old.maximum_attempts = obj.maximum_attempts;
+    obj_old.maximum_attempsts = obj.maximum_attempsts;
     obj_old.description = obj.description;
-    console.log(obj_old);
     var new_obj = await PyramidsPharaohsController.toClass(obj_old);
-    console.log(new_obj);
     pap.modal.hide();
     await PyramidsPharaohsController.update(new_obj);
     pap.table.update(tr, new_obj);
@@ -71,7 +72,7 @@ var on_updateButton = async (obj_old, tr)=> {
 // Create
 var open_create_modal = () => { 
     pap.form.reset();
-    pap.form.enableAll();
+    // pap.form.enableAll();
     pap.modal.set_footerContent(pap.btn.create)
     pap.modal.title = 'Crear Juego';
     pap.modal.changeSize(Modal.LARGE_SIZE);
@@ -84,7 +85,7 @@ var on_create_button = async ()=> {
         var obj = pap.form.getObject();
         pap.modal.hide();
         var classObj = await PyramidsPharaohsController.toClass(obj);
-        await PyramidsPharaohsController.insert(classObj);
+        classObj.id = await PyramidsPharaohsController.insert(classObj);
         pap.table.add(classObj);
     }
 };

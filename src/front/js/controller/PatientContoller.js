@@ -6,7 +6,7 @@ import { PyramidsPharaohsController } from "./PyramidsPharaohsController.js";
 
 class PatientController {
     static toClass(obj) {
-        var patient = new Patient(obj.id, obj.name, obj.age, obj.gender, obj.schooling, obj.residence, obj.country_of_study, obj.image);
+        var patient = new Patient(obj.id, obj.passport, obj.name, obj.age, obj.gender, obj.schooling, obj.residence, obj.country_of_study, obj.image);
         return patient;
     }
 
@@ -14,7 +14,6 @@ class PatientController {
         var data = {};
         var res = await post_api(`${window.location.origin}/api/patient/get_active_patient`, data);
         res = PatientController.toClass(res);
-        console.log(res);
         return res;
     }
 
@@ -22,7 +21,6 @@ class PatientController {
         var data = {};
         var res = await post_api(`${window.location.origin}/api/patient/getAll`, data);
         res = res.map((p) => { return PatientController.toClass(p); });
-        console.log(res);
         return res;
     }
 
@@ -30,7 +28,6 @@ class PatientController {
         var data = {patient_id: patient_id};
         var res = await post_api(`${window.location.origin}/api/patient/get_list_of_groups`, data);
         res = res.map((g) => { return GroupController.toClass(g); });
-        console.log(res);
         return res;
     }
 
@@ -65,7 +62,6 @@ class PatientController {
         }
 
         res = [].concat(tmt, pdp);
-        console.log(res);
         return res;
     }
 

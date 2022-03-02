@@ -9,7 +9,6 @@ class PyramidsPharaohsController {
         var data = {id: id};
         var res = await post_api(`${window.location.origin}/api/pdp/getById`, data);
         res = await PyramidsPharaohsController.toClass(res);
-        console.log(res);
         return res;
     }
 
@@ -21,7 +20,6 @@ class PyramidsPharaohsController {
             var new_pdp = await PyramidsPharaohsController.toClass(pdp);
             pdps.push(new_pdp);
         }
-        console.log(pdps);
         return pdps;
     }
 
@@ -40,7 +38,7 @@ class PyramidsPharaohsController {
     static async insert(pdp) {
         var data = {pdp: pdp};
         var res = await post_api(`${window.location.origin}/api/pdp/insert`, data);
-        return res.is_inserted;
+        return res.inserted_id;
     }
 
     static async toClass(pdp) {
@@ -52,14 +50,16 @@ class PyramidsPharaohsController {
         var new_pdp = new PyramidsPharaohs(pdp.id, pdp.name, pdp.description, group, pdp.maximum_attempsts);
         if(pdp.levels && pdp.levels.length > 0) {
             for(let level of pdp.levels) {
-                var new_level = new PPLevel();
-                for(let example of level.pp_example) {
-                    new_level.example.push(new PPImage(example.image, example.selected));
+                if(level) {
+                    var new_level = new PPLevel();
+                    for(let example of level.pp_example) {
+                        new_level.example.push(new PPImage(example.image, example.selected));
+                    }
+                    for(let answer of level.pp_answer) {
+                        new_level.answer.push(new PPImage(answer.image, answer.selected));
+                    }
+                    new_pdp.levels.push(new_level);
                 }
-                for(let answer of level.pp_answer) {
-                    new_level.answer.push(new PPImage(answer.image, answer.selected));
-                }
-                new_pdp.levels.push(new_level);
             }
         }
         return new_pdp;

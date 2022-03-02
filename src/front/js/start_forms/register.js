@@ -38,7 +38,7 @@ var form_patient_structure = {
         type: 'text',
         label: 'Codigo de Grupo'
     },
-    id: {
+    passport: {
         type: 'text',
         label: 'Cedula / Pasaporte',
         position_class: ['col-12', 'col-md-6'],
@@ -122,7 +122,7 @@ btn_register.onclick = async ()=> {
                 if(await LogController.search_email(obj.email)) {
                     form.report_invalid_input('email', 'El correo ya esta en uso');
                 } else {
-                    var id = await LogController.register(obj.email, obj.password);
+                    var id = await LogController.register(obj.email, obj.password, (user_is_admin) ? 'Administrator' : 'Patient');
                     if(id) {
                         obj.image = loaded_image;
                         if(user_is_admin) {

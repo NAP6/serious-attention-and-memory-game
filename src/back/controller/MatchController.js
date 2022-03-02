@@ -1,26 +1,44 @@
 import { Match } from '../../models/Match.js';
+import { database } from "../database/database.js";
+import { GroupController } from './GroupContoller.js';
 
 class MatchCrontroller {
     static async get_by_patient(req, res) {
         var patient_id = req.body.patient_id;
-        console.log(patient_id);
-        var list_matchs = [];
-        for(var i = 0; i < 5; i++) {
-            list_matchs.push(new Match(i, ['Piramides y Faraones', 'TMT'][(Math.random()>=0.5)? 1 : 0], `Grupo ${Math.floor(Math.random() * 11)}`, null, Math.random() * 100, 100, null));
+
+        var sql = `call get_match_by_patient(${patient_id})`;
+        var [rows, fields] = await database.query(sql);
+        if(!rows || !rows[0] || !rows[0][0] || !rows[0][0].matchs) res.json([]);
+        else {
+            var matchs = [];
+            for(let match of rows[0][0].matchs) {
+                matchs.push(await MatchCrontroller.toClass(match));
+            }
+            res.json(matchs);
         }
-        res.json(list_matchs);
     }
 
     static async update(req, res) {
         var match = req.body.match;
-        console.log(match);
-        res.json({is_updated: true});
+
+        var sql = `call update_adjusted_score_of_match(${match.id}, ${match.adjusted_score})`;
+        var [rows, fields] = await database.query(sql);
+        if(!rows || !rows[0] || !rows[0][0] || !rows[0][0].is_updated) res.json({is_updated: false});
+        else res.json({is_updated: rows[0][0].is_updated});
     }
 
     static async insert(req, res) {
+        var patient_id = req.session.active_user.id;
         var match = req.body.match;
-        console.log(match);
-        res.json({is_inserted: true});
+        var sql = `call insert_match(${patient_id}, '${JSON.stringify(match)}')`;
+        var [rows, fields] = await database.query(sql);
+        if(!rows || !rows[0] || !rows[0][0] || !rows[0][0].is_inserted) res.json({is_inserted: false});
+        else res.json({is_inserted: rows[0][0].is_inserted});
+    }
+
+    static async toClass(match) {
+        match.group = await GroupController.getById(match.game.group);
+        return match;
     }
 }
 

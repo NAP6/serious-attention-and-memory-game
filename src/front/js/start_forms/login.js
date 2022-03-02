@@ -22,7 +22,7 @@ btn_login.onclick = async ()=> {
 
     if(form.valid_required_are_filled) {
         if(logedin.is_logged) {
-            if(logedin.user == 'administrator') {
+            if(logedin.user == 'Administrator') {
                 window.location.href = `${window.location.origin}/admin${window.location.search}`;
             } else {
                 window.location.href = `${window.location.origin}/patient${window.location.search}`;

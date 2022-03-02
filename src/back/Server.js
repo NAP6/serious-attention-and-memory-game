@@ -15,7 +15,7 @@ class Server {
           resave: false,
           saveUninitialized: true
         }));
-        this.app.use(body_parser.json());
+        this.app.use(body_parser.json({limit: '50mb'}));
         this.app.use(body_parser.urlencoded({extended: false}));
 
         for(let r of routes)

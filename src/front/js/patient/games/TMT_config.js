@@ -116,25 +116,25 @@ function print_point(point=null, level_index) {
     return point;
 }
 
-function answer(point, element, index_point, level_index) {
+async function answer(point, element, index_point, level_index) {
     if(index_point == correct_next_pos) {
-        correct_point(point, element, index_point, level_index);
+        await correct_point(point, element, index_point, level_index);
         correct_next_pos++;
     } else {
-        error_point(point, element, index_point, level_index);
+        await error_point(point, element, index_point, level_index);
     }
     if(correct_next_pos == active_points.length) {
         next_level();
     }
 }
 
-function correct_point(point, element, index_point, level_index) {
-    record_event(point, element, true, index_point, level_index);
+async function correct_point(point, element, index_point, level_index) {
+    await record_event(point, element, true, index_point, level_index);
     element.classList.add('sucssess');
 }
 
 async function error_point(point, element, index_point, level_index) {
-    record_event(point, element, false, index_point, level_index);
+    await record_event(point, element, false, index_point, level_index);
     var time = 100;
     element.classList.add('error');
     await delay(time);

@@ -63,15 +63,15 @@ function finish_game() {
     });
 }
 
-function answer(point, element, index_point, level_index, is_example, is_correct_answer) {
+async function answer(point, element, index_point, level_index, is_example, is_correct_answer) {
     if(is_example) {
-        error_point(point, element, index_point, level_index);
+        await error_point(point, element, index_point, level_index, 'pp_example');
     } else {
         if(is_correct_answer) {
-            correct_point(point, element, index_point, level_index);
+            await correct_point(point, element, index_point, level_index, 'pp_answer');
             number_of_answer_found++;
         } else {
-            error_point(point, element, index_point, level_index);
+            await error_point(point, element, index_point, level_index, 'pp_answer');
         }
     }
     if(number_of_correct_answers == number_of_answer_found) {
@@ -79,13 +79,13 @@ function answer(point, element, index_point, level_index, is_example, is_correct
     }
 }
 
-function correct_point(point, element, index_point, level_index) {
-    record_event(point, element, true, index_point, level_index);
+async function correct_point(point, element, index_point, level_index, group_name) {
+    await record_event(point, element, true, index_point, level_index, group_name);
     element.classList.add('sucssess');
 }
 
-async function error_point(point, element, index_point, level_index) {
-    record_event(point, element, false, index_point, level_index);
+async function error_point(point, element, index_point, level_index, group_name) {
+    await record_event(point, element, false, index_point, level_index, group_name);
     var time = 100;
     element.classList.add('error');
     await delay(time);
@@ -100,11 +100,11 @@ function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function record_event(point, element, is_correct, index_point, level_index) {
+async function record_event(point, element, is_correct, index_point, level_index, group_name) {
     var eye = await eye_tracker.get_eye_position();
     this_match.register_event(
         level_index,
-        'points',
+        group_name,
         index_point, 
         element.offsetTop,
         element.offsetLeft,

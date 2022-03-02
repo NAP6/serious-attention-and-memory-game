@@ -9,7 +9,6 @@ class TMTController {
         var data = {id: id};
         var res = await post_api(`${window.location.origin}/api/tmt/getById`, data);
         res = await TMTController.toClass(res);
-        console.log(res);
         return res;
     }
 
@@ -21,7 +20,6 @@ class TMTController {
             var tmt_obj = await TMTController.toClass(tmt);
             tmts.push(tmt_obj);
         }
-        console.log(tmts);
         return tmts;
     }
 
@@ -40,7 +38,7 @@ class TMTController {
     static async insert(tmt) {
         var data = {tmt: tmt};
         var res = await post_api(`${window.location.origin}/api/tmt/insert`, data);
-        return res.is_inserted;
+        return res;
     }
 
     static async toClass(obj) {

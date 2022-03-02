@@ -4,16 +4,20 @@ import { Modal } from '../../helper_models/Modal.js';
 import { start_history_page } from './history_patients.js';
 
 var data = await PatientController.getAll();
-var nameLabels = ['ID', 'Nombre', 'Edad', 'Genero', 'Escolaridad', 'Residencia', 'País de esudio'];
+var nameLabels = ['ID', 'Cedula/Pasaporte', 'Nombre', 'Edad', 'Genero', 'Escolaridad', 'Residencia', 'País de esudio'];
 var form_structure = {
     id: {
         type: 'number',
         label: 'ID',
         position_class: ['col-12', 'col-md-6'],
     },
+    passport: {
+        label: 'Cedula/Pasaporte',
+        position_class: ['col-12', 'col-md-6']
+    },
     name: {
         label: 'Nombre',
-        position_class: ['col-12', 'col-md-6']
+        position_class: ['col-12']
     },
     age: {
         type: 'number',
@@ -54,6 +58,7 @@ var form_structure = {
 var open_update_modal = (obj)=> {
     pat.form.reset();
     pat.form.fill(obj);
+    pat.form.get_input('gender').value = obj.gender;
     pat.form.get_input('id').disabled = true;
     pat.modal.changeSize(Modal.LARGE_SIZE);
     pat.modal.set_bodyContent(pat.form.form);
@@ -111,7 +116,7 @@ var pat = start_table_admin_page({
     data: data,
     tableNameLabels: nameLabels,
     onUpdateHandler: open_update_modal,
-    onDeleteHandler: onDeleteHandler,
+    // onDeleteHandler: onDeleteHandler, // Uncoment to enable delete
     on_updateButton: on_updateButton,
     labelExtraButton: 'Ver Historial',
     titleExtraButton: 'Historial',

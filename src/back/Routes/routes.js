@@ -40,12 +40,12 @@ function Router(__dir_front) {
                 res.redirect('/login')
             else if(need_logged && req.session.active_user) {
                 if(
-                    (req_route.includes('admin') && req.session.user_type == 'administrator') ||
-                    (req_route.includes('patient') && req.session.user_type == 'patient')
+                    (req_route.includes('admin') && req.session.user_type == 'Administrator') ||
+                    (req_route.includes('patient') && req.session.user_type == 'Patient')
                 )
                     res.sendFile(__dir_front + file_name);
                 else
-                    res.redirect(`/${req.session.user_type=='patient'? 'patient':'admin'}`);
+                    res.redirect(`/${req.session.user_type=='Patient'? 'patient':'admin'}`);
             } else
                 res.sendFile(__dir_front + file_name);
         });

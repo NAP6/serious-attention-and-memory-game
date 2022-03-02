@@ -6,7 +6,8 @@ import { load_game_config_form } from './configGame_tmt.js';
 
 var data = await TMTController.getAll();
 var nameLabels = ['ID', 'Nombre', 'Grupo', 'Intentos', 'Descripcion'];
-var group_list = await AdministratorController.get_groups_of(await AdministratorController.get_active_adminitrator().id);
+var active_admin = await AdministratorController.get_active_adminitrator();
+var group_list = await AdministratorController.get_groups_of(active_admin.id);
 var options_group = group_list.map((g)=> {
     var option = {
         value: g.id,
@@ -19,6 +20,8 @@ var form_structure = {
         type: 'number',
         label: 'ID',
         position_class: ['col-12', 'col-md-6'],
+        disabled: true,
+        required: false
     },
     name: {
         label: 'Nombre',
@@ -44,7 +47,7 @@ var form_structure = {
 var open_update_modal = (obj, tr)=> {
     tmt.form.reset();
     tmt.form.fill(obj);
-    tmt.form.get_input('id').disabled = true;
+    // tmt.form.get_input('id').disabled = true;
     tmt.modal.title = 'Modificar Juego';
     tmt.modal.set_footerContent(tmt.btn.update);
     tmt.modal.changeSize(Modal.LARGE_SIZE);
@@ -58,7 +61,7 @@ var on_updateButton = async (obj_old, tr)=> {
     tmt.modal.hide();
     obj_old.name = obj.name;
     obj_old.group = obj.group;
-    obj_old.maximum_attempts = obj.maximum_attempts;
+    obj_old.maximum_attempsts = obj.maximum_attempsts;
     obj_old.description = obj.description;
     var classObj = await TMTController.toClass(obj_old);
     await TMTController.update(classObj)
@@ -68,7 +71,7 @@ var on_updateButton = async (obj_old, tr)=> {
 // Create
 var open_create_modal = () => { 
     tmt.form.reset();
-    tmt.form.enableAll();
+    // tmt.form.enableAll();
     tmt.modal.set_footerContent(tmt.btn.create)
     tmt.modal.title = 'Crear Juego';
     tmt.modal.changeSize(Modal.LARGE_SIZE);
@@ -81,7 +84,8 @@ var on_create_button = async ()=> {
         var obj = tmt.form.getObject();
         tmt.modal.hide();
         var classObj = await TMTController.toClass(obj);
-        await TMTController.insert(classObj)
+        var res = await TMTController.insert(classObj)
+        classObj.id = res.inserted_id;
         tmt.table.add(classObj);
     }
 }

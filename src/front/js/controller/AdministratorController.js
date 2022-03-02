@@ -12,7 +12,6 @@ class AdministratorController {
         var data = {};
         var res = await post_api(`${window.location.origin}/api/administrator/get_active_adminitrator`, data);
         res = await AdministratorController.toClass(res);
-        console.log(res);
         return res;
     }
 
@@ -20,7 +19,6 @@ class AdministratorController {
         var data = {administrator_id: administrator_id};
         var res = await post_api(`${window.location.origin}/api/administrator/get_groups_of`, data);
         res = res.map((g) => { return GroupController.toClass(g); });
-        console.log(res);
         return res;
     }
     
