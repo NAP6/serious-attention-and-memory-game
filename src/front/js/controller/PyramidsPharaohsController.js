@@ -52,11 +52,15 @@ class PyramidsPharaohsController {
             for(let level of pdp.levels) {
                 if(level) {
                     var new_level = new PPLevel();
-                    for(let example of level.pp_example) {
-                        new_level.example.push(new PPImage(example.image, example.selected));
+                    if(level.pp_example && level.pp_example.length > 0) {
+                        for(let example of level.pp_example) {
+                            new_level.example.push(new PPImage(example.image, example.selected));
+                        }
                     }
-                    for(let answer of level.pp_answer) {
-                        new_level.answer.push(new PPImage(answer.image, answer.selected));
+                    if(level.pp_answer && level.pp_answer.length > 0) {
+                        for(let answer of level.pp_answer) {
+                            new_level.answer.push(new PPImage(answer.image, answer.selected));
+                        }
                     }
                     new_pdp.levels.push(new_level);
                 }

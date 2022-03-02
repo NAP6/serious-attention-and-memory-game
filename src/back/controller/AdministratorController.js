@@ -61,7 +61,7 @@ class AdministratorController {
         var [rows, fields] = await database.query(sql);
         if(!rows) res.json({is_added: false});
         else{
-            var is_added = rows[0][0].result.is_added;
+            var is_added = rows[0][0].is_added;
             res.json({is_added: is_added?true:false});
         }
     }
