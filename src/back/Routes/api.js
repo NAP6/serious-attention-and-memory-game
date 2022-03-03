@@ -21,6 +21,7 @@ api.post('/api/administrator/get_active_adminitrator', AdministratorController.g
 api.post('/api/administrator/get_groups_of', AdministratorController.get_groups_of);
 api.post('/api/administrator/insert', AdministratorController.insert);
 api.post('/api/administrator/add_to_group', AdministratorController.add_to_group);
+api.post('/api/administrator/get_n_patietns_by_group', AdministratorController.get_n_patietns_by_group);
 
 // Patient Controller
 api.post('/api/patient/get_active_patient', PatientController.get_active_patient);

@@ -19,6 +19,11 @@
         "css_link": ["ventor/icofont/all.min.css"],
         "js_link": ["ventor/icofont/all.min.js"]
     },
+    "chart.js": {
+        "src": "./node_modules/chart.js/dist/chart.min.js",
+        "dest": "ventor/chartJS/",
+        "js_link": ["ventor/chartJS/chart.min.js"]
+    },
     "sweetalert2": {
         "src": "./node_modules/sweetalert2/dist/sweetalert2.all.min.js",
         "dest": "ventor/sweetalert2/",

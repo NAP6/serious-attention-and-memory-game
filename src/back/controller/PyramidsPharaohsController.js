@@ -107,14 +107,20 @@ class PyramidsPharaohsController {
         var new_pdp = new PyramidsPharaohs(pdp.id, pdp.name, pdp.description, group, pdp.maximum_attempsts);
         if(pdp.levels && pdp.levels.length > 0) {
             for(let level of pdp.levels) {
-                var new_level = new PPLevel();
-                for(let example of level.pp_example) {
-                    new_level.example.push(new PPImage(example.image, example.selected));
+                if(level) {
+                    var new_level = new PPLevel();
+                    if(level.pp_example && level.pp_example.length > 0) {
+                        for(let example of level.pp_example) {
+                            new_level.example.push(new PPImage(example.image, example.selected));
+                        }
+                    }
+                    if(level.pp_answer && level.pp_answer.length > 0) {
+                        for(let answer of level.pp_answer) {
+                            new_level.answer.push(new PPImage(answer.image, answer.selected));
+                        }
+                    }
+                    new_pdp.levels.push(new_level);
                 }
-                for(let answer of level.pp_answer) {
-                    new_level.answer.push(new PPImage(answer.image, answer.selected));
-                }
-                new_pdp.levels.push(new_level);
             }
         }
         return new_pdp;

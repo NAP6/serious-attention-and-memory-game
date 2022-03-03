@@ -33,6 +33,12 @@ class AdministratorController {
         var res = await post_api(`${window.location.origin}/api/administrator/add_to_group`, data);
         return res.is_added;
     }
+
+    static async get_n_patietns_by_group() {
+        var data = {};
+        var res = await post_api(`${window.location.origin}/api/administrator/get_n_patietns_by_group`, data);
+        return res;
+    }
 }
 
 export { AdministratorController };
