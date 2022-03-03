@@ -5,7 +5,31 @@
 {% endblock %} {% block content %}
 
 <main id="main">
-  <h1>Hola Mundo!</h1>
+  <div id="no-data" class="d-flex justify-content-center align-items-center flex-column">
+    <div class="row justify-content-center">
+      <div class="col-11 col-md-5">
+        <img
+          alt="No tienes juegos pendientes"
+          class="img-fluid"
+          src="/img/undraw_group.svg"
+          >
+      </div>
+    </div>
+    <div class="mt-3 text-center">
+      <h3>Oops...</h3>
+      <h2>Parece que no grupos creados!</h2>
+    </div>
+  </div>
+  <div id="chart" class="d-none">
+    <h2>Numero de pacientes por Grupo</h2>
+    <div class="chart-container" style="position: relative; height:80vh; width:100%">
+        <canvas id="groups_chart"></canvas>
+    </div>
+  </div>
 </main>
 
+{% endblock %}
+
+{% block script %}
+    <script type="module" src="/js/admin/action_pages/dashboard_action.js"></script>
 {% endblock %}

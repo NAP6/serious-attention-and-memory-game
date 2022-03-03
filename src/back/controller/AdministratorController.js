@@ -65,6 +65,16 @@ class AdministratorController {
             res.json({is_added: is_added?true:false});
         }
     }
+
+    static async get_n_patietns_by_group(req, res) {
+        var sql = `call count_patients_by_group(${req.session.active_user.id})`;
+        var [rows, fields] = await database.query(sql);
+        console.log(rows);
+        if(!rows || !rows[0] || !rows[0][0] || !rows[0][0].count) res.json([]);
+        else{
+            res.json(rows[0][0].count);
+        }
+    }
 }
 
 export { AdministratorController };
