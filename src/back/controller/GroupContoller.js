@@ -41,7 +41,7 @@ class GroupController {
 
     static async update(req, res) {
         var group = req.body.group;
-        var [rows, fields] = await database.query(`call update_group('${JSON.stringify(group)}')`);
+        var [rows, fields] = await database.query(`call update_group('${JSON.stringify(group).replace(/'/g, "\\'")}')`);
         if(!rows) res.json({is_updated: false});
         else{ 
             var is_updated = rows[0][0].is_updated;
@@ -61,7 +61,7 @@ class GroupController {
 
     static async insert(req, res) {
         var group = req.body.group;
-        var [rows, fields] = await database.query(`call insert_group('${JSON.stringify(group)}')`);
+        var [rows, fields] = await database.query(`call insert_group('${JSON.stringify(group).replace(/'/g, "\\'")}')`);
         if(!rows) res.json({is_inserted: false});
         else {
             var inserted_id = rows[0][0].inserted_id;

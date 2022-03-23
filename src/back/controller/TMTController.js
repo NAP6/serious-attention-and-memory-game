@@ -74,7 +74,7 @@ class TMTController {
                 }
             }
         }
-        var sql = `call update_tmt('${JSON.stringify(tmt)}')`;
+        var sql = `call update_tmt('${JSON.stringify(tmt).replace(/'/g, "\\'")}')`;
         var [rows, fields] = await database.query(sql);
         if(!rows || !rows[0] || !rows[0][0]) res.json({is_updated: false});
         else{
@@ -94,7 +94,7 @@ class TMTController {
 
     static async insert(req, res) {
         var tmt = req.body.tmt;
-        var sql = `call insert_game('${JSON.stringify(tmt)}', 'tmt')`;
+        var sql = `call insert_game('${JSON.stringify(tmt).replace(/'/g, "\\'")}', 'tmt')`;
         var [rows, fields] = await database.query(sql);
         if(rows && rows[0] && rows[0][0]) {
             var inserted_id = rows[0][0].inserted_id;

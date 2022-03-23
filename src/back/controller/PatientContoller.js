@@ -51,7 +51,7 @@ class PatientController {
 
     static async update(req, res) {
         var patient = req.body.patient;
-        var [rows, fields] = await database.query(`call update_patient('${JSON.stringify(patient)}')`);
+        var [rows, fields] = await database.query(`call update_patient('${JSON.stringify(patient).replace(/'/g, "\\'")}')`);
         if(!rows) res.json({is_updated: false});
         else{ 
             var is_updated = rows[0][0].is_updated;
@@ -81,7 +81,7 @@ class PatientController {
             patient.image = path;
         }
         
-        var [rows, fields] = await database.query(`call insert_patient('${JSON.stringify(patient)}')`);
+        var [rows, fields] = await database.query(`call insert_patient('${JSON.stringify(patient).replace(/'/g, "\\'")}')`);
         if(!rows) res.json({is_inserted: false});
         else{
             var sql = `call add_patient_to_a_group(${group_code.split('-').pop()}, ${user_id})`;

@@ -68,7 +68,7 @@ class PyramidsPharaohsController {
                 }
             }
         }
-        var sql = `call update_pdp('${JSON.stringify(pdp)}')`;
+        var sql = `call update_pdp('${JSON.stringify(pdp).replace(/'/g, "\\'")}')`;
         var [rows, fields] = await database.query(sql);
         if(!rows || !rows[0] || !rows[0][0]) res.json({is_updated: false});
         else{
@@ -88,7 +88,7 @@ class PyramidsPharaohsController {
 
     static async insert(req, res) {
         var pdp = req.body.pdp;
-        var sql = `call insert_game('${JSON.stringify(pdp)}', 'pdp')`;
+        var sql = `call insert_game('${JSON.stringify(pdp).replace(/'/g, "\\'")}', 'pdp')`;
         var [rows, fields] = await database.query(sql);
         if(rows && rows[0] && rows[0][0]) {
             var inserted_id = rows[0][0].inserted_id;
