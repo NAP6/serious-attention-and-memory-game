@@ -17,6 +17,7 @@ var id = search_params.get('game_id');
 var tmt = await TMTController.getById(id);
 var this_match = new Match(null, tmt, tmt.group);
 set_on_game_start(game_start);
+window.onresize = resize;
 
 function game_start(eye_tracker_precision) {
     next_level();
@@ -26,11 +27,22 @@ function game_start(eye_tracker_precision) {
 function next_level() {
     game_image.src = "";
     game_image.classList.add('d-none');
-    active_points.every((itm)=> {itm.remove(); return true;});
+    active_points.every((itm)=> {itm.html.remove(); return true;});
     active_points = [];
     if(index_level + 1 >= tmt.levels.length) {
-        this_match.finish_level(index_level);
-        finish_game();
+        try {
+            this_match.finish_level(index_level);
+            finish_game();
+        } catch (e) {
+            console.log(e);
+            Swal.fire(
+                `Oops`,
+                'Parece que este juego no esta bien configurado, comunicate con el administrador',
+                'info'
+            ).then(async () => {
+                window.location.href = `${window.location.origin}/patient`;
+            });
+        }
     } else {
         correct_next_pos = 0;
         index_level++;
@@ -54,9 +66,9 @@ function finish_game() {
     this_match.finish();
     clearInterval(eye_tracking_interval_id);
     Swal.fire(
-      `Terminaste`,
-      'En hora buena, has terminado todos los niveles, porfavor envianos los datos',
-      'info'
+    `Terminaste`,
+    'En hora buena, has terminado todos los niveles, porfavor envianos los datos',
+    'info'
     ).then(async ()=>{
         document.getElementById('sending_match').classList.remove('d-none');
         await MatchCrontroller.insert(this_match);
@@ -71,7 +83,7 @@ function charge_level(level, level_index) {
         var executed = false;
         function load_points() {
             if(game_image.src && game_image.src != '') {
-                active_points.every((itm)=> {itm.remove(); return true;});
+                active_points.every((itm)=> {itm.html.remove(); return true;});
                 active_points = [];
                 if(game_image.width != 0 && game_image.height !=0 && !executed) {
                     executed = true;
@@ -87,7 +99,7 @@ function charge_level(level, level_index) {
     } else {
         game_image.classList.add('d-none');
         game_image.src = '';
-        active_points.every((itm)=> {itm.remove(); return true;});
+        active_points.every((itm)=> {itm.html.remove(); return true;});
         active_points = [];
     }
 }
@@ -97,7 +109,7 @@ function print_point(point=null, level_index) {
     circle.classList.add('points');
 
     points_container.appendChild(circle);
-    active_points.push(circle);
+    active_points.push({"html":circle, "object": point});
     var pos = point.recalculate_inner_position(
         game_image.offsetLeft,
         game_image.offsetTop,
@@ -117,6 +129,7 @@ function print_point(point=null, level_index) {
 }
 
 async function answer(point, element, index_point, level_index) {
+    console.log("answer");
     if(index_point == correct_next_pos) {
         await correct_point(point, element, index_point, level_index);
         correct_next_pos++;
@@ -172,3 +185,19 @@ async function record_eye_tracking() {
     this_match.register_eye_position(eye.x, eye.y);
 }
 
+
+function resize() {
+    for(var i =0; i < active_points.length; i++){
+        var pos = active_points[i].object.
+            recalculate_inner_position(
+                game_image.offsetLeft,
+                game_image.offsetTop,
+                game_image.width,
+                game_image.height
+        );
+        active_points[i].html.style.left = pos.x + 'px';
+        active_points[i].html.style.top = pos.y + 'px';
+        active_points[i].html.style.width = pos.diameter + 'px';
+        active_points[i].html.style.height = pos.diameter + 'px';
+    }
+}
