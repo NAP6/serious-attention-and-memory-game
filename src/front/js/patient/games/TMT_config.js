@@ -16,6 +16,7 @@ var search_params = new URLSearchParams(search_params_string);
 var id = search_params.get('game_id');
 var tmt = await TMTController.getById(id);
 var this_match = new Match(null, tmt, tmt.group);
+var is_drawing = false;
 set_on_game_start(game_start);
 window.onresize = resize;
 
@@ -25,6 +26,7 @@ function game_start(eye_tracker_precision) {
 }
 
 function next_level() {
+    init_draw_on_canvas();
     game_image.src = "";
     game_image.classList.add('d-none');
     active_points.every((itm)=> {itm.html.remove(); return true;});
@@ -121,9 +123,12 @@ function print_point(point=null, level_index) {
     circle.style.width = pos.diameter + 'px';
     circle.style.height = pos.diameter + 'px';
     var index_point = active_points.length - 1;
-    circle.onclick = ()=> {
-        answer(point, circle, index_point, level_index);
-    };
+    circle.addEventListener('mouseenter', ()=>{
+        if (is_drawing) answer(point, circle, index_point, level_index);
+    });
+    //circle.onclick = ()=> {
+    //    answer(point, circle, index_point, level_index);
+    //};
 
     return point;
 }
@@ -135,6 +140,7 @@ async function answer(point, element, index_point, level_index) {
         correct_next_pos++;
     } else {
         await error_point(point, element, index_point, level_index);
+        correct_next_pos += 666;
     }
     if(correct_next_pos == active_points.length) {
         next_level();
@@ -150,12 +156,12 @@ async function error_point(point, element, index_point, level_index) {
     await record_event(point, element, false, index_point, level_index);
     var time = 100;
     element.classList.add('error');
-    await delay(time);
-    element.classList.remove('error');
-    await delay(time);
-    element.classList.add('error');
-    await delay(time);
-    element.classList.remove('error');
+    //await delay(time);
+    //element.classList.remove('error');
+    //await delay(time);
+    //element.classList.add('error');
+    //await delay(time);
+    //element.classList.remove('error');
 }
 
 function delay(ms) {
@@ -199,5 +205,55 @@ function resize() {
         active_points[i].html.style.top = pos.y + 'px';
         active_points[i].html.style.width = pos.diameter + 'px';
         active_points[i].html.style.height = pos.diameter + 'px';
+    }
+}
+
+function init_draw_on_canvas() {
+    var canvas = document.getElementById('game_canvas');
+    var ctx = canvas.getContext('2d');
+    let coord = {x: 0, y: 0};
+
+    document.addEventListener('mousedown', start);
+    document.addEventListener('mouseup', stop);
+    window.addEventListener('resize', resize_canvas);
+    resize_canvas();
+
+    function resize_canvas() {
+        ctx.canvas.width = window.innerWidth;
+        ctx.canvas.height = window.innerHeight;
+    }
+
+    function start(event) {
+        document.addEventListener('mousemove', draw);
+        reposition(event);
+        is_drawing = true;
+    }
+
+    function reposition(event) {
+        coord.x = event.clientX - canvas.offsetLeft;
+        coord.y = event.clientY - canvas.offsetTop;
+    }
+
+    function stop() {
+        is_drawing = false;
+        document.removeEventListener('mousemove', draw);
+        correct_next_pos = 0;
+        Array.prototype.forEach.call(
+            document.getElementsByClassName('points'), (itm)=>{
+                itm.classList.remove('sucssess');
+                itm.classList.remove('error');
+        });
+        init_draw_on_canvas();
+    }
+
+    function draw(event) {
+        ctx.beginPath();
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = '#00ff00';
+        ctx.moveTo(coord.x, coord.y);
+        reposition(event);  
+        ctx.lineTo(coord.x, coord.y);
+        ctx.stroke();
     }
 }
