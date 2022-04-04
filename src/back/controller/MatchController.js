@@ -30,7 +30,7 @@ class MatchCrontroller {
     static async insert(req, res) {
         var patient_id = req.session.active_user.id;
         var match = req.body.match;
-        var sql = `call insert_match(${patient_id}, '${JSON.stringify(match)}')`;
+        var sql = `call insert_match(${patient_id}, '${JSON.stringify(match).replace(/'/g, "\\'")}')`;
         var [rows, fields] = await database.query(sql);
         if(!rows || !rows[0] || !rows[0][0] || !rows[0][0].is_inserted) res.json({is_inserted: false});
         else res.json({is_inserted: rows[0][0].is_inserted});

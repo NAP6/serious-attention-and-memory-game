@@ -47,7 +47,7 @@ class AdministratorController {
             admin.image = path;
         }
 
-        var [rows, fields] = await database.query(`call insert_administrator('${JSON.stringify(admin)}')`);
+        var [rows, fields] = await database.query(`call insert_administrator('${JSON.stringify(admin).replace(/'/g, "\\'")}')`);
         if(!rows) res.json({is_inserted: false});
         else{
             var is_inserted = rows[0][0].result.is_inserted;

@@ -6,7 +6,7 @@ class LogController {
     static async login(req, res) {
         var email = req.body.email;
         var password = req.body.password;
-        var [rows, fields] = await database.query(`call type_of_user('${email}', '${password}')`);
+        var [rows, fields] = await database.query(`call type_of_user('${email.replace(/'/g, "\\'")}', '${password.replace(/'/g, "\\'")}')`);
         var resp;
         if(rows && rows[0][0]) {
             var user = rows[0][0].user;
@@ -42,7 +42,7 @@ class LogController {
 
     static async search_email(req, res) {
         var email = req.body.email;
-        var [rows, fields] = await database.query(`call is_email_exist('${email}')`);
+        var [rows, fields] = await database.query(`call is_email_exist('${email.replace(/'/g, "\\'")}')`);
         if(!rows) res.json({is_email_found: false});
         else {
             var is_email_found = rows[0][0].result.is_exist == 1;
@@ -54,7 +54,7 @@ class LogController {
         var email = req.body.email;
         var password = req.body.password;
         var type = req.body.type;
-        var [rows, fields] = await database.query(`call register_user('${email}', '${password}', '${type}')`);
+        var [rows, fields] = await database.query(`call register_user('${email.replace(/'/g, "\\'")}', '${password.replace(/'/g, "\\'")}', '${type}')`);
         if(!rows) res.json({is_registered: false});
         else{
             var inserted_id = rows[0][0].result.inserted_id;
