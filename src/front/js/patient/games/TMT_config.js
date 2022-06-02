@@ -134,7 +134,6 @@ function print_point(point=null, level_index) {
 }
 
 async function answer(point, element, index_point, level_index) {
-    console.log("answer");
     if(index_point == correct_next_pos) {
         await correct_point(point, element, index_point, level_index);
         correct_next_pos++;
