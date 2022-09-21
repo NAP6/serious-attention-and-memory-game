@@ -9,7 +9,7 @@ var game_image = document.getElementById('game_image');
 var correct_next_pos = 0;
 var index_level = -1;
 var eye_tracking_interval_id;
-var interval_milisecons_to_capture_eye_position = 100;
+var interval_milisecons_to_capture_eye_position = 300;
 
 var is_a_tmt_tutorial = false;
 
