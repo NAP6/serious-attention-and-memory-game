@@ -17,6 +17,7 @@ var search_params = new URLSearchParams(search_params_string);
 var id = search_params.get('game_id');
 var pap = await PyramidsPharaohsController.getById(id);
 var this_match = new Match(null, pap, pap.group);
+this_match = await MatchCrontroller.create_header(this_match);
 set_on_game_start(game_start);
 
 function game_start(eye_tracker_precision) {
@@ -58,7 +59,7 @@ function finish_game() {
       'info'
     ).then(async ()=>{
         document.getElementById('sending_match').classList.remove('d-none');
-        await MatchCrontroller.insert(this_match);
+        await MatchCrontroller.update_body(this_match);
         window.location.href = `${window.location.origin}/patient`;
     });
 }
@@ -102,13 +103,13 @@ function delay(ms) {
 
 async function record_event(point, element, is_correct, index_point, level_index, group_name) {
     var eye = await eye_tracker.get_eye_position();
-    this_match.register_event(
+    const event = this_match.register_event(
         level_index,
         group_name,
         index_point, 
         element.offsetTop,
         element.offsetLeft,
-        element.offsetWidthd,
+        element.offsetWidth,
         element.offsetHeight,
         document.documentElement.clientWidth,
         document.documentElement.clientHeight,
@@ -116,11 +117,13 @@ async function record_event(point, element, is_correct, index_point, level_index
         eye.x,
         eye.y
     );
+    MatchCrontroller.save_event(this_match, event);
 }
 
 async function record_eye_tracking() {
     var eye = await eye_tracker.get_eye_position();
-    this_match.register_eye_position(eye.x, eye.y);
+    const point = this_match.register_eye_position(eye.x, eye.y);
+    MatchCrontroller.save_ET_point(this_match, point);
 }
 
 function charge_level(level, level_index) {

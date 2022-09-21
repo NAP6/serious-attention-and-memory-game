@@ -57,7 +57,10 @@ api.post('/api/pdp/insert', PyramidsPharaohsController.insert);
 // Match Controller
 api.post('/api/match/get_by_patient', MatchCrontroller.get_by_patient);
 api.post('/api/match/update', MatchCrontroller.update);
-api.post('/api/match/insert', MatchCrontroller.insert);
+api.post('/api/match/update_body', MatchCrontroller.update_body);
+api.post('/api/match/create_header', MatchCrontroller.create_header);
+api.post('/api/match/save_event', MatchCrontroller.save_event);
+api.post('/api/match/save_ET_point', MatchCrontroller.save_ET_point);
 
 // Export the router
 export { api };

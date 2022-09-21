@@ -1,4 +1,4 @@
-import { TMT, TMTLevel, TMTPoint } from "../../models/TMT.js";
+import { TMT, TMTLevel, TMTPoint, TMT_Game, TMT_Tutorial } from "../../models/TMT.js";
 import { Group } from "../../models/Group.js";
 import { GroupController } from "./GroupContoller.js";
 import { database } from "../database/database.js";
