@@ -17,7 +17,7 @@ var DB_NAME = process.env.DB_NAME || 'serious_game';
 var DB_USER = process.env.DB_USER || 'root';
 var DB_PASS = process.env.DB_PASS || 'root';
 
-var PORT = 3000;
+var PORT = 80;
 var MODELS_PATH = join(__dirname, 'models');
 var FRONT_PATH = join(__dirname, 'front');
 var FRONT_ASSETS_PATH =FRONT_PATH + '/assets';
