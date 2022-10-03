@@ -5,7 +5,7 @@ import { set_on_game_start, eye_tracker } from '../game_start.js';
 
 var index_level = -1;
 var eye_tracking_interval_id;
-var interval_milisecons_to_capture_eye_position = 300;
+var interval_milisecons_to_capture_eye_position = 500;
 var number_of_correct_answers = 0;
 var number_of_answer_found = 0;
 var active_points = [];

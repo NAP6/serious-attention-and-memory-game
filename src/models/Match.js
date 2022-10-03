@@ -13,7 +13,7 @@ class Match {
     this.group = group;
     if (!date) {
       var cdate = new Date();
-      date = `${cdate.getDay()}/${cdate.getMonth()}/${cdate.getFullYear()}`;
+      date = `${cdate.getDate()}/${cdate.getMonth() + 1}/${cdate.getFullYear()} ${cdate.getHours()}`;
     }
     this.date = date;
     this.game_time = game_time;

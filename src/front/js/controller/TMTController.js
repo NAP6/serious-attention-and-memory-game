@@ -15,10 +15,12 @@ class TMTController {
     var data = {};
     var res = await post_api(`${window.location.origin}/api/tmt/getAll`, data);
     var tmts = [];
+    console.log(res)
     for (var tmt of res) {
       var tmt_obj = await TMTController.toClass(tmt);
       tmts.push(tmt_obj);
     }
+    console.log(tmts)
     return tmts;
   }
 
