@@ -83,11 +83,8 @@ class TMTController {
 
   static async getAll(req, res) {
     var admin_id = req.session.active_user.id;
-    console.log(admin_id)
     var sql = `call bring_tmts_from_an_administrator('${admin_id}')`;
-    console.log(sql)
     var [rows, fields] = await database.query(sql);
-    console.log(rows)
     if (!rows || !rows[0] || !rows[0][0] || !rows[0][0].tmts) res.json([]);
     else {
       var tmts = rows[0][0].tmts;

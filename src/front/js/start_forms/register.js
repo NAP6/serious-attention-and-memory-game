@@ -67,12 +67,12 @@ var form_patient_structure = {
         text: "Colegio",
       },
       university: {
-        value: "Universidad",
-        text: "Universidad",
+        value: "Pregrado",
+        text: "Pregrado",
       },
       master: {
-        value: "Master",
-        text: "Master",
+        value: "Posgrado",
+        text: "Posgrado",
       },
     },
   },
