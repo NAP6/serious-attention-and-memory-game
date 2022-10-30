@@ -46,7 +46,7 @@ class Match {
   }
 
   #calculate_score() {
-    return Math.random() * 100;
+    return  100;
   }
 
   register_event(

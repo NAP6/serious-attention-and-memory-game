@@ -1,6 +1,7 @@
 import { AdministratorController } from "./AdministratorController.js";
 import { PatientController } from "./PatientContoller.js";
 import { database } from "../database/database.js";
+import { use } from "browser-sync";
 
 class LogController {
     static async login(req, res) {
@@ -14,6 +15,7 @@ class LogController {
                 status: 'ok',
                 is_logged: true,
                 user: user.type,
+                user_id: user.id,
                 message: 'El Usuario se ha logueado con exito'
             }
             req.session.is_logged = resp.is_logged;

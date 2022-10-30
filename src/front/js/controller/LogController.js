@@ -4,12 +4,14 @@ class LogController {
     static async login(email, password) {
         var data = {email: email, password: password};
         var res = await post_api(`${window.location.origin}/api/login`, data);
+        localStorage.setItem('user_id', res.user_id);
         return res;
     }
 
     static async logout() {
         var data = {logout: true};
         var res = await post_api(`${window.location.origin}/api/logout`, data);
+        localStorage.removeItem('user_id');
         return res.is_logout;
     }
 

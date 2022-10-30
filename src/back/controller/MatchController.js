@@ -29,7 +29,14 @@ class MatchCrontroller {
   }
 
   static async update_body(req, res) {
-    var patient_id = req.session.active_user.id;
+    if (
+      req &&
+      req.session &&
+      req.session.active_user &&
+      req.session.active_user.id
+    )
+      var patient_id = req.session.active_user.id;
+    else patient_id = req.body.user_id;
     var match = req.body.match;
     var sql = `call update_match(${patient_id}, '${JSON.stringify(
       match
@@ -41,7 +48,14 @@ class MatchCrontroller {
   }
 
   static async create_header(req, res) {
-    var patient_id = req.session.active_user.id;
+    if (
+      req &&
+      req.session &&
+      req.session.active_user &&
+      req.session.active_user.id
+    )
+      var patient_id = req.session.active_user.id;
+    else patient_id = req.body.user_id;
     var match = req.body.match;
     let sql = `call create_header_match(${patient_id}, '${JSON.stringify(
       match
@@ -58,15 +72,12 @@ class MatchCrontroller {
   static async save_event(req, res) {
     var match = req.body.match;
     var event = req.body.event;
-    var sql = `call insert_match_event('${
-        JSON.stringify(event).replace(/'/g, "\\'")
-    }', '${
-        JSON.stringify(match).replace(/'/g, "\\'")
-    }')`
-    var [rows, fields] = await database.query(sql);
-    if (!rows || !rows[0] || !rows[0][0] || !rows[0][0].is_inserted)
-      res.json({ is_saved: false });
-    else res.json({ is_saved: rows[0][0].is_inserted });
+    var sql = `call insert_match_event('${JSON.stringify(event).replace(
+      /'/g,
+      "\\'"
+    )}', '${JSON.stringify(match).replace(/'/g, "\\'")}')`;
+    database.query(sql);
+    res.json({ is_saved: true });
   }
 
   static async save_ET_point(req, res) {
@@ -75,10 +86,8 @@ class MatchCrontroller {
     var sql = `call insert_eye_focus_point(${match.id}, '${JSON.stringify(
       point
     ).replace(/'/g, "\\'")}')`;
-    var [rows, fields] = await database.query(sql);
-    if (!rows || !rows[0] || !rows[0][0] || !rows[0][0].is_inserted)
-      res.json({ is_saved: false });
-    else res.json({ is_saved: rows[0][0].is_inserted });
+    database.query(sql);
+    res.json({ is_saved: true });
   }
 
   static async toClass(match) {
