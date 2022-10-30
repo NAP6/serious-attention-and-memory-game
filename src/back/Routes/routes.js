@@ -24,7 +24,6 @@ function Router(__dir_front) {
     // Redirect to correct place with invitaiton
     router.get('/invitation', (req, res)=> {
         var group_code = req.query.groupCode;
-        console.log(group_code)
         if(req.session.user_type && req.session.user_type != '')
             res.redirect(`/${req.session.user_type=='patient'? 'patient':'admin'}?groupCode=${group_code}`);
         else

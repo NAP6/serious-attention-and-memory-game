@@ -40,7 +40,6 @@ if(gorupCode) {
         var notyf = new Notyf();
         if(result.isConfirmed) {
             var is_added = await AdministratorController.add_to_group(gorupCode.split('-').pop());
-            console.log(is_added)
             if(is_added) {
                 notyf.success('Ahora perteneces al grupo');
                 window.location.search = '';

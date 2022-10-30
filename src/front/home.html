@@ -1,19 +1,30 @@
-{% extends "template.html" %}
+{% extends "template.html" %} {% block meta %}
+<title>Web</title>
+<meta content="" name="description" />
+<meta content="" name="keywords" />
+{% endblock %} {% block content %} {% include "parts/home/hero.html" %}
 
-{% block meta %}
-  <title>Web</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
-{% endblock %}
-
-{% block content %}
-
-  {% include "parts/home/hero.html" %}
-
-  <main id="main">
-
-    <!-- Here put your seccions -->
-
-  </main>
+<main id="main">
+  <!-- Here put your seccions -->
+  <div class="container my-4">
+    <div class="row">
+      <div class="col-12">
+        <h1 class="">Definición:</h1>
+      </div>
+      <div class="col-12 ">
+        <p>
+          El juego serio planteado evalúa, a través del TMT y el ‘Test de
+          Pirámides y Faraones’, la memoria de trabajo en función del tiempo de
+          ejecución y la atención y velocidad de procesamiento.
+          Esta aplicación tiene como objetivo la recolección de datos
+          provenientes de los diferentes test para realizar una evaluación sobre
+          la viabilidad de realizar este tipo de test en su versión digital.
+          Además plantea la posibilidad de encontrar nuevas variables digitales
+          que permitan generar conocimiento o nuevo patrones de comportamiento.
+        </p>
+      </div>
+    </div>
+  </div>
+</main>
 
 {% endblock %}

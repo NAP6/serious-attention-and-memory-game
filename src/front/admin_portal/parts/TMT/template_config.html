@@ -2,21 +2,50 @@
   <div id="config_tmt_game" class="h-100">
     <div class="container-fluid h-100">
       <div class="row h-100">
-        <div
-          class="col-12 col-md-9 d-flex justify-content-center"
-          id="image_container"
-        >
-          <div id="points_container">
-            <img
-              class="img-fluid img_behind_dots d-none"
-              id="editin_image"
-              alt="Esperando imagen para editar"
-              src=""
-            />
+        <div class="col-12 col-md-9">
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link active"
+                id="tutorial-tab"
+                data-bs-toggle="tab"
+                type="button"
+                role="tab"
+                aria-selected="true"
+              >
+                Tutorial
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="game_c-tab"
+                data-bs-toggle="tab"
+                type="button"
+                role="tab"
+                aria-selected="false"
+              >
+                Juego
+              </button>
+            </li>
+          </ul>
+          <!-- Game config area -->
+          <div class="d-flex justify-content-center" id="image_container">
+            <div id="points_container">
+              <img
+                class="img-fluid img_behind_dots d-none"
+                id="editin_image"
+                alt="Esperando imagen para editar"
+                src=""
+              />
+            </div>
           </div>
+          <!-- End game config area -->
         </div>
 
+        <!-- Sidebar config game -->
         <div class="col-12 col-md-3 my-3 d-md-block">
+          <!-- Add new level to game -->
           <div class="input-group mb-3">
             <select
               class="form-select"
@@ -33,7 +62,9 @@
               Nuevo Nivel
             </button>
           </div>
+          <!-- END Add new level to game -->
 
+          <!-- Add image area -->
           <div class="input-group mb-3">
             <button
               class="btn btn-outline-secondary"
@@ -52,7 +83,9 @@
               disabled
             />
           </div>
+          <!-- END Add image area -->
 
+          <!-- Add or Remove dots -->
           <div class="d-flex justify-content-center">
             <button
               id="btn_plus"
@@ -67,10 +100,12 @@
               <i class="fas fa-minus"></i>
             </button>
           </div>
+          <!-- END Add or Remove dots -->
 
+          <!-- Dots size -->
           <div>
             <label for="point_size" class="form-label"
-              >Tamaño de los circulos</label
+              >Tamaño de los círculos</label
             >
             <input
               type="range"
@@ -81,7 +116,9 @@
               id="point_size"
             />
           </div>
+          <!-- END Dots size -->
 
+          <!-- Delete level -->
           <div class="my-3">
             <button
               type="button"
@@ -91,8 +128,22 @@
               Eliminar Nivel
             </button>
           </div>
+          <!-- END Delete level -->
+
+          <!-- Text Area to add patient information -->
+          <div class="form-floating">
+            <textarea
+              class="form-control"
+              placeholder="Mensaje para el paciente"
+              id="level_description"
+            ></textarea>
+            <label for="level_description">Mensaje para el paciente</label>
+          </div>
+          <!-- END Text Area to add patient information -->
+
         </div>
       </div>
+      <!-- END Sidebar config game -->
     </div>
     <input
       type="file"

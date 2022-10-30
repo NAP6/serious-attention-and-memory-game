@@ -6,8 +6,8 @@ class TMT extends Game {
         this.levels = [];
     }
 
-    add_level(image=null, points=[]) {
-        var new_level = new TMTLevel(image, points);
+    add_level(image=null, points=[], tmt_tutorial, instruction="") {
+        var new_level = new TMT_Game(image, points, null, tmt_tutorial, instruction);
         this.levels.push(new_level);
         return new_level;
     }
@@ -19,7 +19,7 @@ class TMT extends Game {
 }
 
 class TMTLevel {
-    constructor(image=null, points=null, label_image=null) {
+    constructor(image=null, points=null, label_image=null, instructions=null) {
         if(image)
             this.image = image;
         else
@@ -32,7 +32,21 @@ class TMTLevel {
             this.label_image = label_image;
         else
             this.label_image = "";
+        if(instructions) 
+            this.instructions = instructions;
+        else
+            this.instructions = "";
     }
+}
+
+class TMT_Game extends TMTLevel {
+    constructor(image=null, points=null, label_image=null, tmt_tutorial=new TMT_Tutorial(), instructions=null) {
+        super(image, points, label_image, instructions);
+        this.tmt_tutorial = tmt_tutorial!=null?tmt_tutorial:new TMT_Tutorial();
+    }
+}
+
+class TMT_Tutorial extends TMTLevel {
 }
 
 class TMTPoint {
@@ -67,4 +81,4 @@ class TMTPoint {
     }
 }
 
-export { TMT, TMTLevel, TMTPoint };
+export { TMT, TMTLevel, TMTPoint, TMT_Game, TMT_Tutorial };

@@ -15,10 +15,30 @@ class MatchCrontroller {
         return res.is_updated;
     }
 
-    static async insert(match) {
-        var data = {match: match};
-        var res = await post_api(`${window.location.origin}/api/match/insert`, data);
-        return res.is_iserted;
+    static async update_body(match) {
+        var data = {match: match, user_id: localStorage.getItem('user_id')};
+        var res = await post_api(`${window.location.origin}/api/match/update_body`, data);
+        return res.is_updated;
+    }
+
+    static async create_header(match) {
+        var data = {match: match, user_id: localStorage.getItem('user_id')};
+        var res = await post_api(`${window.location.origin}/api/match/create_header`, data);
+        return MatchCrontroller.toClass(res);
+    }
+
+    static async save_event(match, event) {
+        var data = {match: match, event: event};
+        console.log('send event')
+        post_api(`${window.location.origin}/api/match/save_event`, data);
+        return true;
+    }
+
+    static async save_ET_point(match, point) {
+        var data = {match: match, point: point};
+        console.log('send eye')
+        post_api(`${window.location.origin}/api/match/save_ET_point`, data);
+        return true;
     }
  
     static toClass(obj) {

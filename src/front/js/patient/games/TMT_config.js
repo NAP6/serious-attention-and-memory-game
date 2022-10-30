@@ -9,18 +9,22 @@ var game_image = document.getElementById('game_image');
 var correct_next_pos = 0;
 var index_level = -1;
 var eye_tracking_interval_id;
-var interval_milisecons_to_capture_eye_position = 100;
+var interval_milisecons_to_capture_eye_position = 500;
+
+var is_a_tmt_tutorial = false;
 
 var search_params_string = window.location.search;
 var search_params = new URLSearchParams(search_params_string);
 var id = search_params.get('game_id');
 var tmt = await TMTController.getById(id);
 var this_match = new Match(null, tmt, tmt.group);
+this_match = await MatchCrontroller.create_header(this_match);
 var is_drawing = false;
 set_on_game_start(game_start);
 window.onresize = resize;
 
 function game_start(eye_tracker_precision) {
+    is_a_tmt_tutorial = false;
     next_level();
     this_match.eye_tracker_precision_estimate = eye_tracker_precision;
 }
@@ -31,7 +35,7 @@ function next_level() {
     game_image.classList.add('d-none');
     active_points.every((itm)=> {itm.html.remove(); return true;});
     active_points = [];
-    if(index_level + 1 >= tmt.levels.length) {
+    if((index_level + 1 >= tmt.levels.length) && !is_a_tmt_tutorial) {
         try {
             this_match.finish_level(index_level);
             finish_game();
@@ -46,14 +50,25 @@ function next_level() {
             });
         }
     } else {
+        is_a_tmt_tutorial = !is_a_tmt_tutorial;
+        var instructions;
+        var level;
+        if(is_a_tmt_tutorial) {
+            index_level++;
+            instructions = tmt.levels[index_level].tmt_tutorial.instructions;
+            level = tmt.levels[index_level].tmt_tutorial;
+        } else {
+            instructions = tmt.levels[index_level].instructions;
+            level = tmt.levels[index_level];
+        }
         correct_next_pos = 0;
-        index_level++;
         Swal.fire(
           `Nivel ${index_level+1}`,
-          'Preciona Ok para inicar',
+          instructions +
+          '</br> Preciona Ok para inicar',
           'info'
         ).then(()=>{
-            charge_level(tmt.levels[index_level], index_level);
+            charge_level(level, index_level);
             if(index_level == 0) {
                 this_match.start();
                 eye_tracking_interval_id = setInterval(record_eye_tracking, interval_milisecons_to_capture_eye_position);
@@ -73,7 +88,7 @@ function finish_game() {
     'info'
     ).then(async ()=>{
         document.getElementById('sending_match').classList.remove('d-none');
-        await MatchCrontroller.insert(this_match);
+        await MatchCrontroller.update_body(this_match);
         window.location.href = `${window.location.origin}/patient`;
     });
 }
@@ -126,6 +141,10 @@ function print_point(point=null, level_index) {
     circle.addEventListener('mouseenter', ()=>{
         if (is_drawing) answer(point, circle, index_point, level_index);
     });
+    circle.addEventListener('click', ()=>{
+        if (is_drawing) answer(point, circle, index_point, level_index);
+        else console.log('se hizo un click en el circulo, pero no esta dibujando')
+    });
     //circle.onclick = ()=> {
     //    answer(point, circle, index_point, level_index);
     //};
@@ -134,7 +153,6 @@ function print_point(point=null, level_index) {
 }
 
 async function answer(point, element, index_point, level_index) {
-    console.log("answer");
     if(index_point == correct_next_pos) {
         await correct_point(point, element, index_point, level_index);
         correct_next_pos++;
@@ -170,13 +188,13 @@ function delay(ms) {
 
 async function record_event(point, element, is_correct, index_point, level_index) {
     var eye = await eye_tracker.get_eye_position();
-    this_match.register_event(
+    const event = this_match.register_event(
         level_index,
         'points',
         index_point, 
         element.offsetTop,
         element.offsetLeft,
-        element.offsetWidthd,
+        element.offsetWidth,
         element.offsetHeight,
         document.documentElement.clientWidth,
         document.documentElement.clientHeight,
@@ -184,11 +202,13 @@ async function record_event(point, element, is_correct, index_point, level_index
         eye.x,
         eye.y
     );
+    MatchCrontroller.save_event(this_match, event);
 }
 
 async function record_eye_tracking() {
     var eye = await eye_tracker.get_eye_position();
-    this_match.register_eye_position(eye.x, eye.y);
+    const point = this_match.register_eye_position(eye.x, eye.y);
+    MatchCrontroller.save_ET_point(this_match, point);
 }
 
 

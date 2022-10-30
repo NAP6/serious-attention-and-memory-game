@@ -206,7 +206,7 @@ function copile_back_js() {
 */
 function init_browser_sync(done) {
     browser_sync.init(null, {
-        proxy: "http://localhost:3000/",
+        proxy: "http://localhost/",
         files: [`${copiled_dir + front}`],
         port: 7000,
     });
