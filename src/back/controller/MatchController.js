@@ -69,18 +69,16 @@ class MatchCrontroller {
     }
   }
 
-  static async save_event(match, event) {
-    var sql = `call insert_match_event('${JSON.stringify(event).replace(
-      /'/g,
-      "\\'"
-    )}', '${JSON.stringify(match).replace(/'/g, "\\'")}')`;
+  static async save_event(match_id, event) {
+    var sql = `call insert_match_event('
+    ${JSON.stringify(event).replace(/'/g, "\\'")}', '${match_id}')`;
     database.query(sql);
   }
 
   static async save_event_r(req, res) {
-    var match = req.body.match;
+    var match_id = req.body.match_id;
     var event = req.body.event;
-    MatchCrontroller.save_event(match, event);
+    MatchCrontroller.save_event(match_id, event);
     res.json({ is_saved: true });
   }
 

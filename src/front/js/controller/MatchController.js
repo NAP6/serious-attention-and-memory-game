@@ -43,16 +43,24 @@ class MatchCrontroller {
   }
 
   static async save_event(match, event) {
-    var data = { match: match, event: event };
+    var data = { match_id: match.id, event: event };
     // post_api(`${window.location.origin}/api/match/save_event`, data);
-    socket.emit("match/save_event", data);
+    try {
+      socket.emit("match/save_event", data);
+    } catch (e) {
+      console.log("Error en Eventos: ", e);
+    }
     return true;
   }
 
   static async save_ET_point(match, point) {
     var data = { match_id: match.id, point: point };
     // post_api(`${window.location.origin}/api/match/save_ET_point`, data);
-    socket.emit("match/save_ET_point", data);
+    try {
+      socket.emit("match/save_ET_point", data);
+    } catch (e) {
+      console.log("Error en Ojos: ", e);
+    }
     return true;
   }
 
