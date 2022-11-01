@@ -5,6 +5,7 @@ import {fileURLToPath} from 'url';
 import { Server } from "./back/Server.js";
 import { Router } from "./back/Routes/routes.js";
 import { api } from "./back/Routes/api.js";
+import { init_socket_chanels } from "./back/Routes/socket.js";
 import { database } from "./back/database/database.js";
 import dotenv from 'dotenv';
 
@@ -24,5 +25,6 @@ var FRONT_ASSETS_PATH =FRONT_PATH + '/assets';
 var router = Router(FRONT_PATH);
 
 database.set_parameters(DB_HOST, DB_PORT, DB_USER, DB_PASS, DB_NAME);
-var server = new Server(PORT, [MODELS_PATH, FRONT_ASSETS_PATH], [router, api]);
+var server = new Server(PORT, [MODELS_PATH, FRONT_ASSETS_PATH], [router, api], true);
+init_socket_chanels(server);
 server.start();

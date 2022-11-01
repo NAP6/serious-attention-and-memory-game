@@ -69,24 +69,32 @@ class MatchCrontroller {
     }
   }
 
-  static async save_event(req, res) {
-    var match = req.body.match;
-    var event = req.body.event;
+  static async save_event(match, event) {
     var sql = `call insert_match_event('${JSON.stringify(event).replace(
       /'/g,
       "\\'"
     )}', '${JSON.stringify(match).replace(/'/g, "\\'")}')`;
     database.query(sql);
+  }
+
+  static async save_event_r(req, res) {
+    var match = req.body.match;
+    var event = req.body.event;
+    MatchCrontroller.save_event(match, event);
     res.json({ is_saved: true });
   }
 
-  static async save_ET_point(req, res) {
-    var match = req.body.match;
-    var point = req.body.point;
-    var sql = `call insert_eye_focus_point(${match.id}, '${JSON.stringify(
+  static async save_ET_point(match_id, point) {
+    var sql = `call insert_eye_focus_point(${match_id}, '${JSON.stringify(
       point
     ).replace(/'/g, "\\'")}')`;
     database.query(sql);
+  }
+
+  static async save_ET_point_r(req, res) {
+    var match_id = req.body.match_id;
+    var point = req.body.point;
+    MatchCrontroller.save_ET_point(match_id, point);
     res.json({ is_saved: true });
   }
 
